@@ -1,11 +1,11 @@
-import { StyleSheet, Text, View, Image } from "react-native";
-import React from "react";
-import { IFileType } from "@/types";
-import { Colors } from "@/constants/Colors";
-import DocumentViewer from "./DocumentViewer";
-import { AudioPlayer } from "./AudioPlayer";
-import { VideoPlayer } from "./VideoPlayer";
-import { ImageDisplay } from "./ImageDisplay";
+import { StyleSheet, Text, View, Image } from 'react-native';
+import React from 'react';
+import { IFileType } from '@/types';
+import { Colors } from '@/constants/Colors';
+import DocumentViewer from './DocumentViewer';
+import { AudioPlayer } from './AudioPlayer';
+import { VideoPlayer } from './VideoPlayer';
+import { ImageDisplay } from './ImageDisplay';
 
 interface IDisplayFile {
   type: IFileType;
@@ -15,24 +15,24 @@ interface IDisplayFile {
 
 const DisplayFile: React.FC<IDisplayFile> = ({ type, url, self }) => {
   switch (type) {
-    case "Image":
+    case 'Image':
       return <ImageDisplay url={url} />;
 
-    case "Audio":
+    case 'Audio':
       return (
         <AudioPlayer
           url={url}
-          color={Colors.dark[self ? "background" : "tint"]}
+          color={Colors.dark[self ? 'background' : 'tint']}
         />
       );
 
-    case "Video":
+    case 'Video':
       return <VideoPlayer url={url} />;
 
-    case "None":
+    case 'None':
       return <></>;
 
-    case "Document":
+    case 'Document':
       return <DocumentViewer url={url} />;
 
     default:
@@ -44,14 +44,12 @@ const DisplayFile: React.FC<IDisplayFile> = ({ type, url, self }) => {
   }
 };
 
-
-
 export default DisplayFile;
 
 const styles = StyleSheet.create({
   videoWrapper: {
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   video: {
     width: 300,
@@ -60,31 +58,31 @@ const styles = StyleSheet.create({
     borderRadius: 15,
   },
   icon: {
-    position: "absolute",
-    alignSelf: "center",
-    justifyContent: "center",
+    position: 'absolute',
+    alignSelf: 'center',
+    justifyContent: 'center',
   },
   audioContainer: {
-    alignItems: "center",
+    alignItems: 'center',
     marginBottom: 10,
-    flexDirection: "row",
-    justifyContent: "center",
+    flexDirection: 'row',
+    justifyContent: 'center',
   },
   button: {
-    backgroundColor: Colors["dark"].tint,
+    backgroundColor: Colors['dark'].tint,
     padding: 20,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     borderRadius: 20,
   },
   buttonText: {
-    color: Colors["dark"].text,
-    fontWeight: "bold",
+    color: Colors['dark'].text,
+    fontWeight: 'bold',
   },
   waveForm: {
     width: 200,
     height: 30,
-    justifyContent: "center",
+    justifyContent: 'center',
     padding: 10,
   },
 });

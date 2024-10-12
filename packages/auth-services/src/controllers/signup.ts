@@ -1,7 +1,7 @@
-import { NextFunction, Request, Response } from "express";
-import { asyncErrorHandler } from "../utils/asyncErrorHandler";
-import { createUser } from "../db";
-import { createJWT } from "../utils/jwt";
+import { NextFunction, Request, Response } from 'express';
+import { asyncErrorHandler } from '../utils/asyncErrorHandler';
+import { createUser } from '../db';
+import { createJWT } from '../utils/jwt';
 
 // Controller function for handling user sign-up
 // Wrapped in asyncErrorHandler to catch and handle async errors
@@ -14,7 +14,7 @@ export const signUp = asyncErrorHandler(
     if (!phone || !password)
       return res
         .status(400)
-        .send({ message: "Invaid data recived from users." });
+        .send({ message: 'Invaid data recived from users.' });
 
     // Attempt to create a new user with the provided phone and password
     let { response, error } = await createUser(phone, password, name);
@@ -25,7 +25,7 @@ export const signUp = asyncErrorHandler(
 
     const jwt = createJWT(response.json());
     return res.status(200).send({ jwt });
-  },
+  }
 );
 
 export default signUp;

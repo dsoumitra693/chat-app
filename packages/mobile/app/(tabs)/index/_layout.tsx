@@ -1,6 +1,6 @@
-import { useIsFocused } from "@react-navigation/native";
-import { Stack, useNavigation } from "expo-router";
-import { useEffect } from "react";
+import { useIsFocused } from '@react-navigation/native';
+import { Stack, useNavigation } from 'expo-router';
+import { useEffect } from 'react';
 
 const IndexLayout = () => {
   const navigation = useNavigation();
@@ -8,15 +8,16 @@ const IndexLayout = () => {
 
   useEffect(() => {
     if (isFocused) {
-      const currentRoute = navigation.getState()?.routes?.[navigation.getState().index]?.name;
+      const currentRoute =
+        navigation.getState()?.routes?.[navigation.getState().index]?.name;
 
-      if (currentRoute === "chat") {
+      if (currentRoute === 'chat') {
         navigation.getParent()?.setOptions({
-          tabBarStyle: { display: "none" },
+          tabBarStyle: { display: 'none' },
         });
       } else {
         navigation.getParent()?.setOptions({
-          tabBarStyle: { display: "flex" },
+          tabBarStyle: { display: 'flex' },
         });
       }
     }

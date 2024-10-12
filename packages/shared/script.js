@@ -20,24 +20,32 @@ export default function () {
   let phone = `${Math.floor(Math.random() * 10000000000)}`.padStart(10, '0');
 
   // Test the /signup endpoint
-  let signupRes = http.post(`${BASE_URL}/auth/signup`, JSON.stringify({
-    phone,
-    password: 'testpassword',
-    name: 'soumo',
-  }), { headers: { 'Content-Type': 'application/json' } });
+  let signupRes = http.post(
+    `${BASE_URL}/auth/signup`,
+    JSON.stringify({
+      phone,
+      password: 'testpassword',
+      name: 'soumo',
+    }),
+    { headers: { 'Content-Type': 'application/json' } }
+  );
   check(signupRes, {
     'signup status was 200': (r) => r.status === 200,
   });
 
   // Test the /login endpoint
-  let loginRes = http.post(`${BASE_URL}/auth/login`, JSON.stringify({
-    phone,
-    password: 'testpassword',
-  }), { headers: { 'Content-Type': 'application/json' } });
+  let loginRes = http.post(
+    `${BASE_URL}/auth/login`,
+    JSON.stringify({
+      phone,
+      password: 'testpassword',
+    }),
+    { headers: { 'Content-Type': 'application/json' } }
+  );
   check(loginRes, {
     'login status was 200': (r) => r.status === 200,
   });
 
   // Sleep between requests to simulate real-world usage and reduce load
-  sleep(2); 
+  sleep(2);
 }

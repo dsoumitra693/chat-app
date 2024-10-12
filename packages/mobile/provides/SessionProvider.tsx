@@ -2,8 +2,7 @@ import { apiService } from '@/services/ApiServices';
 import { deleteData, getData, storeData } from '@/utils/secureStore';
 import React, { useContext, useEffect, useState } from 'react';
 
-
-const SESSION_KEY = "session";
+const SESSION_KEY = 'session';
 
 interface ISessionContext {
   session: string;

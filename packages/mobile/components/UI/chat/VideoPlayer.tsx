@@ -1,8 +1,8 @@
-import { Colors } from "@/constants/Colors";
-import { Ionicons } from "@expo/vector-icons";
-import { Video, ResizeMode, VideoFullscreenUpdateEvent } from "expo-av";
-import { useRef, useState } from "react";
-import { StyleSheet, TouchableOpacity } from "react-native";
+import { Colors } from '@/constants/Colors';
+import { Ionicons } from '@expo/vector-icons';
+import { Video, ResizeMode, VideoFullscreenUpdateEvent } from 'expo-av';
+import { useRef, useState } from 'react';
+import { StyleSheet, TouchableOpacity } from 'react-native';
 
 const FULLSCREEN_ENTER = 1;
 const FULLSCREEN_EXIT = 3;
@@ -40,9 +40,9 @@ export const VideoPlayer = ({ url }: { url: string }) => {
         onFullscreenUpdate={handleFullscreenUpdate}
       />
       <Ionicons
-        name={isPlaying ? "pause" : "play"}
+        name={isPlaying ? 'pause' : 'play'}
         size={40}
-        color={Colors["dark"].text}
+        color={Colors['dark'].text}
         style={styles.icon}
         onPress={() => {
           setisPlaying((prev) => !prev);
@@ -54,8 +54,8 @@ export const VideoPlayer = ({ url }: { url: string }) => {
 
 const styles = StyleSheet.create({
   videoWrapper: {
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   video: {
     width: 300,
@@ -64,8 +64,8 @@ const styles = StyleSheet.create({
     borderRadius: 15,
   },
   icon: {
-    position: "absolute",
-    alignSelf: "center",
-    justifyContent: "center",
+    position: 'absolute',
+    alignSelf: 'center',
+    justifyContent: 'center',
   },
 });

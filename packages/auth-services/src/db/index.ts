@@ -1,8 +1,8 @@
-import { db } from "./db"; // Drizzle db instance
-import { user } from "./schema"; // Drizzle user schema
-import { User } from "../user";
-import { getHash } from "../utils/password";
-import { eq } from "drizzle-orm";
+import { db } from './db'; // Drizzle db instance
+import { user } from './schema'; // Drizzle user schema
+import { User } from '../user';
+import { getHash } from '../utils/password';
+import { eq } from 'drizzle-orm';
 
 export { db, user };
 
@@ -14,7 +14,7 @@ export const searchUser = async (query: any): Promise<User[]> => {
       (user) => new User(user.phone, user.password, user.name)
     ) as User[];
   } catch (error) {
-    console.error("Error searching for users:", error);
+    console.error('Error searching for users:', error);
     return [];
   }
 };
@@ -34,7 +34,7 @@ export const createUser = async (
     // Check if a user with the given phone already exists
     const users = await searchUser(eq(user.phone, phone));
 
-    if (users.length > 0) throw new Error("Email already exists.");
+    if (users.length > 0) throw new Error('Email already exists.');
 
     // Create a new User instance for validation or additional logic
     const newUser = new User(phone, password, name);

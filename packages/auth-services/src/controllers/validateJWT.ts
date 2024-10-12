@@ -1,8 +1,8 @@
-import { asyncErrorHandler } from "../utils/asyncErrorHandler";
-import { NextFunction, Request, Response } from "express";
-import { verifyJWT } from "../utils/jwt";
-import { searchUser, user } from "../db";
-import { eq } from "drizzle-orm";
+import { asyncErrorHandler } from '../utils/asyncErrorHandler';
+import { NextFunction, Request, Response } from 'express';
+import { verifyJWT } from '../utils/jwt';
+import { searchUser, user } from '../db';
+import { eq } from 'drizzle-orm';
 
 const validateJWT = asyncErrorHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -11,7 +11,7 @@ const validateJWT = asyncErrorHandler(
     if (!token)
       return res
         .status(400)
-        .send({ message: "Invaid data recived from users." });
+        .send({ message: 'Invaid data recived from users.' });
 
     const _user = verifyJWT(token).data;
 
@@ -20,7 +20,7 @@ const validateJWT = asyncErrorHandler(
 
     // If the user doesn't exist, return a 409 Conflict status
     if (users.length === 0)
-      return res.status(409).send({ message: "User does not exits" });
+      return res.status(409).send({ message: 'User does not exits' });
 
     res.status(200).send({ user: _user });
   }

@@ -7,13 +7,12 @@ import {
   TouchableOpacity,
   Dimensions,
   TouchableWithoutFeedback,
-} from "react-native";
-import React, { useEffect, useState } from "react";
-import { ReactNativeZoomableView } from "@openspacelabs/react-native-zoomable-view";
-
+} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { ReactNativeZoomableView } from '@openspacelabs/react-native-zoomable-view';
 
 const MAX_ZOOM = 2;
-const MIN_ZOOM = 1
+const MIN_ZOOM = 1;
 
 export const ImageDisplay = ({ url }: { url: string }) => {
   const [isFullScreen, setIsFullScreen] = useState(false);
@@ -25,11 +24,11 @@ export const ImageDisplay = ({ url }: { url: string }) => {
   const toggleFullScreen = () => {
     setIsFullScreen((prev) => !prev);
   };
-  
+
   useEffect(() => {
     Image.getSize(url, (width, height) => {
-      const screenWidth = Dimensions.get("window").width;
-      const screenHeight = Dimensions.get("window").height;
+      const screenWidth = Dimensions.get('window').width;
+      const screenHeight = Dimensions.get('window').height;
 
       const aspectRatio = width / height;
       let adjustedWidth = screenWidth;
@@ -58,11 +57,11 @@ export const ImageDisplay = ({ url }: { url: string }) => {
     };
 
     if (isFullScreen) {
-      BackHandler.addEventListener("hardwareBackPress", onBackPress);
+      BackHandler.addEventListener('hardwareBackPress', onBackPress);
     }
 
     return () =>
-      BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+      BackHandler.removeEventListener('hardwareBackPress', onBackPress);
   }, [isFullScreen]);
 
   return (
@@ -81,7 +80,7 @@ export const ImageDisplay = ({ url }: { url: string }) => {
             <ReactNativeZoomableView
               maxZoom={MAX_ZOOM}
               minZoom={MIN_ZOOM}
-              zoomStep={MIN_ZOOM/2}
+              zoomStep={MIN_ZOOM / 2}
               initialZoom={1}
               bindToBorders={true}
               contentWidth={imageDimensions.width}
@@ -108,18 +107,18 @@ const styles = StyleSheet.create({
   image: {
     width: 300,
     height: 300,
-    resizeMode: "cover",
+    resizeMode: 'cover',
     marginBottom: 5,
     borderRadius: 15,
   },
   fullScreenContainer: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.8)",
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
   },
   zoomableView: {
-    width: "100%",
-    height: "100%",
+    width: '100%',
+    height: '100%',
   },
 });

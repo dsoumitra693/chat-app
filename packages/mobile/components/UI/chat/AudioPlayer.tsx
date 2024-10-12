@@ -1,11 +1,11 @@
-import { FormateDurtaion } from "@/utils/time";
-import { Ionicons } from "@expo/vector-icons";
-import { Audio } from "expo-av";
-import { useState, useEffect, useMemo } from "react";
-import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
-import Waveform from "../WaveForm";
-import { Colors } from "@/constants/Colors";
-import { stringToSeed } from "@/utils/stringToSeed";
+import { FormateDurtaion } from '@/utils/time';
+import { Ionicons } from '@expo/vector-icons';
+import { Audio } from 'expo-av';
+import { useState, useEffect, useMemo } from 'react';
+import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
+import Waveform from '../WaveForm';
+import { Colors } from '@/constants/Colors';
+import { stringToSeed } from '@/utils/stringToSeed';
 
 export const AudioPlayer = ({ url, color }: { url: string; color: string }) => {
   const [sound, setSound] = useState<Audio.Sound | null>(null);
@@ -69,19 +69,17 @@ export const AudioPlayer = ({ url, color }: { url: string; color: string }) => {
         style={{ ...styles.button, backgroundColor: color }}
       >
         <Ionicons
-          name={isPlaying ? "pause" : "play"}
+          name={isPlaying ? 'pause' : 'play'}
           size={20}
-          color={Colors["dark"].text}
+          color={Colors['dark'].text}
           style={styles.icon}
         />
       </TouchableOpacity>
-      <View style={styles.waveForm}>
-        {waveform}
-      </View>
+      <View style={styles.waveForm}>{waveform}</View>
       <Text
         style={{
           fontSize: 14,
-          color: Colors["dark"].text2,
+          color: Colors['dark'].text2,
           left: -15,
         }}
       >
@@ -93,31 +91,31 @@ export const AudioPlayer = ({ url, color }: { url: string; color: string }) => {
 
 const styles = StyleSheet.create({
   icon: {
-    position: "absolute",
-    alignSelf: "center",
-    justifyContent: "center",
+    position: 'absolute',
+    alignSelf: 'center',
+    justifyContent: 'center',
   },
   audioContainer: {
-    alignItems: "center",
+    alignItems: 'center',
     marginBottom: 10,
-    flexDirection: "row",
-    justifyContent: "center",
+    flexDirection: 'row',
+    justifyContent: 'center',
   },
   button: {
-    backgroundColor: Colors["dark"].tint,
+    backgroundColor: Colors['dark'].tint,
     padding: 20,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     borderRadius: 20,
   },
   buttonText: {
-    color: Colors["dark"].text,
-    fontWeight: "bold",
+    color: Colors['dark'].text,
+    fontWeight: 'bold',
   },
   waveForm: {
     width: 200,
     height: 30,
-    justifyContent: "center",
+    justifyContent: 'center',
     padding: 10,
   },
 });

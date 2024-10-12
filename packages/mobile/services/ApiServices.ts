@@ -1,5 +1,5 @@
-import { RequestOptionsBuilder } from "@/utils/requestOptionsBuilder";
-import axios, { AxiosResponse } from "axios";
+import { RequestOptionsBuilder } from '@/utils/requestOptionsBuilder';
+import axios, { AxiosResponse } from 'axios';
 
 const BASE_URL = process.env.EXPO_PUBLIC_AUTH_API_URL!;
 
@@ -24,7 +24,7 @@ export class ApiService {
     method: string,
     data: Record<string, string> = {},
     headers: Record<string, string> = {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     }
   ): Promise<AxiosResponse<T>> {
     try {
@@ -37,7 +37,7 @@ export class ApiService {
       const response = await axios.request<T>(requestOptions);
       return response;
     } catch (error: any) {
-      console.error("Error:", error);
+      console.error('Error:', error);
       throw new Error(error);
     }
   }

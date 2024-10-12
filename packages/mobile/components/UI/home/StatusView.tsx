@@ -1,6 +1,6 @@
-import { StyleSheet, Text, View, ScrollView } from "react-native";
-import React from "react";
-import StatusCircle from "./StatusCircle";
+import { StyleSheet, Text, View, ScrollView } from 'react-native';
+import React from 'react';
+import StatusCircle from './StatusCircle';
 
 const STATUS_DATA = [
   {},
@@ -37,9 +37,9 @@ const styles = StyleSheet.create({
     height: 80,
     zIndex: 100,
     padding: 20,
-    flexDirection: "row",
-    justifyContent: "flex-start",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
     gap: 5,
   },
 });

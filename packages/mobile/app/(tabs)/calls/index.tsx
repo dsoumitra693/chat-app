@@ -1,10 +1,7 @@
 import { StyleSheet, Image, Platform, View } from 'react-native';
 
 export default function Calls() {
-  return (
-    <View>
-    </View>
-  );
+  return <View></View>;
 }
 
 const styles = StyleSheet.create({

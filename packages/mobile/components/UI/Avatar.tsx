@@ -6,9 +6,9 @@ import {
   StyleSheet,
   View,
   ViewStyle,
-} from "react-native";
-import React from "react";
-import { Colors } from "@/constants/Colors";
+} from 'react-native';
+import React from 'react';
+import { Colors } from '@/constants/Colors';
 
 interface IAvatarProps {
   showBadge?: boolean;
@@ -20,7 +20,7 @@ interface IAvatarProps {
 
 const Avatar: React.FC<IAvatarProps> = ({
   showBadge = false,
-  bagdeColor = Colors["dark"].active,
+  bagdeColor = Colors['dark'].active,
   imageSource,
   style,
 }) => {
@@ -45,16 +45,16 @@ const styles = StyleSheet.create({
   badge: {
     width: 10,
     aspectRatio: 1,
-    position: "absolute",
+    position: 'absolute',
     zIndex: 10,
     borderRadius: 100,
     bottom: '5%',
     right: '5%',
   },
   avatar: {
-    width: "100%",
-    height: "100%",
-    objectFit: "cover",
+    width: '100%',
+    height: '100%',
+    objectFit: 'cover',
     borderRadius: 35,
   },
 });

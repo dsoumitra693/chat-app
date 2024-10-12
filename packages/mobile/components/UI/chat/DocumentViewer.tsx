@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import {
   View,
   TouchableOpacity,
@@ -8,31 +8,31 @@ import {
   Linking,
   StyleSheet,
   Platform,
-} from "react-native";
-import * as FileSystem from "expo-file-system";
-import * as IntentLauncher from "expo-intent-launcher";
-import { Ionicons } from "@expo/vector-icons";
-import { Colors } from "@/constants/Colors";
-import { calcSize } from "@/utils/file";
-import { formateFileName } from "@/utils/text";
+} from 'react-native';
+import * as FileSystem from 'expo-file-system';
+import * as IntentLauncher from 'expo-intent-launcher';
+import { Ionicons } from '@expo/vector-icons';
+import { Colors } from '@/constants/Colors';
+import { calcSize } from '@/utils/file';
+import { formateFileName } from '@/utils/text';
 
 const DocumentViewer = ({ url }: { url: string }) => {
   const [loading, setLoading] = useState(false);
-  const [fileSize, setFileSize] = useState<string>("");
-  const fileName = url.split("/").pop();
+  const [fileSize, setFileSize] = useState<string>('');
+  const fileName = url.split('/').pop();
 
   const getFileSize = async () => {
     try {
-      const response = await fetch(url, { method: "HEAD" });
-      const contentLength = response.headers.get("Content-Length");
+      const response = await fetch(url, { method: 'HEAD' });
+      const contentLength = response.headers.get('Content-Length');
       if (contentLength) {
         setFileSize(calcSize(parseInt(contentLength)));
       } else {
-        setFileSize("Unknown");
+        setFileSize('Unknown');
       }
     } catch (error) {
-      Alert.alert("Error", "Error fetching file size:");
-      setFileSize("Unknown");
+      Alert.alert('Error', 'Error fetching file size:');
+      setFileSize('Unknown');
     }
   };
 
@@ -47,9 +47,9 @@ const DocumentViewer = ({ url }: { url: string }) => {
       const { uri } = await FileSystem.downloadAsync(url, localUri);
       setLoading(false);
 
-      if (Platform.OS === "android") {
+      if (Platform.OS === 'android') {
         const contentUri = await FileSystem.getContentUriAsync(uri);
-        IntentLauncher.startActivityAsync("android.intent.action.VIEW", {
+        IntentLauncher.startActivityAsync('android.intent.action.VIEW', {
           data: contentUri,
           flags: 1,
         });
@@ -58,12 +58,12 @@ const DocumentViewer = ({ url }: { url: string }) => {
         if (supported) {
           await Linking.openURL(uri);
         } else {
-          Alert.alert("Error", "No application found to open this file.");
+          Alert.alert('Error', 'No application found to open this file.');
         }
       }
     } catch (error) {
       setLoading(false);
-      Alert.alert("Error", "Failed to download or open the document.");
+      Alert.alert('Error', 'Failed to download or open the document.');
     }
   };
 
@@ -71,12 +71,12 @@ const DocumentViewer = ({ url }: { url: string }) => {
     <TouchableOpacity onPress={downloadAndOpenDocument} style={styles.card}>
       <View style={styles.document}>
         {loading ? (
-          <ActivityIndicator size="small" color={Colors["dark"].text} />
+          <ActivityIndicator size="small" color={Colors['dark'].text} />
         ) : (
           <Ionicons
             name="document-outline"
             size={24}
-            color={Colors["dark"].text}
+            color={Colors['dark'].text}
           />
         )}
         <Text style={styles.documentTitle}>
@@ -93,19 +93,19 @@ const styles = StyleSheet.create({
   card: {
     borderRadius: 8,
     padding: 10,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   document: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   documentTitle: {
     marginLeft: 10,
     fontSize: 16,
-    color: Colors["dark"].text,
-    fontWeight: "400",
+    color: Colors['dark'].text,
+    fontWeight: '400',
   },
   icon: {
     marginRight: 10,
@@ -113,6 +113,6 @@ const styles = StyleSheet.create({
   fileSize: {
     fontSize: 14,
     padding: 10,
-    color: Colors["dark"].text,
+    color: Colors['dark'].text,
   },
 });

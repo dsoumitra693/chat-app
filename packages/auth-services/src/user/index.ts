@@ -1,4 +1,4 @@
-import { compareHash, getHash } from "../utils/password";
+import { compareHash, getHash } from '../utils/password';
 
 export class User {
   // Private properties for storing Phone and password
@@ -41,7 +41,7 @@ export class User {
     }
 
     // Throw an error if the previous password does not match
-    throw new Error("Password did not match");
+    throw new Error('Password did not match');
   }
 
   // Method to change the user's Phone
@@ -54,7 +54,7 @@ export class User {
     }
 
     // Throw an error if the password does not match
-    throw new Error("Password did not match");
+    throw new Error('Password did not match');
   }
 
   // Method to authenticate the user with a given password

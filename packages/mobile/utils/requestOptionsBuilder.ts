@@ -1,4 +1,4 @@
-import { AxiosRequestConfig } from "axios";
+import { AxiosRequestConfig } from 'axios';
 
 export class RequestOptionsBuilder {
   private baseUrl: string;
@@ -14,7 +14,7 @@ export class RequestOptionsBuilder {
   buildRequestOptions(
     url: string,
     method: string,
-    data:Record<string, string> = {},
+    data: Record<string, string> = {},
     headers: Record<string, string> = {}
   ): AxiosRequestConfig {
     return {

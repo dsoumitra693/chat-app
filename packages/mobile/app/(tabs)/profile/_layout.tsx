@@ -1,4 +1,4 @@
-import { Stack } from "expo-router";
+import { Stack } from 'expo-router';
 
 const HomeLayout = () => {
   return (
@@ -7,7 +7,7 @@ const HomeLayout = () => {
         headerShown: false,
       }}
     >
-      <Stack.Screen name="index"/>
+      <Stack.Screen name="index" />
     </Stack>
   );
 };

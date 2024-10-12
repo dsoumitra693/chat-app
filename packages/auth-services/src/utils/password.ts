@@ -1,10 +1,10 @@
-import * as bcrypt from "bcrypt";
+import * as bcrypt from 'bcrypt';
 
 const saltRounds = 10;
 
 // Function to generate a hash from a password
 export const getHash = (data: string): string => {
-  if (data.length == 0) throw new Error("Password should not be empty");
+  if (data.length == 0) throw new Error('Password should not be empty');
   const hash = bcrypt.hashSync(data, saltRounds);
   return hash;
 };

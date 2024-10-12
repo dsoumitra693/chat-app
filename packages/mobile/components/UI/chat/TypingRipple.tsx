@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Animated, StyleSheet, Text, View } from "react-native";
-import { Colors } from "@/constants/Colors";
+import React, { useEffect, useRef, useState } from 'react';
+import { Animated, StyleSheet, Text, View } from 'react-native';
+import { Colors } from '@/constants/Colors';
 
-const TypingRipple = ({name}:{name:string}) => {
+const TypingRipple = ({ name }: { name: string }) => {
   const ripple1 = useRef(new Animated.Value(0)).current;
   const ripple2 = useRef(new Animated.Value(0)).current;
   const ripple3 = useRef(new Animated.Value(0)).current;
@@ -10,12 +10,12 @@ const TypingRipple = ({name}:{name:string}) => {
   const containerTranslateY = useRef(new Animated.Value(10)).current;
   const containerOpacity = useRef(new Animated.Value(0)).current;
 
-  const [typingText, setTypingText] = useState("is typing");
+  const [typingText, setTypingText] = useState('is typing');
 
   useEffect(() => {
     Animated.parallel([
       Animated.timing(containerTranslateY, {
-        toValue: 0, 
+        toValue: 0,
         duration: 300,
         useNativeDriver: true,
       }),
@@ -49,7 +49,7 @@ const TypingRipple = ({name}:{name:string}) => {
     let timeout1 = setTimeout(() => startRippleAnimation(ripple2), 200);
     let timeout2 = setTimeout(() => startRippleAnimation(ripple3), 400);
 
-    const _typingText = "....";
+    const _typingText = '....';
     let index = 0;
     const typingInterval = setInterval(() => {
       setTypingText(_typingText.slice(0, index));
@@ -94,30 +94,30 @@ export default TypingRipple;
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: "row",
-    marginTop:20,
-    alignItems: "center",
-    justifyContent: "flex-start",
+    flexDirection: 'row',
+    marginTop: 20,
+    alignItems: 'center',
+    justifyContent: 'flex-start',
   },
   textPrimary: {
-    color: Colors["dark"].text,
+    color: Colors['dark'].text,
     fontSize: 16,
   },
   textSecondary: {
-    color: Colors["dark"].text2,
+    color: Colors['dark'].text2,
     fontSize: 16,
   },
   rippleWrapper: {
-    flexDirection: "row",
+    flexDirection: 'row',
     gap: 5,
     paddingHorizontal: 6,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   ripple: {
     width: 5,
     aspectRatio: 1,
     borderRadius: 5,
-    backgroundColor: Colors["dark"].tint,
+    backgroundColor: Colors['dark'].tint,
   },
 });

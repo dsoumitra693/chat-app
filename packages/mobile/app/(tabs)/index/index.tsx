@@ -1,6 +1,6 @@
-import {StatusView, Feed} from "@/components/UI/home";
-import { Colors } from "@/constants/Colors";
-import { ScrollView, StyleSheet, StatusBar } from "react-native";
+import { StatusView, Feed } from '@/components/UI/home';
+import { Colors } from '@/constants/Colors';
+import { ScrollView, StyleSheet, StatusBar } from 'react-native';
 
 export default function Chats() {
   return (
@@ -13,11 +13,11 @@ export default function Chats() {
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: Number(StatusBar.currentHeight)+10,
-    backgroundColor:Colors["dark"].background,
-    flex:1,
+    paddingTop: Number(StatusBar.currentHeight) + 10,
+    backgroundColor: Colors['dark'].background,
+    flex: 1,
   },
   text: {
-    color: "#fff",
+    color: '#fff',
   },
 });

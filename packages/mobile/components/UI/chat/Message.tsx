@@ -1,11 +1,11 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import React, { useState } from "react";
-import { Colors } from "@/constants/Colors";
-import Avatar from "../Avatar";
-import { IMessage } from "@/types";
-import { FormateTime } from "@/utils/time";
-import DisplayFile from "./DisplayFile";
-import { LongPressGestureHandler } from "react-native-gesture-handler";
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useState } from 'react';
+import { Colors } from '@/constants/Colors';
+import Avatar from '../Avatar';
+import { IMessage } from '@/types';
+import { FormateTime } from '@/utils/time';
+import DisplayFile from './DisplayFile';
+import { LongPressGestureHandler } from 'react-native-gesture-handler';
 
 interface IMessageProps {
   message: IMessage;
@@ -62,7 +62,7 @@ const Message: React.FC<IMessageProps> = ({ message }) => {
               }}
             >
               <Text style={{ ...styles.text, fontSize: 10 }}>
-                {key}{" "}
+                {key}{' '}
                 {Number(message.reactions?.get(key)) > 1 &&
                   String(message.reactions?.get(key))}
               </Text>
@@ -76,7 +76,7 @@ const Message: React.FC<IMessageProps> = ({ message }) => {
             ...(message.self && styles.reactionEmojisRight),
           }}
         >
-          {["❤️", "😂", "😮", "😢", "😡", "👍"].map((emoji) => (
+          {['❤️', '😂', '😮', '😢', '😡', '👍'].map((emoji) => (
             <TouchableOpacity onPress={() => handleReaction(emoji)} key={emoji}>
               <Text style={{ fontSize: 22 }}>{emoji}</Text>
             </TouchableOpacity>
@@ -94,86 +94,86 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   text: {
-    color: Colors["dark"].text,
+    color: Colors['dark'].text,
     fontSize: 16,
-    fontWeight: "400",
-    textAlign: "left",
+    fontWeight: '400',
+    textAlign: 'left',
   },
   msgWrapper: {
     padding: 10,
     // overflow: "hidden",
     borderRadius: 20,
     borderTopLeftRadius: 1,
-    backgroundColor: Colors["dark"].background,
-    alignSelf: "flex-start",
+    backgroundColor: Colors['dark'].background,
+    alignSelf: 'flex-start',
   },
 
   avatarWrapper: {
-    flexDirection: "row",
-    alignItems: "center",
-    alignSelf: "flex-start",
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'flex-start',
   },
   avatar: {
     width: 20,
     marginBottom: 5,
   },
   textSecondary: {
-    color: Colors["dark"].text2,
+    color: Colors['dark'].text2,
     fontSize: 12,
   },
   reactionContainer: {
     padding: 2,
     paddingHorizontal: 5,
-    backgroundColor: Colors["dark"].tint,
-    justifyContent: "center",
-    alignItems: "center",
+    backgroundColor: Colors['dark'].tint,
+    justifyContent: 'center',
+    alignItems: 'center',
     borderRadius: 10,
-    flexDirection: "row",
+    flexDirection: 'row',
     top: -5,
     borderWidth: 1,
-    alignSelf: "flex-start",
-    borderColor: "#ffffff2f",
+    alignSelf: 'flex-start',
+    borderColor: '#ffffff2f',
   },
   reactionContainerRight: {
-    alignSelf: "flex-end",
+    alignSelf: 'flex-end',
     padding: 2,
     paddingHorizontal: 5,
-    backgroundColor: Colors["dark"].secondary,
+    backgroundColor: Colors['dark'].secondary,
   },
   right: {
-    alignSelf: "flex-end",
+    alignSelf: 'flex-end',
   },
   msgWrapperRight: {
     borderTopRightRadius: 1,
     borderTopLeftRadius: 20,
-    backgroundColor: Colors["dark"].tint,
-    position: "relative",
+    backgroundColor: Colors['dark'].tint,
+    position: 'relative',
   },
   avatarWrapperRight: {
-    flexDirection: "row-reverse",
-    alignSelf: "flex-end",
+    flexDirection: 'row-reverse',
+    alignSelf: 'flex-end',
   },
   reactionWrapper: {
     flex: 1,
-    width: "100%",
+    width: '100%',
     gap: 5,
-    flexDirection: "row",
+    flexDirection: 'row',
     paddingLeft: 10,
   },
   reactionEmojis: {
     width: 300,
-    backgroundColor: Colors["dark"].secondary,
-    position: "absolute",
+    backgroundColor: Colors['dark'].secondary,
+    position: 'absolute',
     borderRadius: 30,
     borderWidth: 1,
-    borderColor: "#ffffff0d",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    borderColor: '#ffffff0d',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     padding: 10,
     paddingHorizontal: 15,
   },
   reactionEmojisRight: {
-    alignSelf: "flex-end",
+    alignSelf: 'flex-end',
   },
 });

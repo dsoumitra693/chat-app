@@ -1,5 +1,4 @@
-
-  module.exports = {
+module.exports = {
   root: true,
   env: {
     browser: true,
@@ -10,7 +9,7 @@
   extends: [
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended',
-    'plugin:prettier/recommended',  // Enables eslint-plugin-prettier and displays Prettier errors as ESLint errors
+    'plugin:prettier/recommended', // Enables eslint-plugin-prettier and displays Prettier errors as ESLint errors
     'prettier', // Disables ESLint rules that conflict with Prettier
   ],
   plugins: ['@typescript-eslint', 'prettier'],
@@ -19,7 +18,7 @@
     sourceType: 'module',
   },
   rules: {
-    'prettier/prettier': 'error',  // Ensure that Prettier errors are flagged
+    'prettier/prettier': 'error', // Ensure that Prettier errors are flagged
   },
   overrides: [
     {

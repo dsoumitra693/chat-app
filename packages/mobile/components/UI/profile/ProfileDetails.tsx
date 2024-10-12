@@ -1,7 +1,7 @@
-import { StyleSheet, Text, View } from "react-native";
-import React from "react";
-import { Colors } from "@/constants/Colors";
-import { Feather, Ionicons } from "@expo/vector-icons";
+import { StyleSheet, Text, View } from 'react-native';
+import React from 'react';
+import { Colors } from '@/constants/Colors';
+import { Feather, Ionicons } from '@expo/vector-icons';
 
 const ProfileDetails = () => {
   return (
@@ -31,47 +31,47 @@ export default ProfileDetails;
 
 const styles = StyleSheet.create({
   container: {
-    justifyContent: "center",
-    backgroundColor: Colors["dark"].secondary,
+    justifyContent: 'center',
+    backgroundColor: Colors['dark'].secondary,
     marginHorizontal: 25,
     borderRadius: 20,
-    top: "-6%",
+    top: '-6%',
   },
   textPrimary: {
     fontSize: 16,
-    color: Colors["dark"].text,
+    color: Colors['dark'].text,
   },
   textSecondary: {
     fontSize: 14,
-    color: Colors["dark"].text2,
+    color: Colors['dark'].text2,
   },
   detail: {
-    borderBottomColor: Colors["dark"].background,
+    borderBottomColor: Colors['dark'].background,
     borderBottomWidth: 1,
     padding: 10,
-    alignItems: "center",
+    alignItems: 'center',
     paddingHorizontal: 30,
-    flexDirection: "row",
+    flexDirection: 'row',
   },
   iconWrapper: {
-    position: "absolute",
-    alignSelf: "flex-end",
+    position: 'absolute',
+    alignSelf: 'flex-end',
     right: 20,
     padding: 15,
     borderRadius: 30,
-    backgroundColor: `${Colors["dark"].tint}aa`,
+    backgroundColor: `${Colors['dark'].tint}aa`,
   },
   icon: {
     fontSize: 22,
-    color: Colors["dark"].icon,
-    position: "relative",
+    color: Colors['dark'].icon,
+    position: 'relative',
   },
   icon2: {
     fontSize: 24,
-    color: Colors["dark"].tint,
-    position: "relative",
+    color: Colors['dark'].tint,
+    position: 'relative',
   },
-  textWrapper:{
-    paddingLeft:20,
-  }
+  textWrapper: {
+    paddingLeft: 20,
+  },
 });

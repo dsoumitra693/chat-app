@@ -1,7 +1,7 @@
-import { StyleSheet, Text, View, TextInput } from "react-native";
-import React from "react";
-import { Ionicons } from "@expo/vector-icons";
-import { Colors } from "@/constants/Colors";
+import { StyleSheet, Text, View, TextInput } from 'react-native';
+import React from 'react';
+import { Ionicons } from '@expo/vector-icons';
+import { Colors } from '@/constants/Colors';
 
 const Searchbar = () => {
   return (
@@ -13,7 +13,11 @@ const Searchbar = () => {
           placeholderTextColor={Colors['dark'].text2}
           cursorColor={Colors['dark'].text2}
         />
-        <Ionicons name="search-outline" size={28} color={Colors['dark'].text2} />
+        <Ionicons
+          name="search-outline"
+          size={28}
+          color={Colors['dark'].text2}
+        />
       </View>
     </View>
   );
@@ -23,25 +27,25 @@ export default Searchbar;
 
 const styles = StyleSheet.create({
   container: {
-    width: "100%",
+    width: '100%',
     height: 55,
     paddingHorizontal: 30,
   },
   inputWrapper: {
-    width: "100%",
-    height: "100%",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    backgroundColor: Colors["dark"].secondary,
+    width: '100%',
+    height: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: Colors['dark'].secondary,
     borderRadius: 20,
-    overflow: "hidden",
+    overflow: 'hidden',
     padding: 10,
   },
   input: {
-    width: "90%",
-    height: "100%",
+    width: '90%',
+    height: '100%',
     fontSize: 18,
-    color: "#FFF",
+    color: '#FFF',
   },
 });
