@@ -12,8 +12,8 @@
     "start:auth-sevice": "cd packages/auth-services && yarn dev",
     "start:mobile": "cd packages/mobile && EXPO_USE_METRO_WORKSPACE_ROOT=1 npx expo start",
     "install": "cd packages/mobile && yarn -W \n cd ../auth-services && yarn -W",
-    "lint": "eslint '**/*.{ts,tsx,js,jsx}' --ignore-path .gitignore",
-    "lint:fix": "eslint '**/*.{ts,tsx,js,jsx}' --ignore-path .gitignore --fix",
+    "lint": "eslint '**/*.{ts,tsx,js,jsx}' --ignore-pattern .gitignore",
+    "lint:fix": "eslint '**/*.{ts,tsx,js,jsx}' --ignore-pattern .gitignore --fix",
     "format": "prettier --write '**/*.{ts,tsx,js,jsx,json,md}'",
     "docs": "typedoc"
   },
