@@ -1,11 +1,15 @@
 import { apiService } from '@/services/ApiServices';
-import { getData, storeData } from '@/utils/secureStore';
+import { deleteData, getData, storeData } from '@/utils/secureStore';
 import React, { useContext, useEffect, useState } from 'react';
+
+
+const SESSION_KEY = "session";
 
 interface ISessionContext {
   session: string;
   signUp: (phone: string, password: string, name: string) => Promise<void>;
   signIn: (phone: string, password: string) => Promise<void>;
+  signOut: () => Promise<void>;
 }
 
 interface SessionProviderProps {
@@ -45,7 +49,7 @@ const SessionProvider: React.FC<SessionProviderProps> = ({ children }) => {
         password,
       });
       setSession(response?.data?.jwt);
-      storeData<string>('session', response?.data?.jwt);
+      storeData<string>(SESSION_KEY, response?.data?.jwt);
     }
   };
 
@@ -57,12 +61,14 @@ const SessionProvider: React.FC<SessionProviderProps> = ({ children }) => {
         password,
       });
       setSession(response?.data?.jwt);
-      storeData<string>('session', response?.data?.jwt);
+      storeData<string>(SESSION_KEY, response?.data?.jwt);
     }
   };
 
+  const signOut = () => deleteData(SESSION_KEY);
+
   return (
-    <SessionContext.Provider value={{ session, signIn, signUp }}>
+    <SessionContext.Provider value={{ session, signIn, signUp, signOut }}>
       {children}
     </SessionContext.Provider>
   );
