@@ -12,7 +12,6 @@ interface ProviderProps {
 }
 
 
-
 export const RootProvider: React.FC<ProviderProps> = ({ children }) => {
   const colorScheme = useColorScheme();
   return (

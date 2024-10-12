@@ -9,9 +9,9 @@
   ],
   "private": true,
   "scripts": {
-    "start:auth-sevice":"cd packages/auth-services && yarn dev",
-    "start:mobile":"cd packages/mobile && EXPO_USE_METRO_WORKSPACE_ROOT=1 npx expo start",
-    "install":"cd packages/mobile && yarn -W \n cd ../auth-services && yarn -W",
+    "start:auth-sevice": "cd packages/auth-services && yarn dev",
+    "start:mobile": "cd packages/mobile && EXPO_USE_METRO_WORKSPACE_ROOT=1 npx expo start",
+    "install": "cd packages/mobile && yarn -W \n cd ../auth-services && yarn -W",
     "lint": "eslint '**/*.{ts,tsx,js,jsx}' --ignore-path .gitignore",
     "lint:fix": "eslint '**/*.{ts,tsx,js,jsx}' --ignore-path .gitignore --fix",
     "format": "prettier --write '**/*.{ts,tsx,js,jsx,json,md}'",
@@ -25,5 +25,9 @@
     "eslint-plugin-prettier": "^5.2.1",
     "prettier": "^3.3.3",
     "typedoc": "^0.26.8"
+  },
+  "dependencies": {
+    "expo-secure-store": "^13.0.2",
+    "workspace": "^0.0.1-preview.1"
   }
 }

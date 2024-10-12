@@ -1,5 +1,6 @@
-import { apiService } from "@/services/ApiServices";
-import React, { useContext, useEffect, useState } from "react";
+import { apiService } from '@/services/ApiServices';
+import { getData, storeData } from '@/utils/secureStore';
+import React, { useContext, useEffect, useState } from 'react';
 
 interface ISessionContext {
   session: string;
@@ -14,7 +15,7 @@ interface SessionProviderProps {
 export const useSession = () => {
   const context = useContext(SessionContext);
   if (!context) {
-    throw new Error("usePeopleContext must be used within a PeopleProvider");
+    throw new Error('useSession must be used within a SessionProvider');
   }
   return context;
 };
@@ -26,28 +27,37 @@ interface IJwt {
 const SessionContext = React.createContext<ISessionContext | null>(null);
 
 const SessionProvider: React.FC<SessionProviderProps> = ({ children }) => {
-  const [session, setSession] = useState("");
+  const [session, setSession] = useState('');
+
+  useEffect(() => {
+    (async () => {
+      let token = await getData<string>('session');
+      setSession(token);
+    })();
+  });
 
   const signUp = async (phone: string, password: string, name: string) => {
     if (!!phone && !!password && !!name) {
       const url = `auth/signup`;
-      const response = await apiService.request<IJwt>(url, "POST", {
+      const response = await apiService.request<IJwt>(url, 'POST', {
         phone,
         name,
         password,
       });
       setSession(response?.data?.jwt);
+      storeData<string>('session', response?.data?.jwt);
     }
   };
 
   const signIn = async (phone: string, password: string) => {
     if (!!phone && !!password) {
       const url = `auth/login`;
-      const response = await apiService.request<IJwt>(url, "POST", {
+      const response = await apiService.request<IJwt>(url, 'POST', {
         phone,
         password,
       });
       setSession(response?.data?.jwt);
+      storeData<string>('session', response?.data?.jwt);
     }
   };
 
