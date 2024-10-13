@@ -35,7 +35,7 @@ const SessionProvider: React.FC<SessionProviderProps> = ({ children }) => {
   useEffect(() => {
     (async () => {
       let token = await getData<string>('session');
-      setSession(token);
+      setSession(token!);
     })();
   });
 

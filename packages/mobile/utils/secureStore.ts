@@ -10,17 +10,20 @@ export const storeData = async <T>(token: string, data: T) => {
 };
 
 // Retrieve the data
-export const getData = async <T>(token: string): Promise<T> => {
+export const getData = async <T>(token: string): Promise<T | null> => {
   try {
-    const data = await SecureStore.getItemAsync('token');
-    return JSON.parse(data!) as T;
+    const data = await SecureStore.getItemAsync(token);
+    if (data) {
+      return JSON.parse(data) as T;
+    }
+    return null;
   } catch (error) {
     console.error('Error while retrieving data:', error);
-    return {} as T;
+    return null;
   }
 };
 
-// Retrieve the data
+// Delete the data
 export const deleteData = async (token: string) => {
   try {
     await SecureStore.deleteItemAsync(token);
