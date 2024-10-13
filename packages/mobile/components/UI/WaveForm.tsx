@@ -1,6 +1,6 @@
 // Waveform.js
 import { Colors } from '@/constants/Colors';
-import { lfsr } from '@/utils/random';
+import { xorshift32 } from '@/utils/random';
 import React from 'react';
 import { View } from 'react-native';
 import Svg, { Rect } from 'react-native-svg';
@@ -14,11 +14,11 @@ const Waveform = ({
   progress = 0.5,
   activeColor = Colors['dark'].tint,
   inactiveColor = Colors['dark'].tabIconDefault,
-  seed = 10000,
+  seed = 17362243,
 }) => {
   const generateBars = (numBars: number, height: number, seed: number) => {
     const bars = [];
-    const random = lfsr(seed);
+    const random = xorshift32(seed);
 
     for (let i = 0; i < numBars; i++) {
       const x = i * (barWidth + barGap);
