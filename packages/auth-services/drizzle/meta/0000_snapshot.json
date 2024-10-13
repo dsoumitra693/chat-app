@@ -1,23 +1,17 @@
 {
-  "id": "48425028-ca4e-4af0-9357-cb6a4c252d4a",
+  "id": "ab5fc8bc-5aa5-40a6-8c13-517ccbecba33",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
-    "public.user": {
-      "name": "user",
+    "public.account": {
+      "name": "account",
       "schema": "",
       "columns": {
         "id": {
           "name": "id",
-          "type": "serial",
+          "type": "uuid",
           "primaryKey": true,
-          "notNull": true
-        },
-        "name": {
-          "name": "name",
-          "type": "text",
-          "primaryKey": false,
           "notNull": true
         },
         "phone": {
@@ -51,10 +45,12 @@
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
-        "user_phone_unique": {
-          "name": "user_phone_unique",
+        "account_phone_unique": {
+          "name": "account_phone_unique",
           "nullsNotDistinct": false,
-          "columns": ["phone"]
+          "columns": [
+            "phone"
+          ]
         }
       }
     }
