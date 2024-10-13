@@ -1,50 +1,76 @@
-# Welcome to your Expo app 👋
+# 🗨️ Scalable Chat App
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Welcome to the **Scalable Chat App** built with **Expo**, **React Native**, **Node.js**, **Drizzle ORM** (PostgreSQL - Neon DB), and enhanced with **Redis**, **Socket.IO**, **Kafka**, **Docker**, and other essential tools. This application is designed for scalability, performance, and maintainability.
 
-## Get started
+---
 
-1. Install dependencies
+## 🌟 Features
 
-   ```bash
-   npm install
-   ```
+- **Real-time Messaging**: Leverage Socket.IO for instant messaging and notifications.
+- **Scalable Architecture**: Built with a microservices architecture, using Kafka for event-driven communication.
+- **Efficient Data Management**: Drizzle ORM with PostgreSQL for structured data storage and retrieval.
+- **Session Management**: Use Redis for managing user sessions and caching.
+- **Docker Support**: Containerized application for easy deployment and scaling.
 
-2. Start the app
+---
 
-   ```bash
-    npx expo start
-   ```
+## 📦 Technologies Used
 
-In the output, you'll find options to open the app in a
+- **Frontend**: 
+  - [Expo](https://expo.dev/) - Framework for React Native apps
+  - [React Native](https://reactnative.dev/) - Build native apps using React
+- **Backend**:
+  - [Node.js](https://nodejs.org/) - JavaScript runtime for the server-side
+  - [Express](https://expressjs.com/) - Web framework for Node.js
+  - [Socket.IO](https://socket.io/) - Real-time bidirectional event-based communication
+  - [Kafka](https://kafka.apache.org/) - Distributed streaming platform for building real-time data pipelines
+  - [Redis](https://redis.io/) - In-memory data structure store for caching
+  - [Drizzle ORM](https://orm.drizzle.team/) - TypeScript ORM for PostgreSQL
+  - [PostgreSQL](https://www.postgresql.org/) - Relational database for data storage
+- **Development Tools**:
+  - [Docker](https://www.docker.com/) - Containerization platform
+  - [Yarn](https://yarnpkg.com/) - Dependency management
+  - [TypeScript](https://www.typescriptlang.org/) - Superset of JavaScript for better development experience
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+---
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+## 🚀 Getting Started
 
-## Get a fresh project
+### Prerequisites
 
-When you're ready, run:
+Make sure you have the following installed:
+
+- [Node.js](https://nodejs.org/) (version X.X.X)
+- [Yarn](https://yarnpkg.com/)
+- [Docker](https://www.docker.com/)
+
+### Installation
+
+1. Clone the repository:
 
 ```bash
-npm run reset-project
+git clone https://github.com/yourusername/scalable-chat-app.git
+cd scalable-chat-app
+```
+2. Install dependencies:
+```bash
+yarn install
+Set up the environment variables in a .env file (sample .env.example is provided).
+```
+Start the application:
+```bash
+yarn start
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+📄 Documentation
+Refer to the docs directory for detailed documentation on the architecture, API endpoints, and usage guidelines.
 
-## Learn more
 
-To learn more about developing your project with Expo, look at the following resources:
+📝 License
+This project is licensed under the MIT License. See the LICENSE file for details.
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+📞 Contact
+For any inquiries, feel free to reach out:
 
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Your Name - [Email](dsoumitra693@gmail.com)
+GitHub - [Github](https://github.com/dsoumitra693/)
