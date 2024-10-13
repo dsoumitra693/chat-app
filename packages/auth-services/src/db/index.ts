@@ -1,18 +1,19 @@
 import { db } from './db'; // Drizzle db instance
-import { user } from './schema'; // Drizzle user schema
-import { User } from '../user';
+import { account } from './schema'; // Drizzle user schema
+import { Account } from '../account';
 import { getHash } from '../utils/password';
 import { eq } from 'drizzle-orm';
+import { generateUUID } from '../utils/uuid';
 
-export { db, user };
+export { db, account };
 
 // Function to search for users in the database
-export const searchUser = async (query: any): Promise<User[]> => {
+export const searchAccount = async (query: any): Promise<Account[]> => {
   try {
-    const data = await db.select().from(user).where(query);
+    const data = await db.select().from(account).where(query);
     return data.map(
-      (user) => new User(user.phone, user.password, user.name)
-    ) as User[];
+      (account) => new Account(account.phone, account.password, account.id)
+    ) as Account[];
   } catch (error) {
     console.error('Error searching for users:', error);
     return [];
@@ -20,30 +21,29 @@ export const searchUser = async (query: any): Promise<User[]> => {
 };
 
 // Function to create a new user in the database
-export const createUser = async (
+export const createAccount = async (
   phone: string,
   password: string,
-  name: string
 ): Promise<
-  { response: User; error: undefined } | { response: undefined; error: Error }
+  { response: Account; error: undefined } | { response: undefined; error: Error }
 > => {
-  let response: User | undefined, error: Error | undefined;
+  let response: Account | undefined, error: Error | undefined;
   password = getHash(password); // Hash the password
 
   try {
-    // Check if a user with the given phone already exists
-    const users = await searchUser(eq(user.phone, phone));
+    // Check if a Account with the given phone already exists
+    const accounts = await searchAccount(eq(account.phone, phone));
 
-    if (users.length > 0) throw new Error('Email already exists.');
+    if (accounts.length > 0) throw new Error('Email already exists.');
 
     // Create a new User instance for validation or additional logic
-    const newUser = new User(phone, password, name);
+    const newUser = new Account(phone, password, generateUUID());
 
     // Insert a new user record in the database using Drizzle
-    await db.insert(user).values({
-      phone: newUser.getPhone(),
-      password: newUser.getPassword(), // Ensure password is securely handled
-      name: newUser.getName()!,
+    await db.insert(account).values({
+      phone: newUser.phone,
+      password: newUser.password,
+      id:newUser.id // Ensure password is securely handled
     });
 
     // Success: set response, and error should be undefined

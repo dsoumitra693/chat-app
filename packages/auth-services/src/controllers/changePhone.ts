@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { asyncErrorHandler } from '../utils/asyncErrorHandler';
-import { db, searchUser, user } from '../db';
+import { db, searchAccount, account } from '../db';
 import { eq } from 'drizzle-orm';
 
 // Controller function for handling email change requests
@@ -14,27 +14,27 @@ const changeEmail = asyncErrorHandler(
     if (!previousPhone || !newPhone || !password)
       return res.status(400).send({ error: 'Missing required fields' });
 
-    // Search for the user with the previous email address
-    const users = await searchUser(eq(user.phone, previousPhone));
+    // Search for the account with the previous email address
+    const accounts = await searchAccount(eq(account.phone, previousPhone));
 
-    // If the user does not exist, return a 409 Conflict status
-    if (!users[0]) return res.status(404).send({ error: 'User not found' });
+    // If the account does not exist, return a 409 Conflict status
+    if (!accounts[0]) return res.status(404).send({ error: 'account not found' });
 
     // If the old password does not match, return a 401 Unauthorized status
-    if (!users[0].authenticate(password))
+    if (!accounts[0].authenticate(password))
       return res.status(401).send({ error: 'Incorrect old password' });
 
     // Check if the new email already exists
-    let existingUserWithNewPhone = await searchUser(eq(user.phone, newPhone));
+    let existingaccountWithNewPhone = await searchAccount(eq(account.phone, newPhone));
 
-    // If there is already a user with the new email, return a 409 Conflict status
-    if (existingUserWithNewPhone[0]) return res.sendStatus(409);
+    // If there is already a account with the new email, return a 409 Conflict status
+    if (existingaccountWithNewPhone[0]) return res.sendStatus(409);
 
-    // Update the user's email with the new email address
+    // Update the account's email with the new email address
     await db
-      .update(user)
+      .update(account)
       .set({ phone: newPhone }) // Set the new email
-      .where(eq(user.phone, previousPhone));
+      .where(eq(account.phone, previousPhone));
 
     // Return a 200 OK status
     return res.status(200).send({ message: 'Email updated successfully' });

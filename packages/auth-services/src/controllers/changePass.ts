@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { asyncErrorHandler } from '../utils/asyncErrorHandler';
-import { db, searchUser, user } from '../db';
+import { db, searchAccount, account } from '../db';
 import { getHash } from '../utils/password';
 import { createJWT } from '../utils/jwt';
 import { eq } from 'drizzle-orm';
@@ -16,24 +16,24 @@ const changePass = asyncErrorHandler(
     if (!phone || !newPass || !oldPass)
       return res.status(400).send({ error: 'Missing required fields' });
 
-    // Search for the user in the database using the provided phone
-    let users = await searchUser(eq(user.phone, phone));
+    // Search for the account in the database using the provided phone
+    let accounts = await searchAccount(eq(account.phone, phone));
 
-    // If the user does not exist, return a 409 Conflict status
-    if (!users[0]) return res.status(404).send({ error: 'User not found' });
+    // If the account does not exist, return a 409 Conflict status
+    if (!accounts[0]) return res.status(404).send({ error: 'account not found' });
 
     // If the old password does not match, return a 401 Unauthorized status
-    if (!users[0].authenticate(oldPass))
+    if (!accounts[0].authenticate(oldPass))
       return res.status(401).send({ error: 'Incorrect old password' });
 
-    // Update the user's password with the new password
+    // Update the account's password with the new password
     await db
-      .update(user)
+      .update(account)
       .set({ password: getHash(newPass) })
-      .where(eq(user.phone, phone));
+      .where(eq(account.phone, phone));
 
-    const jwt = createJWT(users[0].json());
-    // Return a 200 OK status and send the user's updated JWT
+    const jwt = createJWT(accounts[0].json());
+    // Return a 200 OK status and send the account's updated JWT
     return res.status(200).send({ jwt });
   }
 );
