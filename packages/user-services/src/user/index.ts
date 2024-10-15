@@ -1,19 +1,26 @@
-import { eq } from 'drizzle-orm';
+import { and, eq, inArray } from 'drizzle-orm';
 import { z } from 'zod';
 import { db } from '../db/db';
-import { account, users } from '../db/schema';
+import { account, userContacts, users } from '../db/schema';
 
 // Validation schema using Zod
 const createUserSchema = z.object({
   accountId: z.string().uuid(),
-  fullname: z.string().min(3, 'Fullname must be at least 3 characters long').max(255, 'Fullname is too long'),
+  fullname: z
+    .string()
+    .min(3, 'Fullname must be at least 3 characters long')
+    .max(255, 'Fullname is too long'),
   bio: z.string().max(500, 'Bio must be less than 500 characters'),
 });
 
 const updateUserSchema = z.object({
   accountId: z.string().uuid(),
-  fullname: z.string().min(3, 'Fullname must be at least 3 characters long').max(255, 'Fullname is too long'),
-  bio: z.string().max(500, 'Bio must be less than 500 characters'),
+  fullname: z
+    .string()
+    .min(3, 'Fullname must be at least 3 characters long')
+    .max(255, 'Fullname is too long')
+    .optional(),
+  bio: z.string().max(500, 'Bio must be less than 500 characters').optional(),
 });
 
 export class UserServices {
@@ -86,5 +93,41 @@ export class UserServices {
       .update(users)
       .set({ fullname: input.fullname, bio: input.bio })
       .where(eq(users.accountId, input.accountId));
+  }
+
+  // Add a contact
+  async addContact(userId: string, contactId: string) {
+    await db.insert(userContacts).values({
+      userId,
+      contactId,
+    });
+  }
+
+  // Remove a contact
+  async removeContact(userId: string, contactId: string): Promise<void> {
+    await db
+      .delete(userContacts)
+      .where(
+        and(
+          eq(userContacts.userId, userId),
+          eq(userContacts.contactId, contactId)
+        )
+      );
+  }
+
+  // Get all contacts for a user
+  async getContacts(userId: string) {
+    const contacts = await db
+      .select()
+      .from(userContacts)
+      .where(eq(userContacts.userId, userId));
+
+    // You can fetch additional user info here if needed
+    const contactIds = contacts.map((contact) => contact.contactId);
+    const filteredContactIds = contactIds.filter((id) => id !== null);
+    return await db
+      .select()
+      .from(users)
+      .where(inArray(users.id, filteredContactIds));
   }
 }
