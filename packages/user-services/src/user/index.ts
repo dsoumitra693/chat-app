@@ -1,66 +1,90 @@
-import { compareHash, getHash } from '../utils/password';
+import { eq } from 'drizzle-orm';
+import { z } from 'zod';
+import { db } from '../db/db';
+import { account, users } from '../db/schema';
 
-export class Account {
-  // Private properties for storing Phone and password
-  private _phone: string;
-  private _password: string;
-  private _id:string
+// Validation schema using Zod
+const createUserSchema = z.object({
+  accountId: z.string().uuid(),
+  fullname: z.string().min(3, 'Fullname must be at least 3 characters long').max(255, 'Fullname is too long'),
+  bio: z.string().max(500, 'Bio must be less than 500 characters'),
+});
 
-  // // Public property for storing JWT tokens associated with the account
-  // public jwt: string[];
+const updateUserSchema = z.object({
+  accountId: z.string().uuid(),
+  fullname: z.string().min(3, 'Fullname must be at least 3 characters long').max(255, 'Fullname is too long'),
+  bio: z.string().max(500, 'Bio must be less than 500 characters'),
+});
 
-  // Constructor to initialize a new Account instance with Phone and password
-  constructor(phone: string, password: string, _id:string) {
-    this._phone = phone;
-    this._password = password;
-    this._id = _id
-  }
+export class UserServices {
+  // Create a user associated with an existing account
+  async createUser(input: {
+    accountId: string;
+    fullname: string;
+    bio: string;
+  }) {
+    // Validate input
+    createUserSchema.parse(input);
 
-  // Method to get the account's Phone
-  get phone(): string {
-    return this._phone;
-  }
+    // Check if the account exists
+    const user_account = await db
+      .select()
+      .from(account)
+      .where(eq(account.id, input.accountId));
 
-  // Method to get the account's password (normally not used due to security concerns)
-  get password(): string {
-    return this._password;
-  }
-  get id(): string {
-    return this._id;
-  }
-
-  // Method to change the account's password
-  // Takes the previous password and new password as arguments
-  setPassword(prevPass: string, newPass: string): string {
-    // Authenticate with the previous password before setting the new one
-    if (this.authenticate(prevPass)) {
-      this._password = getHash(newPass);
-      return this.password;
+    if (user_account.length === 0) {
+      throw new Error('DBError: Account does not exist');
     }
 
-    // Throw an error if the previous password does not match
-    throw new Error('Password did not match');
+    // Insert the user record
+    await db.insert(users).values({
+      accountId: input.accountId,
+      fullname: input.fullname,
+      bio: input.bio,
+      phone: user_account[0].phone, // Copy phone from the account
+    });
   }
 
-  // Method to change the account's Phone
-  // Takes the current password and new Phone as arguments
-  setPhone(pass: string, newPhone: string): string {
-    // Authenticate with the current password before setting the new Phone
-    if (this.authenticate(pass)) {
-      this._phone = newPhone;
-      return this._phone;
+  // Retrieve a user by accountId
+  async getUser({ accountId }: { accountId: string }) {
+    // Ensure the accountId is a valid UUID
+    z.string().uuid().parse(accountId);
+
+    const user = await db
+      .select()
+      .from(users)
+      .where(eq(users.accountId, accountId));
+
+    if (user.length === 0) {
+      throw new Error('DBError: User does not exist');
     }
 
-    // Throw an error if the password does not match
-    throw new Error('Password did not match');
+    return user[0]; // Return the first matching user
   }
 
-  // Method to authenticate the account with a given password
-  // Returns true if the password matches the stored password
-  authenticate(password: string): boolean {
-    return compareHash(password, this._password);
-  }
-  json() {
-    return JSON.stringify(this._id);
+  // Update a user's fullname and bio
+  async updateUser(input: {
+    accountId: string;
+    fullname: string;
+    bio: string;
+  }) {
+    // Validate input
+    updateUserSchema.parse(input);
+
+    // Ensure the account exists
+    const user_account = await db
+      .select()
+      .from(account)
+      .where(eq(account.id, input.accountId));
+
+    if (user_account.length === 0) {
+      throw new Error('DBError: Account does not exist');
+    }
+
+    // Perform the update
+    await db
+      .update(users)
+      .set({ fullname: input.fullname, bio: input.bio })
+      .where(eq(users.accountId, input.accountId));
   }
 }
