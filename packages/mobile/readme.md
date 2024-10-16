@@ -16,7 +16,7 @@ Welcome to the **Scalable Chat App** built with **Expo**, **React Native**, **No
 
 ## 📦 Technologies Used
 
-- **Frontend**: 
+- **Frontend**:
   - [Expo](https://expo.dev/) - Framework for React Native apps
   - [React Native](https://reactnative.dev/) - Build native apps using React
 - **Backend**:
@@ -52,19 +52,22 @@ Make sure you have the following installed:
 git clone https://github.com/yourusername/scalable-chat-app.git
 cd scalable-chat-app
 ```
+
 2. Install dependencies:
+
 ```bash
 yarn install
 Set up the environment variables in a .env file (sample .env.example is provided).
 ```
+
 Start the application:
+
 ```bash
 yarn start
 ```
 
 📄 Documentation
 Refer to the docs directory for detailed documentation on the architecture, API endpoints, and usage guidelines.
-
 
 📝 License
 This project is licensed under the MIT License. See the LICENSE file for details.

@@ -48,9 +48,7 @@
         "account_phone_unique": {
           "name": "account_phone_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "phone"
-          ]
+          "columns": ["phone"]
         }
       }
     }

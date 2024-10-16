@@ -20,7 +20,8 @@ const changePass = asyncErrorHandler(
     let accounts = await searchAccount(eq(account.phone, phone));
 
     // If the account does not exist, return a 409 Conflict status
-    if (!accounts[0]) return res.status(404).send({ error: 'account not found' });
+    if (!accounts[0])
+      return res.status(404).send({ error: 'account not found' });
 
     // If the old password does not match, return a 401 Unauthorized status
     if (!accounts[0].authenticate(oldPass))

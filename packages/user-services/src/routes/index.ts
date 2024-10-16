@@ -1,13 +1,15 @@
 import { Router } from 'express';
-import { getUserProfile,
-    updateUserProfile,
-    addContact,
-    removeContact,
-    getUserContacts,
-    getUserSettings,
-    updateUserSettings,
-    setUserPresence,
-    getUserPresence, } from '../controllers';
+import {
+  getUserProfile,
+  updateUserProfile,
+  addContact,
+  removeContact,
+  getUserContacts,
+  getUserSettings,
+  updateUserSettings,
+  setUserPresence,
+  getUserPresence,
+} from '../controllers';
 import { createUserProfile } from '../controllers/userProfileController';
 
 // Initialize a new Router instance for handling authentication and user-related routes

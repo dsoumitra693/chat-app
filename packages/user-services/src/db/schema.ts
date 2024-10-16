@@ -20,15 +20,17 @@ export const account = pgTable('account', {
 // Define the Users Table
 export const users = pgTable('users', {
   id: uuid('id').primaryKey().defaultRandom(), // UUID as primary key
-  fullname: varchar('fullname', { length: 255 }).notNull(), 
-  bio: varchar('bio', { length: 255 }).default(""), // Full name, required
+  fullname: varchar('fullname', { length: 255 }).notNull(),
+  bio: varchar('bio', { length: 255 }).default(''), // Full name, required
   phone: varchar('phone', { length: 10 }).unique().notNull(), // Unique phone
   profilePicture: varchar('profile_picture', { length: 255 }).default(''), // Optional profile picture
   accountId: uuid('account_id')
     .notNull()
     .references(() => account.id), // Foreign key to accounts
   createdAt: timestamp('created_at').defaultNow(), // Creation timestamp
-  updatedAt: timestamp('updated_at').defaultNow().$onUpdateFn(() => new Date()), // Update timestamp
+  updatedAt: timestamp('updated_at')
+    .defaultNow()
+    .$onUpdateFn(() => new Date()), // Update timestamp
 });
 
 // User Contacts Table
@@ -60,12 +62,15 @@ export const userSettings = pgTable('user_settings', {
   userId: uuid('user_id')
     .primaryKey()
     .references(() => users.id), // Foreign key to users
-  notificationSettings: json('notification_settings').default(() => 
+  notificationSettings: json('notification_settings').default(() =>
     JSON.stringify({})
   ), // Corrected to use default empty JSON object
-  privacySettings: json('privacy_settings').default(() => // Fixed the column name from notification_settings to privacy_settings
+  privacySettings: json('privacy_settings').default(() =>
+    // Fixed the column name from notification_settings to privacy_settings
     JSON.stringify({})
   ),
   createdAt: timestamp('created_at').defaultNow(), // Creation timestamp
-  updatedAt: timestamp('updated_at').defaultNow().$onUpdateFn(() => new Date()), // Update timestamp
+  updatedAt: timestamp('updated_at')
+    .defaultNow()
+    .$onUpdateFn(() => new Date()), // Update timestamp
 });

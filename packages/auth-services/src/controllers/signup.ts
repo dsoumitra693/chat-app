@@ -8,7 +8,7 @@ import { createJWT } from '../utils/jwt';
 export const signUp = asyncErrorHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     // Extract phone and password from the request body
-    let { phone, password} = req.body;
+    let { phone, password } = req.body;
 
     // Return a 400 Bad Request status if phone or password is missing
     if (!phone || !password)

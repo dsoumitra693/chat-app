@@ -112,11 +112,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     alignSelf: 'flex-start',
-    marginBottom:5
+    marginBottom: 5,
   },
   avatar: {
     width: 20,
-    marginRight:5,
+    marginRight: 5,
   },
   textSecondary: {
     color: Colors['dark'].text2,

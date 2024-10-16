@@ -18,14 +18,17 @@ const changeEmail = asyncErrorHandler(
     const accounts = await searchAccount(eq(account.phone, previousPhone));
 
     // If the account does not exist, return a 409 Conflict status
-    if (!accounts[0]) return res.status(404).send({ error: 'account not found' });
+    if (!accounts[0])
+      return res.status(404).send({ error: 'account not found' });
 
     // If the old password does not match, return a 401 Unauthorized status
     if (!accounts[0].authenticate(password))
       return res.status(401).send({ error: 'Incorrect old password' });
 
     // Check if the new email already exists
-    let existingaccountWithNewPhone = await searchAccount(eq(account.phone, newPhone));
+    let existingaccountWithNewPhone = await searchAccount(
+      eq(account.phone, newPhone)
+    );
 
     // If there is already a account with the new email, return a 409 Conflict status
     if (existingaccountWithNewPhone[0]) return res.sendStatus(409);

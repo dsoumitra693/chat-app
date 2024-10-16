@@ -13,7 +13,7 @@ import { asyncErrorHandler } from '../utils/asyncErrorHandler';
 export const setUserPresence = asyncErrorHandler(
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { userId } = req.params; // Assume userId is sent as a URL parameter
-    const {status} = req.body; // Expected to be "online" or "offline"
+    const { status } = req.body; // Expected to be "online" or "offline"
 
     const key = `presence:${userId}`;
     if (status === 'online') {

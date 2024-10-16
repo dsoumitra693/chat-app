@@ -6,5 +6,5 @@ export {
   getUserContacts,
 } from './userContactsController';
 
-export {getUserPresence, setUserPresence} from './userPresenceController';
+export { getUserPresence, setUserPresence } from './userPresenceController';
 export { getUserSettings, updateUserSettings } from './userSettingsController';

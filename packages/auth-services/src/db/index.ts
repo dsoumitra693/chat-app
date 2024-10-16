@@ -23,9 +23,10 @@ export const searchAccount = async (query: any): Promise<Account[]> => {
 // Function to create a new user in the database
 export const createAccount = async (
   phone: string,
-  password: string,
+  password: string
 ): Promise<
-  { response: Account; error: undefined } | { response: undefined; error: Error }
+  | { response: Account; error: undefined }
+  | { response: undefined; error: Error }
 > => {
   let response: Account | undefined, error: Error | undefined;
   password = getHash(password); // Hash the password
@@ -43,7 +44,7 @@ export const createAccount = async (
     await db.insert(account).values({
       phone: newUser.phone,
       password: newUser.password,
-      id:newUser.id // Ensure password is securely handled
+      id: newUser.id, // Ensure password is securely handled
     });
 
     // Success: set response, and error should be undefined
