@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { asyncErrorHandler } from '../utils/asyncErrorHandler';
 import { UserServices } from '../user';
+import uploadImage from '../utils/imageUpload';
 
 const userService = new UserServices();
 
@@ -11,14 +12,15 @@ const userService = new UserServices();
  * @param {string} accountId - The account ID from the request parameters
  * @param {string} fullname - The full name of the user
  * @param {string} bio - A short bio for the user's profile
- * @param {string} profilePicture - The profilePicture for the user's profile
+ * @param {string} profilePictureBase64 - The profilePicture for the user's profile
  * @returns {void}
  */
 export const createUserProfile = asyncErrorHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const accountId = req.params.id; // Extract accountId from the request parameters
-    const { fullname, bio, profilePicture } = req.body; // Destructure fullname and bio from request body
+    const { fullname, bio, profilePictureBase64 } = req.body; // Destructure fullname and bio from request body
 
+    let profilePicture = (await uploadImage(profilePictureBase64)) as string;
     // Call the UserServices to create a new user profile
     await userService.createUser({ accountId, bio, fullname, profilePicture });
 
@@ -53,14 +55,15 @@ export const getUserProfile = asyncErrorHandler(
  * @param {string} accountId - The account ID from the request parameters
  * @param {string} fullname - The updated full name of the user
  * @param {string} bio - The updated bio for the user's profile
- * @param {string} profilePicture - The updated profilePicture for the user's profile
+ * @param {string} profilePictureBase64 - The updated profilePicture for the user's profile
  * @returns {object} user_profile - The updated user profile data
  */
 export const updateUserProfile = asyncErrorHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const accountId = req.params.id; // Extract accountId from the request parameters
-    const { fullname, bio, profilePicture } = req.body; // Destructure fullname and bio from request body
+    const { fullname, bio, profilePictureBase64 } = req.body; // Destructure fullname and bio from request body
 
+    let profilePicture = (await uploadImage(profilePictureBase64)) as string;
     // Update the user's profile using the UserServices class
     const user_profile = await userService.updateUser({
       accountId,
