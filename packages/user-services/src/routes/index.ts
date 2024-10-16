@@ -4,10 +4,10 @@ import { getUserProfile,
     addContact,
     removeContact,
     getUserContacts,
-    updateUserPresence,
-    getUserPresence,
     getUserSettings,
-    updateUserSettings, } from '../controllers';
+    updateUserSettings,
+    setUserPresence,
+    getUserPresence, } from '../controllers';
 import { createUserProfile } from '../controllers/userProfileController';
 
 // Initialize a new Router instance for handling authentication and user-related routes
@@ -68,7 +68,7 @@ userRouter.get('/users/:id/contacts', getUserContacts);
  * @param {string} id - The user ID.
  * @returns {void}
  */
-userRouter.post('/users/:id/presence', updateUserPresence);
+userRouter.post('/users/:id/presence', setUserPresence);
 
 /**
  * Route to get the user's presence status.
