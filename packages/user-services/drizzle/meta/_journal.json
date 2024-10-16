@@ -5,22 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1728805019938,
-      "tag": "0000_stale_weapon_omega",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1728807134218,
-      "tag": "0001_volatile_sentinel",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1729003712770,
-      "tag": "0002_groovy_emma_frost",
+      "when": 1729081646459,
+      "tag": "0000_glorious_yellowjacket",
       "breakpoints": true
     }
   ]

@@ -9,13 +9,15 @@ import {
 
 // Define the Accounts Table
 export const account = pgTable('account', {
-  id: uuid('id').primaryKey().defaultRandom(), // Auto-incrementing primary key
+  id: uuid('id').primaryKey(), // Auto-incrementing primary key
   phone: text('phone').notNull().unique(), // Phone number, must be unique
+  password: text('password').notNull(), // Hashed password field, required
   createdAt: timestamp('created_at').defaultNow(), // Set the current timestamp on insert
   updatedAt: timestamp('updated_at')
     .defaultNow()
     .$onUpdateFn(() => new Date()), // Set the current timestamp on updates
 });
+
 
 // Define the Users Table
 export const users = pgTable('users', {

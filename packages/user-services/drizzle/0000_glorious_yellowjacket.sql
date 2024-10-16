@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS "account" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"id" uuid PRIMARY KEY NOT NULL,
 	"phone" text NOT NULL,
 	"password" text NOT NULL,
 	"created_at" timestamp DEFAULT now(),
@@ -16,8 +16,8 @@ CREATE TABLE IF NOT EXISTS "user_contacts" (
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "user_settings" (
 	"user_id" uuid PRIMARY KEY NOT NULL,
-	"notification_settings" json DEFAULT '{}'::json, 
-    "privacy_settings" json DEFAULT '{}'::json,
+	"notification_settings" json DEFAULT '{}'::json,
+	"privacy_settings" json DEFAULT '{}'::json,
 	"created_at" timestamp DEFAULT now(),
 	"updated_at" timestamp DEFAULT now()
 );
@@ -25,6 +25,7 @@ CREATE TABLE IF NOT EXISTS "user_settings" (
 CREATE TABLE IF NOT EXISTS "users" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"fullname" varchar(255) NOT NULL,
+	"bio" varchar(255) DEFAULT '',
 	"phone" varchar(10) NOT NULL,
 	"profile_picture" varchar(255) DEFAULT '',
 	"account_id" uuid NOT NULL,
