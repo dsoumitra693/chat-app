@@ -1,20 +1,40 @@
-import { NextFunction, Request, Response } from "express";
-import { asyncErrorHandler } from "../utils/asyncErrorHandler";
+import { Request, Response, NextFunction } from 'express';
+import redisClient from '../db/redis';
 
-// Update user presence status
-export const updateUserPresence = asyncErrorHandler(
-    async (req: Request, res: Response, next: NextFunction) => {
-      const userId = req.params.id;
-      const status = req.body.status; // Expecting body to have a status field
-      res.status(200).json({ message: 'Presence updated successfully' });
+// Set user presence status in Redis
+export const setUserPresence = async (req: Request, res: Response, next: NextFunction) => {
+  const { userId } = req.params; // Assume userId is sent as a URL parameter
+  const status = req.body.status; // Expected to be "online" or "offline"
+
+  try {
+    const key = `presence:${userId}`;
+    if (status === 'online') {
+      await redisClient.set(key, 'online', 'EX', 60); // Set user as online for 1 hour
+    } else if (status === 'offline') {
+      await redisClient.del(key); // Remove user presence status
     }
-  );
-  
-  // Get user presence status
-  export const getUserPresence = asyncErrorHandler(
-    async (req: Request, res: Response, next: NextFunction) => {
-      const userId = req.params.id;
-      res.status(200).json();
+
+    return res.status(200).json({ message: `User ${status}.` });
+  } catch (error) {
+    console.error('Error setting user presence:', error);
+    return res.status(500).json({ message: 'Internal server error.' });
+  }
+};
+
+// Get user presence status from Redis
+export const getUserPresence = async (req: Request, res: Response, next: NextFunction) => {
+  const { userId } = req.params;
+
+  try {
+    const presenceStatus = await redisClient.get(`presence:${userId}`);
+
+    if (presenceStatus) {
+      return res.status(200).json({ userId, status: presenceStatus });
+    } else {
+      return res.status(200).json({ userId, status: 'offline' });
     }
-  );
-  
+  } catch (error) {
+    console.error('Error getting user presence:', error);
+    return res.status(500).json({ message: 'Internal server error.' });
+  }
+};
