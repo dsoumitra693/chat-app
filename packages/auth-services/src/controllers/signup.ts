@@ -24,7 +24,12 @@ export const signUp = asyncErrorHandler(
       return res.status(409).send({ error: error?.message });
 
     const jwt = createJWT(response.json());
-    return res.status(200).send({ jwt, account: response });
+    return res
+      .status(200)
+      .send({
+        jwt,
+        account: { accountId: response.id, phone: response.phone },
+      });
   }
 );
 

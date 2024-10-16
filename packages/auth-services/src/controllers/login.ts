@@ -27,11 +27,17 @@ const logIn = asyncErrorHandler(
     // If the password is incorrect, return a 401 Unauthorized status
     if (!accounts[0].authenticate(password))
       return res.status(401).send({ message: 'Password does not match' });
+    console.log(accounts[0]);
 
     // If everything is correct, return a 200 OK status and send the account's JWT
     const jwt = createJWT(accounts[0].json());
 
-    return res.status(200).send({ jwt, account: accounts[0] });
+    return res
+      .status(200)
+      .send({
+        jwt,
+        account: { accountId: accounts[0].id, phone: accounts[0].phone },
+      });
   }
 );
 

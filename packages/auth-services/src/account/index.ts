@@ -6,9 +6,6 @@ export class Account {
   private _password: string;
   private _id: string;
 
-  // // Public property for storing JWT tokens associated with the account
-  // public jwt: string[];
-
   // Constructor to initialize a new Account instance with Phone and password
   constructor(phone: string, password: string, _id: string) {
     this._phone = phone;
