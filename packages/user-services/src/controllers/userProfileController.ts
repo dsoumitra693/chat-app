@@ -16,10 +16,10 @@ const userService = new UserServices();
 export const createUserProfile = asyncErrorHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const accountId = req.params.id; // Extract accountId from the request parameters
-    const { fullname, bio } = req.body; // Destructure fullname and bio from request body
+    const { fullname, bio, profilePicture } = req.body; // Destructure fullname and bio from request body
 
     // Call the UserServices to create a new user profile
-    await userService.createUser({ accountId, bio, fullname });
+    await userService.createUser({ accountId, bio, fullname, profilePicture });
 
     // Send a 201 response indicating user profile was successfully created
     res.status(201).json({ message: 'User profile created successfully' });
@@ -57,13 +57,14 @@ export const getUserProfile = asyncErrorHandler(
 export const updateUserProfile = asyncErrorHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const accountId = req.params.id; // Extract accountId from the request parameters
-    const { fullname, bio } = req.body; // Destructure fullname and bio from request body
+    const { fullname, bio, profilePicture } = req.body; // Destructure fullname and bio from request body
 
     // Update the user's profile using the UserServices class
     const user_profile = await userService.updateUser({
       accountId,
       bio,
       fullname,
+      profilePicture,
     });
 
     // Send a 200 response with the updated user profile

@@ -10,7 +10,8 @@ const createUserSchema = z.object({
     .string()
     .min(3, 'Fullname must be at least 3 characters long')
     .max(255, 'Fullname is too long'),
-  bio: z.string().max(500, 'Bio must be less than 500 characters'),
+  bio: z.string().max(500, 'Bio must be less than 500 characters').optional().default('Hey! there I\'m using Messenger.'),
+  profilePicture: z.string().optional().default(''),
 });
 
 const updateUserSchema = z.object({
@@ -21,6 +22,7 @@ const updateUserSchema = z.object({
     .max(255, 'Fullname is too long')
     .optional(),
   bio: z.string().max(500, 'Bio must be less than 500 characters').optional(),
+  profilePicture: z.string().optional(),
 });
 
 export class UserServices {
@@ -29,6 +31,7 @@ export class UserServices {
     accountId: string;
     fullname: string;
     bio: string;
+    profilePicture: string;
   }) {
     // Validate input
     createUserSchema.parse(input);
@@ -49,6 +52,7 @@ export class UserServices {
       fullname: input.fullname,
       bio: input.bio,
       phone: user_account[0].phone, // Copy phone from the account
+      profilePicture: input.profilePicture,
     });
   }
 
@@ -74,6 +78,7 @@ export class UserServices {
     accountId: string;
     fullname: string;
     bio: string;
+    profilePicture: string;
   }) {
     // Validate input
     updateUserSchema.parse(input);
@@ -91,7 +96,11 @@ export class UserServices {
     // Perform the update
     await db
       .update(users)
-      .set({ fullname: input.fullname, bio: input.bio })
+      .set({
+        fullname: input.fullname,
+        bio: input.bio,
+        profilePicture: input.profilePicture,
+      })
       .where(eq(users.accountId, input.accountId));
   }
 
