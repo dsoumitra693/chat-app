@@ -1,9 +1,19 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import React from 'react';
 import { Colors } from '@/constants/Colors';
 import { Feather, Ionicons } from '@expo/vector-icons';
+import { useSession } from '@/provides';
+import { Redirect, useRouter } from 'expo-router';
 
 const ProfileDetails = () => {
+  const { signOut } = useSession();
+  const router = useRouter()
+  const handleLogout = async () => {
+    await signOut();
+    router.replace("/");
+    
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.detail}>
@@ -20,6 +30,17 @@ const ProfileDetails = () => {
           <Text style={styles.textSecondary}>Phone</Text>
         </View>
       </View>
+      <TouchableOpacity onPress={handleLogout}>
+        <View style={{ ...styles.detail, borderBottomWidth: 0 }}>
+          <Feather name="log-out" style={styles.icon2} />
+          <View style={styles.textWrapper}>
+            <Text style={styles.textPrimary}>Logout</Text>
+            <Text style={styles.textSecondary}>
+              You will be logouted from this device only.
+            </Text>
+          </View>
+        </View>
+      </TouchableOpacity>
       <View style={styles.iconWrapper}>
         <Feather name="edit-3" style={styles.icon} />
       </View>

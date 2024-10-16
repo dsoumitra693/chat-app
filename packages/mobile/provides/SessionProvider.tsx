@@ -64,7 +64,10 @@ const SessionProvider: React.FC<SessionProviderProps> = ({ children }) => {
     }
   };
 
-  const signOut = () => deleteData(SESSION_KEY);
+  const signOut = async () => {
+    await deleteData(SESSION_KEY);
+    setSession('');
+  };
 
   return (
     <SessionContext.Provider value={{ session, signIn, signUp, signOut }}>
