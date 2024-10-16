@@ -1,7 +1,8 @@
 import { RequestOptionsBuilder } from '@/utils/requestOptionsBuilder';
 import axios, { AxiosResponse } from 'axios';
 
-const BASE_URL = process.env.EXPO_PUBLIC_AUTH_API_URL!;
+const AUTH_API_URL = process.env.EXPO_PUBLIC_AUTH_API_URL!;
+const USER_API_URL = process.env.EXPO_PUBLIC_USER_API_URL!;
 
 export class ApiService {
   private static instance: ApiService;
@@ -43,4 +44,5 @@ export class ApiService {
   }
 }
 
-export const apiService = ApiService.getInstance(BASE_URL);
+export const authApiService = ApiService.getInstance(AUTH_API_URL);
+export const userApiService = ApiService.getInstance(USER_API_URL);

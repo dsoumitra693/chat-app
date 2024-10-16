@@ -19,22 +19,13 @@ export default function SignIn() {
   };
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
 
   const handleSignup = () => {
-    signUp(phone, password, name);
+    signUp(phone, password);
   };
   if (session) return <Redirect href="/" />;
   return (
     <KeyboardAvoidingView style={styles.conatainer} behavior="height">
-      <TextInput
-        placeholder="Name"
-        style={styles.input}
-        autoComplete="name"
-        placeholderTextColor={Colors['dark'].text2}
-        value={name}
-        onChangeText={setName}
-      />
       <TextInput
         placeholder="Phone number"
         inputMode="numeric"

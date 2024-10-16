@@ -1,4 +1,4 @@
-import { IMessage } from '@/types';
+import { IMessage, IUser } from '@/types';
 
 export const IMAGE_1 =
   'https://instagram.fccu13-2.fna.fbcdn.net/v/t51.2885-19/455795226_846316080785062_4864498626493087599_n.jpg?stp=dst-jpg_s150x150&_nc_ht=instagram.fccu13-2.fna.fbcdn.net&_nc_cat=110&_nc_ohc=cCQreSVzDO8Q7kNvgFOsNYj&_nc_gid=4af29bb5ea73447190f52b7257f13b8c&edm=AP4sbd4BAAAA&ccb=7-5&oh=00_AYAeLc1t3C8P1EYOP_4BkNOkPQP-ndrsj09BUkM17IV6wg&oe=670B205D&_nc_sid=7a9f4b';
@@ -7,16 +7,20 @@ export const IMAGE_2 =
 export const WALLPAPER_URI =
   'https://e1.pxfuel.com/desktop-wallpaper/407/713/desktop-wallpaper-in-celebration-of-whatsapps-dark-mode-whatsapp-aesthetic.jpg';
 
-export const SENDER = {
-  name: 'Marybeth Tonks',
+export const SENDER: IUser = {
+  fullname: 'Marybeth Tonks',
   phone: '+998-879-396-3329',
-  displayPicture: IMAGE_2,
+  profilePicture: IMAGE_2,
+  id: '',
+  accoutId: '',
 };
 
-export const ME = {
-  name: 'Soumo',
+export const ME: IUser = {
+  fullname: 'Soumo',
   phone: '+917478398178',
-  displayPicture: IMAGE_1,
+  profilePicture: IMAGE_1,
+  id: '',
+  accoutId: '',
 };
 
 export const MESSAGES: IMessage[] = [

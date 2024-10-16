@@ -2,9 +2,12 @@ export type IFileType = 'Audio' | 'Image' | 'Video' | 'Document' | 'None';
 export type IEmojis = '❤️' | '😂' | '😮' | '😢' | '😡' | '👍';
 export type IReaction = Map<IEmojis, Number>;
 export interface IUser {
-  name: string;
+  id:string;
+  fullname: string;
   phone: string;
-  displayPicture: string;
+  profilePicture?: string;
+  bio?:string;
+  accoutId:string
 }
 
 interface IMessageBase {
