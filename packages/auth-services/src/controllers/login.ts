@@ -31,7 +31,7 @@ const logIn = asyncErrorHandler(
     // If everything is correct, return a 200 OK status and send the account's JWT
     const jwt = createJWT(accounts[0].json());
 
-    return res.status(200).send({ jwt });
+    return res.status(200).send({ jwt, account: accounts[0] });
   }
 );
 
