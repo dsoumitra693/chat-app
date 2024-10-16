@@ -11,6 +11,7 @@ const userService = new UserServices();
  * @param {string} accountId - The account ID from the request parameters
  * @param {string} fullname - The full name of the user
  * @param {string} bio - A short bio for the user's profile
+ * @param {string} profilePicture - The profilePicture for the user's profile
  * @returns {void}
  */
 export const createUserProfile = asyncErrorHandler(
@@ -52,6 +53,7 @@ export const getUserProfile = asyncErrorHandler(
  * @param {string} accountId - The account ID from the request parameters
  * @param {string} fullname - The updated full name of the user
  * @param {string} bio - The updated bio for the user's profile
+ * @param {string} profilePicture - The updated profilePicture for the user's profile
  * @returns {object} user_profile - The updated user profile data
  */
 export const updateUserProfile = asyncErrorHandler(
