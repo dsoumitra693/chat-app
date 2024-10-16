@@ -2,11 +2,18 @@ import { Request, Response, NextFunction } from 'express';
 import redisClient from '../db/redis';
 import { asyncErrorHandler } from '../utils/asyncErrorHandler';
 
-// Set user presence status in Redis
+/**
+ * Controller to set the user's presence status in Redis.
+ * @route POST /users/:userId/presence
+ * @param {Request} req - The incoming request object, with `userId` as a URL parameter and `status` ("online" or "offline") in the body.
+ * @param {Response} res - The outgoing response object.
+ * @param {NextFunction} next - The next middleware function.
+ * @returns {Promise<void>} Returns a message indicating the user's status change.
+ */
 export const setUserPresence = asyncErrorHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { userId } = req.params; // Assume userId is sent as a URL parameter
-    const status = req.body.status; // Expected to be "online" or "offline"
+    const {status} = req.body; // Expected to be "online" or "offline"
 
     const key = `presence:${userId}`;
     if (status === 'online') {
@@ -15,20 +22,27 @@ export const setUserPresence = asyncErrorHandler(
       await redisClient.del(key); // Remove user presence status
     }
 
-    return res.status(200).json({ message: `User ${status}.` });
+    res.status(200).json({ message: `User ${status}.` });
   }
 );
 
-// Get user presence status from Redis
+/**
+ * Controller to get the user's presence status from Redis.
+ * @route GET /users/:userId/presence
+ * @param {Request} req - The incoming request object, with `userId` as a URL parameter.
+ * @param {Response} res - The outgoing response object.
+ * @param {NextFunction} next - The next middleware function.
+ * @returns {Promise<void>} Returns the user's current status ("online" or "offline").
+ */
 export const getUserPresence = asyncErrorHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { userId } = req.params;
     const presenceStatus = await redisClient.get(`presence:${userId}`);
 
     if (presenceStatus) {
-      return res.status(200).json({ userId, status: presenceStatus });
+      res.status(200).json({ userId, status: presenceStatus });
     } else {
-      return res.status(200).json({ userId, status: 'offline' });
+      res.status(200).json({ userId, status: 'offline' });
     }
   }
 );
