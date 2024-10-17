@@ -24,7 +24,7 @@ app.get('/', (_, res) => {
 });
 
 // Authentication routes, handles routes defined in the authRouter
-app.use('/user', userRouter);
+app.use('/users', userRouter);
 
 // Start the Express server and listen on the specified port
 app.listen(PORT, () => console.log(`App listening on port ${PORT}!`));

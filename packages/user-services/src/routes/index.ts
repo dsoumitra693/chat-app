@@ -17,84 +17,84 @@ const userRouter = Router();
 
 /**
  * Route to create a user profile.
- * @route POST /users/:id
+ * @route POST /:id
  * @param {string} id - The user ID.
  * @returns {void}
  */
-userRouter.post('/users/:id', createUserProfile);
+userRouter.post('/:id', createUserProfile);
 
 /**
  * Route to retrieve user profile data.
- * @route GET /users/:id
+ * @route GET /:id
  * @param {string} id - The user ID.
  * @returns {void}
  */
-userRouter.get('/users/:id', getUserProfile);
+userRouter.get('/:id', getUserProfile);
 
 /**
  * Route to update user profile data.
- * @route PUT /users/:id
+ * @route PUT /:id
  * @param {string} id - The user ID.
  * @returns {void}
  */
-userRouter.put('/users/:id', updateUserProfile);
+userRouter.put('/:id', updateUserProfile);
 
 /**
  * Route to add a new contact to the user's contact list.
- * @route POST /users/:id/contacts
+ * @route POST /:id/contacts
  * @param {string} id - The user ID.
  * @returns {void}
  */
-userRouter.post('/users/:id/contacts', addContact);
+userRouter.post('/:id/contacts', addContact);
 
 /**
  * Route to remove a contact from the user's contact list.
- * @route DELETE /users/:id/contacts/:contactId
+ * @route DELETE /:id/contacts/:contactId
  * @param {string} id - The user ID.
  * @param {string} contactId - The contact ID to be removed.
  * @returns {void}
  */
-userRouter.delete('/users/:id/contacts/:contactId', removeContact);
+userRouter.delete('/:id/contacts/:contactId', removeContact);
 
 /**
  * Route to retrieve the user's contact list.
- * @route GET /users/:id/contacts
+ * @route GET /:id/contacts
  * @param {string} id - The user ID.
  * @returns {void}
  */
-userRouter.get('/users/:id/contacts', getUserContacts);
+userRouter.get('/:id/contacts', getUserContacts);
 
 /**
  * Route to update the user's presence status.
- * @route POST /users/:id/presence
+ * @route POST /:id/presence
  * @param {string} id - The user ID.
  * @returns {void}
  */
-userRouter.post('/users/:id/presence', setUserPresence);
+userRouter.post('/:id/presence', setUserPresence);
 
 /**
  * Route to get the user's presence status.
- * @route GET /users/:id/presence
+ * @route GET /:id/presence
  * @param {string} id - The user ID.
  * @returns {void}
  */
-userRouter.get('/users/:id/presence', getUserPresence);
+userRouter.get('/:id/presence', getUserPresence);
 
 /**
  * Route to retrieve the user's settings.
- * @route GET /users/:id/settings
+ * @route GET /:id/settings
  * @param {string} id - The user ID.
  * @returns {void}
  */
-userRouter.get('/users/:id/settings', getUserSettings);
+userRouter.get('/:id/settings', getUserSettings);
 
 /**
  * Route to update the user's settings.
- * @route PUT /users/:id/settings
+ * @route PUT /:id/settings
  * @param {string} id - The user ID.
  * @returns {void}
  */
-userRouter.put('/users/:id/settings', updateUserSettings);
+userRouter.put('/:id/settings', updateUserSettings);
 
 // Export the userRouter so it can be used in the main application file
 export default userRouter;
