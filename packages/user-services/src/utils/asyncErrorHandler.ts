@@ -1,8 +1,16 @@
 import { Request, Response, NextFunction } from 'express';
 import createHttpError from 'http-errors';
 
-// Higher-order function that wraps asynchronous Express route handlers
-// to automatically catch and handle errors
+/**
+ * Higher-order function that wraps asynchronous Express route handlers
+ * to automatically catch and handle errors.
+ *
+ * @param {Function} func - The asynchronous function to wrap. It should
+ * take (req: Request, res: Response, next: NextFunction) as parameters
+ * and return a Promise.
+ * @returns {Function} A new function that wraps the original async function,
+ *                     providing automatic error handling.
+ */
 export const asyncErrorHandler = (
   func: (req: Request, res: Response, next: NextFunction) => Promise<any>
 ) => {

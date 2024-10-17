@@ -25,8 +25,21 @@ const updateUserSchema = z.object({
   profilePicture: z.string().optional(),
 });
 
+/**
+ * Service class for managing user-related operations.
+ */
 export class UserServices {
-  // Create a user associated with an existing account
+  /**
+   * Creates a user associated with an existing account.
+   * 
+   * @param input - The input data for creating a user.
+   * @param input.accountId - The UUID of the associated account.
+   * @param input.fullname - The fullname of the user.
+   * @param input.bio - The bio of the user (optional).
+   * @param input.profilePicture - The URL of the user's profile picture (optional).
+   * 
+   * @throws {Error} If the account does not exist.
+   */
   async createUser(input: {
     accountId: string;
     fullname: string;
@@ -56,7 +69,15 @@ export class UserServices {
     });
   }
 
-  // Retrieve a user by accountId
+  /**
+   * Retrieves a user by their account ID.
+   * 
+   * @param accountId - The UUID of the account.
+   * 
+   * @returns The user object associated with the account ID.
+   * 
+   * @throws {Error} If the user does not exist.
+   */
   async getUser({ accountId }: { accountId: string }) {
     // Ensure the accountId is a valid UUID
     z.string().uuid().parse(accountId);
@@ -73,7 +94,17 @@ export class UserServices {
     return user[0]; // Return the first matching user
   }
 
-  // Update a user's fullname and bio
+  /**
+   * Updates a user's fullname, bio, and profile picture.
+   * 
+   * @param input - The input data for updating the user.
+   * @param input.accountId - The UUID of the associated account.
+   * @param input.fullname - The new fullname of the user (optional).
+   * @param input.bio - The new bio of the user (optional).
+   * @param input.profilePicture - The new URL of the user's profile picture (optional).
+   * 
+   * @throws {Error} If the account does not exist.
+   */
   async updateUser(input: {
     accountId: string;
     fullname: string;
@@ -104,7 +135,12 @@ export class UserServices {
       .where(eq(users.accountId, input.accountId));
   }
 
-  // Add a contact
+  /**
+   * Adds a contact for a user.
+   * 
+   * @param userId - The ID of the user.
+   * @param contactId - The ID of the contact to add.
+   */
   async addContact(userId: string, contactId: string) {
     await db.insert(userContacts).values({
       userId,
@@ -112,7 +148,12 @@ export class UserServices {
     });
   }
 
-  // Remove a contact
+  /**
+   * Removes a contact from a user's contact list.
+   * 
+   * @param userId - The ID of the user.
+   * @param contactId - The ID of the contact to remove.
+   */
   async removeContact(userId: string, contactId: string): Promise<void> {
     await db
       .delete(userContacts)
@@ -124,7 +165,13 @@ export class UserServices {
       );
   }
 
-  // Get all contacts for a user
+  /**
+   * Retrieves all contacts for a user.
+   * 
+   * @param userId - The ID of the user whose contacts are to be retrieved.
+   * 
+   * @returns An array of user objects representing the contacts.
+   */
   async getContacts(userId: string) {
     const contacts = await db
       .select()

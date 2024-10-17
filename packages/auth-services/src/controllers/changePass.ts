@@ -5,8 +5,21 @@ import { getHash } from '../utils/password';
 import { createJWT } from '../utils/jwt';
 import { eq } from 'drizzle-orm';
 
-// Controller function for handling password change requests
-// Wrapped in asyncErrorHandler to manage async errors effectively
+/**
+ * Controller function to handle password change requests.
+ * 
+ * @param req - Express Request object containing the request data
+ * @param res - Express Response object used to send a response back to the client
+ * @param next - Express NextFunction to pass control to the next middleware
+ * 
+ * This function checks if the provided old password is correct and updates the account with the new password. 
+ * If successful, it returns a JWT for the updated account.
+ * 
+ * @throws 400 Bad Request - If required fields (phone, newPass, oldPass) are missing.
+ * @throws 404 Not Found - If the account associated with the provided phone number is not found.
+ * @throws 401 Unauthorized - If the old password provided is incorrect.
+ * @returns 200 OK - If the password is updated successfully, it returns the new JWT for the user.
+ */
 const changePass = asyncErrorHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     // Extract phone, new password, and old password from the request body
@@ -19,7 +32,7 @@ const changePass = asyncErrorHandler(
     // Search for the account in the database using the provided phone
     let accounts = await searchAccount(eq(account.phone, phone));
 
-    // If the account does not exist, return a 409 Conflict status
+    // If the account does not exist, return a 404 Not Found status
     if (!accounts[0])
       return res.status(404).send({ error: 'account not found' });
 
@@ -33,7 +46,9 @@ const changePass = asyncErrorHandler(
       .set({ password: getHash(newPass) })
       .where(eq(account.phone, phone));
 
+    // Create a new JWT for the account
     const jwt = createJWT({ id: accounts[0].id });
+
     // Return a 200 OK status and send the account's updated JWT
     return res.status(200).send({ jwt });
   }

@@ -6,7 +6,7 @@ import userRouter from './routes';
 // Load environment variables from a .env file into process.env
 dotenv.config();
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3000; // Define the port for the server
 const app = express();
 
 // Middleware to parse incoming JSON requests with a body size limit of 50mb
@@ -18,13 +18,21 @@ app.use(express.urlencoded({ extended: true }));
 // Middleware to enable Cross-Origin Resource Sharing (CORS) for all routes
 app.use(cors());
 
-// Root route for the API, provides a simple welcome message
+/**
+ * Root route for the API.
+ * 
+ * @returns A welcome message to the client.
+ */
 app.get('/', (_, res) => {
-  res.send('Welcome to messenger');
+  res.send('Welcome to Messenger-User-Service');
 });
 
-// Authentication routes, handles routes defined in the authRouter
+// Authentication routes, handles routes defined in the userRouter
 app.use('/users', userRouter);
 
-// Start the Express server and listen on the specified port
+/**
+ * Starts the Express server and listens on the specified port.
+ * 
+ * @param PORT - The port number the server listens on.
+ */
 app.listen(PORT, () => console.log(`App listening on port ${PORT}!`));

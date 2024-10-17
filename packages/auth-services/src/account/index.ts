@@ -1,63 +1,95 @@
 import { compareHash, getHash } from '../utils/password';
 
 export class Account {
-  // Private properties for storing Phone and password
+  // Private properties for storing phone and password
   private _phone: string;
   private _password: string;
   private _id: string;
 
-  // Constructor to initialize a new Account instance with Phone and password
+  /**
+   * Constructor to initialize a new Account instance with phone, password, and ID.
+   * @param {string} phone - The phone number associated with the account.
+   * @param {string} password - The account password (plain text, to be hashed).
+   * @param {string} _id - The unique identifier for the account.
+   */
   constructor(phone: string, password: string, _id: string) {
     this._phone = phone;
     this._password = password;
     this._id = _id;
   }
 
-  // Method to get the account's Phone
+  /**
+   * Getter for the account's phone number.
+   * @returns {string} The phone number associated with the account.
+   */
   get phone(): string {
     return this._phone;
   }
 
-  // Method to get the account's password (normally not used due to security concerns)
+  /**
+   * Getter for the account's password.
+   * **Note:** Password should not normally be accessible in plain text.
+   * @returns {string} The account's hashed password.
+   */
   get password(): string {
     return this._password;
   }
+
+  /**
+   * Getter for the account's unique ID.
+   * @returns {string} The unique identifier for the account.
+   */
   get id(): string {
     return this._id;
   }
 
-  // Method to change the account's password
-  // Takes the previous password and new password as arguments
+  /**
+   * Method to change the account's password.
+   * Validates the old password before setting a new one.
+   * @param {string} prevPass - The previous password for authentication.
+   * @param {string} newPass - The new password to be set.
+   * @returns {string} The updated (hashed) password.
+   * @throws {Error} If the previous password does not match.
+   */
   setPassword(prevPass: string, newPass: string): string {
-    // Authenticate with the previous password before setting the new one
     if (this.authenticate(prevPass)) {
       this._password = getHash(newPass);
       return this.password;
     }
-
-    // Throw an error if the previous password does not match
     throw new Error('Password did not match');
   }
 
-  // Method to change the account's Phone
-  // Takes the current password and new Phone as arguments
+  /**
+   * Method to change the account's phone number.
+   * Validates the password before setting a new phone number.
+   * @param {string} pass - The current password for authentication.
+   * @param {string} newPhone - The new phone number to be set.
+   * @returns {string} The updated phone number.
+   * @throws {Error} If the password does not match.
+   */
   setPhone(pass: string, newPhone: string): string {
-    // Authenticate with the current password before setting the new Phone
     if (this.authenticate(pass)) {
       this._phone = newPhone;
       return this._phone;
     }
-
-    // Throw an error if the password does not match
     throw new Error('Password did not match');
   }
 
-  // Method to authenticate the account with a given password
-  // Returns true if the password matches the stored password
+  /**
+   * Method to authenticate the account with a given password.
+   * Compares the given password with the stored hashed password.
+   * @param {string} password - The password to be authenticated.
+   * @returns {boolean} True if the password matches, false otherwise.
+   */
   authenticate(password: string): boolean {
     return compareHash(password, this._password);
   }
-  json() {
+
+  /**
+   * Method to return the account's ID as a JSON string.
+   * @returns {string} The account's ID in JSON format.
+   */
+  json(): string {
     return JSON.stringify(this._id);
   }
 }

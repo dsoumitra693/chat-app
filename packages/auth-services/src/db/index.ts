@@ -7,7 +7,16 @@ import { generateUUID } from '../utils/uuid';
 
 export { db, account };
 
-// Function to search for users in the database
+/**
+ * Function to search for users in the database based on the provided query.
+ *
+ * @async
+ * @function searchAccount
+ * @param {any} query - The query criteria for searching accounts in the database.
+ * @returns {Promise<Account[]>} - A promise that resolves to an array of Account instances.
+ *
+ * This function catches any errors during the search and logs them, returning an empty array if an error occurs.
+ */
 export const searchAccount = async (query: any): Promise<Account[]> => {
   try {
     const data = await db.select().from(account).where(query);
@@ -20,7 +29,18 @@ export const searchAccount = async (query: any): Promise<Account[]> => {
   }
 };
 
-// Function to create a new user in the database
+/**
+ * Function to create a new user in the database.
+ *
+ * @async
+ * @function createAccount
+ * @param {string} phone - The phone number of the user.
+ * @param {string} password - The password for the user.
+ * @returns {Promise<{ response: Account | undefined; error: Error | undefined }>} - A promise that resolves to an object containing either the newly created Account or an error.
+ *
+ * This function checks if an account with the given phone number already exists, hashes the password, 
+ * and inserts the new user record into the database. It returns the created account or an error message.
+ */
 export const createAccount = async (
   phone: string,
   password: string
@@ -32,7 +52,7 @@ export const createAccount = async (
   password = getHash(password); // Hash the password
 
   try {
-    // Check if a Account with the given phone already exists
+    // Check if an Account with the given phone already exists
     const accounts = await searchAccount(eq(account.phone, phone));
 
     if (accounts.length > 0) throw new Error('Email already exists.');

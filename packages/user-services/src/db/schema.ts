@@ -7,7 +7,12 @@ import {
   json,
 } from 'drizzle-orm/pg-core';
 
-// Define the Accounts Table
+/**
+ * Defines the Accounts Table.
+ * 
+ * This table stores account-related information including a unique phone number
+ * and a hashed password. It also tracks the creation and update timestamps.
+ */
 export const account = pgTable('account', {
   id: uuid('id').primaryKey(), // Auto-incrementing primary key
   phone: text('phone').notNull().unique(), // Phone number, must be unique
@@ -18,14 +23,18 @@ export const account = pgTable('account', {
     .$onUpdateFn(() => new Date()), // Set the current timestamp on updates
 });
 
-
-// Define the Users Table
+/**
+ * Defines the Users Table.
+ * 
+ * This table stores user profiles including their full name, bio, and contact information.
+ * It links to the Accounts Table through a foreign key and tracks creation and update timestamps.
+ */
 export const users = pgTable('users', {
   id: uuid('id').primaryKey().defaultRandom(), // UUID as primary key
-  fullname: varchar('fullname', { length: 255 }).notNull(),
-  bio: varchar('bio', { length: 255 }).default(''), // Full name, required
-  phone: varchar('phone', { length: 10 }).unique().notNull(), // Unique phone
-  profilePicture: varchar('profile_picture', { length: 255 }).default(''), // Optional profile picture
+  fullname: varchar('fullname', { length: 255 }).notNull(), // User's full name
+  bio: varchar('bio', { length: 255 }).default(''), // User biography
+  phone: varchar('phone', { length: 10 }).unique().notNull(), // Unique phone number
+  profilePicture: varchar('profile_picture', { length: 255 }).default(''), // Optional profile picture URL
   accountId: uuid('account_id')
     .notNull()
     .references(() => account.id), // Foreign key to accounts
@@ -35,18 +44,23 @@ export const users = pgTable('users', {
     .$onUpdateFn(() => new Date()), // Update timestamp
 });
 
-// User Contacts Table
+/**
+ * Defines the User Contacts Table.
+ * 
+ * This table maintains relationships between users and their contacts.
+ * It prevents duplicate entries for user-contact pairs through a composite unique index.
+ */
 export const userContacts = pgTable(
   'user_contacts',
   {
-    id: uuid('id').primaryKey().defaultRandom(),
+    id: uuid('id').primaryKey().defaultRandom(), // Unique identifier for user contacts
     userId: uuid('user_id').references(() => users.id, {
-      onDelete: 'cascade',
+      onDelete: 'cascade', // Cascade delete on user removal
     }),
     contactId: uuid('contact_id').references(() => users.id, {
-      onDelete: 'cascade',
+      onDelete: 'cascade', // Cascade delete on contact removal
     }),
-    createdAt: timestamp('created_at').defaultNow(),
+    createdAt: timestamp('created_at').defaultNow(), // Creation timestamp
   },
   (table) => {
     // Composite unique index to prevent duplicate entries for user-contact pairs
@@ -59,17 +73,21 @@ export const userContacts = pgTable(
   }
 );
 
-// Define the User Settings Table
+/**
+ * Defines the User Settings Table.
+ * 
+ * This table stores user-specific settings related to notifications and privacy.
+ * It is linked to the Users Table through a foreign key.
+ */
 export const userSettings = pgTable('user_settings', {
   userId: uuid('user_id')
     .primaryKey()
     .references(() => users.id), // Foreign key to users
   notificationSettings: json('notification_settings').default(() =>
-    JSON.stringify({})
-  ), // Corrected to use default empty JSON object
+    JSON.stringify({}) // Default to an empty JSON object for notifications
+  ),
   privacySettings: json('privacy_settings').default(() =>
-    // Fixed the column name from notification_settings to privacy_settings
-    JSON.stringify({})
+    JSON.stringify({}) // Default to an empty JSON object for privacy settings
   ),
   createdAt: timestamp('created_at').defaultNow(), // Creation timestamp
   updatedAt: timestamp('updated_at')

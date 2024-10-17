@@ -5,64 +5,67 @@ import uploadImage from '../utils/imageUpload';
 
 const userService = new UserServices();
 
-// Create a new user profile
 /**
  * @desc Create a new user profile associated with an account ID
  * @route POST /users/:id/profile
- * @param {string} accountId - The account ID from the request parameters
- * @param {string} fullname - The full name of the user
- * @param {string} bio - A short bio for the user's profile
- * @param {string} profilePictureBase64 - The profilePicture for the user's profile
- * @returns {void}
+ * @param {string} accountId - The account ID from the request body
+ * @param {string} fullname - The full name of the user from the request body
+ * @param {string} bio - A short bio for the user's profile from the request body
+ * @param {string} profilePictureBase64 - The base64-encoded profile picture from the request body
+ * @returns {void} Responds with a 201 status code and success message on success
  */
 export const createUserProfile = asyncErrorHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { accountId, fullname, bio, profilePictureBase64 } = req.body; // Destructure fullname and bio from request body
+    const { accountId, fullname, bio, profilePictureBase64 } = req.body;
 
+    // Upload the profile picture and get its URL
     let profilePicture = (await uploadImage(profilePictureBase64)) as string;
-    // Call the UserServices to create a new user profile
+
+    // Create the new user profile
     await userService.createUser({ accountId, bio, fullname, profilePicture });
 
-    // Send a 201 response indicating user profile was successfully created
+    // Respond with a 201 status indicating profile creation success
     res.status(201).json({ message: 'User profile created successfully' });
   }
 );
 
-// Get user profile data
 /**
  * @desc Retrieve user profile information by account ID
  * @route GET /users/:id/profile
- * @param {string} accountId - The account ID from the request parameters
- * @returns {object} user_profile - The user's profile data
+ * @param {string} accountId - The account ID from the request body
+ * @returns {object} user_profile - The retrieved user's profile data
+ * Responds with a 200 status code and the user's profile data on success
  */
 export const getUserProfile = asyncErrorHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { accountId } = req.body; // Extract accountId from the request parameters
+    const { accountId } = req.body;
 
-    // Retrieve user profile by accountId
+    // Retrieve the user profile using the account ID
     const user_profile = await userService.getUser({ accountId });
 
-    // Send a 200 response with the retrieved user profile
+    // Respond with a 200 status and the retrieved user profile
     res.status(200).json({ user: user_profile });
   }
 );
 
-// Update user profile data
 /**
  * @desc Update an existing user profile associated with an account ID
  * @route PUT /users/:id/profile
- * @param {string} accountId - The account ID from the request parameters
- * @param {string} fullname - The updated full name of the user
- * @param {string} bio - The updated bio for the user's profile
- * @param {string} profilePictureBase64 - The updated profilePicture for the user's profile
+ * @param {string} accountId - The account ID from the request body
+ * @param {string} fullname - The updated full name of the user from the request body
+ * @param {string} bio - The updated bio for the user's profile from the request body
+ * @param {string} profilePictureBase64 - The updated base64-encoded profile picture from the request body
  * @returns {object} user_profile - The updated user profile data
+ * Responds with a 200 status code and the updated user profile data on success
  */
 export const updateUserProfile = asyncErrorHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { accountId, fullname, bio, profilePictureBase64 } = req.body; // Destructure fullname and bio from request body
+    const { accountId, fullname, bio, profilePictureBase64 } = req.body;
 
+    // Upload the updated profile picture and get its URL
     let profilePicture = (await uploadImage(profilePictureBase64)) as string;
-    // Update the user's profile using the UserServices class
+
+    // Update the user's profile with new data
     const user_profile = await userService.updateUser({
       accountId,
       bio,
@@ -70,7 +73,7 @@ export const updateUserProfile = asyncErrorHandler(
       profilePicture,
     });
 
-    // Send a 200 response with the updated user profile
+    // Respond with a 200 status and the updated user profile
     res.status(200).json({ user: user_profile });
   }
 );
