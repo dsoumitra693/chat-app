@@ -23,13 +23,11 @@ export const signUp = asyncErrorHandler(
     if (!response || error)
       return res.status(409).send({ error: error?.message });
 
-    const jwt = createJWT(response.json());
-    return res
-      .status(200)
-      .send({
-        jwt,
-        account: { accountId: response.id, phone: response.phone },
-      });
+    const jwt = createJWT({ id: response.id });
+    return res.status(200).send({
+      jwt,
+      account: { accountId: response.id, phone: response.phone },
+    });
   }
 );
 

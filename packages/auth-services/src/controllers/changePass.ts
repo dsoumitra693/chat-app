@@ -33,7 +33,7 @@ const changePass = asyncErrorHandler(
       .set({ password: getHash(newPass) })
       .where(eq(account.phone, phone));
 
-    const jwt = createJWT(accounts[0].json());
+    const jwt = createJWT({ id: accounts[0].id });
     // Return a 200 OK status and send the account's updated JWT
     return res.status(200).send({ jwt });
   }

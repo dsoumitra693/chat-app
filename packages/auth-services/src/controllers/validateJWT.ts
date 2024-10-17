@@ -14,6 +14,7 @@ const validateJWT = asyncErrorHandler(
         .send({ message: 'Invaid data recived from accounts.' });
 
     const _account = verifyJWT(token).data;
+    console.log(_account)
 
     // // Search for the account in the database using the provided email
     const accounts = await searchAccount(eq(account.id, _account.id));
