@@ -17,8 +17,7 @@ const userService = new UserServices();
  */
 export const createUserProfile = asyncErrorHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const accountId = req.params.id; // Extract accountId from the request parameters
-    const { fullname, bio, profilePictureBase64 } = req.body; // Destructure fullname and bio from request body
+    const { accountId, fullname, bio, profilePictureBase64 } = req.body; // Destructure fullname and bio from request body
 
     let profilePicture = (await uploadImage(profilePictureBase64)) as string;
     // Call the UserServices to create a new user profile
@@ -38,7 +37,7 @@ export const createUserProfile = asyncErrorHandler(
  */
 export const getUserProfile = asyncErrorHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const accountId = req.params.id; // Extract accountId from the request parameters
+    const { accountId } = req.body; // Extract accountId from the request parameters
 
     // Retrieve user profile by accountId
     const user_profile = await userService.getUser({ accountId });
@@ -60,8 +59,7 @@ export const getUserProfile = asyncErrorHandler(
  */
 export const updateUserProfile = asyncErrorHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const accountId = req.params.id; // Extract accountId from the request parameters
-    const { fullname, bio, profilePictureBase64 } = req.body; // Destructure fullname and bio from request body
+    const { accountId, fullname, bio, profilePictureBase64 } = req.body; // Destructure fullname and bio from request body
 
     let profilePicture = (await uploadImage(profilePictureBase64)) as string;
     // Update the user's profile using the UserServices class

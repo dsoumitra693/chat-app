@@ -11,6 +11,7 @@ import {
   getUserPresence,
 } from '../controllers';
 import { createUserProfile } from '../controllers/userProfileController';
+import { authenticate } from '../middleware/auth.middleware';
 
 // Initialize a new Router instance for handling authentication and user-related routes
 const userRouter = Router();
@@ -21,7 +22,7 @@ const userRouter = Router();
  * @param {string} id - The user ID.
  * @returns {void}
  */
-userRouter.post('/:id', createUserProfile);
+userRouter.post('/', authenticate, createUserProfile);
 
 /**
  * Route to retrieve user profile data.
@@ -29,7 +30,7 @@ userRouter.post('/:id', createUserProfile);
  * @param {string} id - The user ID.
  * @returns {void}
  */
-userRouter.get('/:id', getUserProfile);
+userRouter.get('/', authenticate, getUserProfile);
 
 /**
  * Route to update user profile data.
@@ -37,7 +38,7 @@ userRouter.get('/:id', getUserProfile);
  * @param {string} id - The user ID.
  * @returns {void}
  */
-userRouter.put('/:id', updateUserProfile);
+userRouter.put('/', authenticate, updateUserProfile);
 
 /**
  * Route to add a new contact to the user's contact list.
@@ -45,7 +46,7 @@ userRouter.put('/:id', updateUserProfile);
  * @param {string} id - The user ID.
  * @returns {void}
  */
-userRouter.post('/:id/contacts', addContact);
+userRouter.post('/contacts', authenticate, addContact);
 
 /**
  * Route to remove a contact from the user's contact list.
@@ -54,7 +55,7 @@ userRouter.post('/:id/contacts', addContact);
  * @param {string} contactId - The contact ID to be removed.
  * @returns {void}
  */
-userRouter.delete('/:id/contacts/:contactId', removeContact);
+userRouter.delete('/contacts/:contactId', authenticate, removeContact);
 
 /**
  * Route to retrieve the user's contact list.
@@ -62,7 +63,7 @@ userRouter.delete('/:id/contacts/:contactId', removeContact);
  * @param {string} id - The user ID.
  * @returns {void}
  */
-userRouter.get('/:id/contacts', getUserContacts);
+userRouter.get('/contacts', authenticate, getUserContacts);
 
 /**
  * Route to update the user's presence status.
@@ -70,7 +71,7 @@ userRouter.get('/:id/contacts', getUserContacts);
  * @param {string} id - The user ID.
  * @returns {void}
  */
-userRouter.post('/:id/presence', setUserPresence);
+userRouter.post('/presence', authenticate, setUserPresence);
 
 /**
  * Route to get the user's presence status.
@@ -78,7 +79,7 @@ userRouter.post('/:id/presence', setUserPresence);
  * @param {string} id - The user ID.
  * @returns {void}
  */
-userRouter.get('/:id/presence', getUserPresence);
+userRouter.get('/presence', authenticate, getUserPresence);
 
 /**
  * Route to retrieve the user's settings.
@@ -86,7 +87,7 @@ userRouter.get('/:id/presence', getUserPresence);
  * @param {string} id - The user ID.
  * @returns {void}
  */
-userRouter.get('/:id/settings', getUserSettings);
+userRouter.get('/settings', authenticate, getUserSettings);
 
 /**
  * Route to update the user's settings.
@@ -94,7 +95,7 @@ userRouter.get('/:id/settings', getUserSettings);
  * @param {string} id - The user ID.
  * @returns {void}
  */
-userRouter.put('/:id/settings', updateUserSettings);
+userRouter.put('/settings', authenticate, updateUserSettings);
 
 // Export the userRouter so it can be used in the main application file
 export default userRouter;

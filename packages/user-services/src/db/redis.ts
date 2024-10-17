@@ -7,7 +7,7 @@ const redisClient = new Redis(process.env.REDIS_SERVICE_URL!);
 
 // Optional: Handle connection events
 redisClient.on('connect', () => {
-  console.log('Connected to Redis');
+  ('Connected to Redis');
 });
 
 redisClient.on('error', (err) => {
