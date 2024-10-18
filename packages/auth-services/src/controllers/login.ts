@@ -54,7 +54,6 @@ const logIn = asyncErrorHandler(
         data: {},
       });
     }
-    console.log(accounts[0]);
 
     // If everything is correct, return a standardized 200 OK response with the JWT
     const jwt = createJWT({ id: accounts[0].id });

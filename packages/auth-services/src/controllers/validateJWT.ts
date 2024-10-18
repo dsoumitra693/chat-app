@@ -34,7 +34,6 @@ const validateJWT = asyncErrorHandler(
 
     // Verify the JWT and extract account data
     const _account = verifyJWT(token).data;
-    console.log(_account);
 
     // Search for the account in the database using the provided account ID
     const accounts = await searchAccount(eq(account.id, _account.id));
