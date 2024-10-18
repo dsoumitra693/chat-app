@@ -9,9 +9,10 @@ const createUserSchema = z.object({
   fullname: z
     .string()
     .min(3, 'Fullname must be at least 3 characters long')
-    .max(255, 'Fullname is too long'),
-  bio: z.string().max(500, 'Bio must be less than 500 characters').optional().default('Hey! there I\'m using Messenger.'),
-  profilePicture: z.string().optional().default(''),
+    .max(255, 'Fullname is too long')
+    .optional(),
+  bio: z.string().max(500, 'Bio must be less than 500 characters').optional(),
+  profilePicture: z.string().optional(),
 });
 
 const updateUserSchema = z.object({
@@ -31,20 +32,14 @@ const updateUserSchema = z.object({
 export class UserServices {
   /**
    * Creates a user associated with an existing account.
-   * 
+   *
    * @param input - The input data for creating a user.
-   * @param input.accountId - The UUID of the associated account.
-   * @param input.fullname - The fullname of the user.
-   * @param input.bio - The bio of the user (optional).
-   * @param input.profilePicture - The URL of the user's profile picture (optional).
-   * 
-   * @throws {Error} If the account does not exist.
    */
   async createUser(input: {
     accountId: string;
-    fullname: string;
-    bio: string;
-    profilePicture: string;
+    fullname?: string;
+    bio?: string;
+    profilePicture?: string;
   }) {
     // Validate input
     createUserSchema.parse(input);
@@ -59,23 +54,89 @@ export class UserServices {
       throw new Error('DBError: Account does not exist');
     }
 
-    // Insert the user record
-    await db.insert(users).values({
+    // Prepare the insert data
+    const insertData: {
+      accountId: string;
+      fullname?: string;
+      bio?: string;
+      profilePicture?: string;
+      phone: string;
+    } = {
       accountId: input.accountId,
-      fullname: input.fullname,
-      bio: input.bio,
       phone: user_account[0].phone, // Copy phone from the account
-      profilePicture: input.profilePicture,
-    });
+    };
+
+    // Conditionally add fields if they are not empty or undefined
+    if (input.fullname && input.fullname.trim()) {
+      insertData.fullname = input.fullname.trim();
+    }
+    if (input.bio && input.bio.trim()) {
+      insertData.bio = input.bio.trim();
+    }
+    if (input.profilePicture && input.profilePicture.trim()) {
+      insertData.profilePicture = input.profilePicture.trim();
+    }
+
+    // Ensure that fields are defined and not undefined before insertion
+    await db.insert(users).values(insertData as Required<typeof insertData>);
   }
 
   /**
+   * Updates a user's fullname, bio, and profile picture.
+   *
+   * @param input - The input data for updating the user.
+   */
+  async updateUser(input: {
+    accountId: string;
+    fullname?: string;
+    bio?: string;
+    profilePicture?: string;
+  }) {
+    // Validate input
+    updateUserSchema.parse(input);
+
+    // Ensure the account exists
+    const user_account = await db
+      .select()
+      .from(account)
+      .where(eq(account.id, input.accountId));
+
+    if (user_account.length === 0) {
+      throw new Error('DBError: Account does not exist');
+    }
+
+    // Prepare an update object with only non-empty fields
+    const updateFields: Partial<{
+      fullname: string;
+      bio: string;
+      profilePicture: string;
+    }> = {};
+
+    if (input.fullname && input.fullname.trim()) {
+      updateFields.fullname = input.fullname;
+    }
+    if (input.bio && input.bio.trim()) {
+      updateFields.bio = input.bio;
+    }
+    if (input.profilePicture && input.profilePicture.trim()) {
+      updateFields.profilePicture = input.profilePicture;
+    }
+
+    // Perform the update only if there are fields to update
+    if (Object.keys(updateFields).length > 0) {
+      return await db
+        .update(users)
+        .set(updateFields)
+        .where(eq(users.accountId, input.accountId));
+    }
+  }
+  /**
    * Retrieves a user by their account ID.
-   * 
+   *
    * @param accountId - The UUID of the account.
-   * 
+   *
    * @returns The user object associated with the account ID.
-   * 
+   *
    * @throws {Error} If the user does not exist.
    */
   async getUser({ accountId }: { accountId: string }) {
@@ -93,51 +154,9 @@ export class UserServices {
 
     return user[0]; // Return the first matching user
   }
-
-  /**
-   * Updates a user's fullname, bio, and profile picture.
-   * 
-   * @param input - The input data for updating the user.
-   * @param input.accountId - The UUID of the associated account.
-   * @param input.fullname - The new fullname of the user (optional).
-   * @param input.bio - The new bio of the user (optional).
-   * @param input.profilePicture - The new URL of the user's profile picture (optional).
-   * 
-   * @throws {Error} If the account does not exist.
-   */
-  async updateUser(input: {
-    accountId: string;
-    fullname: string;
-    bio: string;
-    profilePicture: string;
-  }) {
-    // Validate input
-    updateUserSchema.parse(input);
-
-    // Ensure the account exists
-    const user_account = await db
-      .select()
-      .from(account)
-      .where(eq(account.id, input.accountId));
-
-    if (user_account.length === 0) {
-      throw new Error('DBError: Account does not exist');
-    }
-
-    // Perform the update
-    await db
-      .update(users)
-      .set({
-        fullname: input.fullname,
-        bio: input.bio,
-        profilePicture: input.profilePicture,
-      })
-      .where(eq(users.accountId, input.accountId));
-  }
-
   /**
    * Adds a contact for a user.
-   * 
+   *
    * @param userId - The ID of the user.
    * @param contactId - The ID of the contact to add.
    */
@@ -150,7 +169,7 @@ export class UserServices {
 
   /**
    * Removes a contact from a user's contact list.
-   * 
+   *
    * @param userId - The ID of the user.
    * @param contactId - The ID of the contact to remove.
    */
@@ -167,9 +186,9 @@ export class UserServices {
 
   /**
    * Retrieves all contacts for a user.
-   * 
+   *
    * @param userId - The ID of the user whose contacts are to be retrieved.
-   * 
+   *
    * @returns An array of user objects representing the contacts.
    */
   async getContacts(userId: string) {

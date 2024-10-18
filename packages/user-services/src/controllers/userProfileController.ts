@@ -16,13 +16,16 @@ const userService = new UserServices();
  */
 export const createUserProfile = asyncErrorHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { accountId, fullname, bio, profilePictureBase64 } = req.body;
+    const body = req.body;
+    let profilePicture: string = '';
 
-    // Upload the profile picture and get its URL
-    let profilePicture = (await uploadImage(profilePictureBase64)) as string;
+    // Upload the updated profile picture and get its URL
+    if (!!body.profilePictureBase64) {
+      profilePicture = (await uploadImage(body.profilePictureBase64)) as string;
+    }
 
     // Create the new user profile
-    await userService.createUser({ accountId, bio, fullname, profilePicture });
+    await userService.createUser({ ...body, profilePicture });
 
     // Respond with a 201 status indicating profile creation success
     res.status(201).json({ message: 'User profile created successfully' });
@@ -60,16 +63,17 @@ export const getUserProfile = asyncErrorHandler(
  */
 export const updateUserProfile = asyncErrorHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { accountId, fullname, bio, profilePictureBase64 } = req.body;
+    const body = req.body;
+    let profilePicture: string = '';
 
     // Upload the updated profile picture and get its URL
-    let profilePicture = (await uploadImage(profilePictureBase64)) as string;
+    if (!!body.profilePictureBase64) {
+      profilePicture = (await uploadImage(body.profilePictureBase64)) as string;
+    }
 
     // Update the user's profile with new data
     const user_profile = await userService.updateUser({
-      accountId,
-      bio,
-      fullname,
+      ...body,
       profilePicture,
     });
 
