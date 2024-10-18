@@ -58,32 +58,24 @@ const SessionProvider: React.FC<SessionProviderProps> = ({ children }) => {
    */
   useEffect(() => {
     (async () => {
-      const data = await getData<ISession>(SESSION_KEY);
-      if (!data.jwt) return;
+      const session_data = await getData<ISession>(SESSION_KEY);
+      const user_data = await getData<IUser>(USER_KEY);
+      if (!session_data.jwt) return;
       const headers = {
         'Content-Type': 'application/json',
-        authorization: `Bearer ${data.jwt}`,
+        authorization: `Bearer ${session_data.jwt}`,
       };
-      let [authRes, userRes] = await Promise.all([
-        authApiService.request<{ accountId: string }>(
-          'auth/jwt/validate',
-          'POST',
-          {
-            token: data.jwt,
-          }
-        ),
-        userApiService.request<IUser>(
-          `users`,
-          'GET',
-          { accountId: data.account.accountId },
-          headers
-        ),
-      ]);
-      if (authRes.success && !!data.jwt) {
-        setSession({ jwt: data.jwt, account: authRes.data });
-      }
-      if (userRes.success) {
-        setUser(userRes.data);
+      let authRes = await authApiService.request<{ accountId: string }>(
+        'auth/jwt/validate',
+        'POST',
+        {
+          token: session_data.jwt,
+        }
+      );
+
+      if (authRes.success && !!session_data.jwt) {
+        setSession({ jwt: session_data.jwt, account: authRes.data });
+        setUser(user_data);
       }
     })();
   }, []);
@@ -139,7 +131,7 @@ const SessionProvider: React.FC<SessionProviderProps> = ({ children }) => {
       payload,
       headers
     );
-    console.log(res)
+    console.log(res);
     setUser(res.data);
     storeData<IUser>(USER_KEY, res.data);
   };
