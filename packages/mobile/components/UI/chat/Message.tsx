@@ -29,7 +29,7 @@ const Message: React.FC<IMessageProps> = ({ message }) => {
         }}
       >
         <Avatar
-          imageSource={{ uri: message.sender.displayPicture }}
+          imageSource={{ uri: message.sender.profilePicture }}
           style={styles.avatar}
         />
         <Text style={styles.textSecondary}>

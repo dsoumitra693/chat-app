@@ -19,10 +19,10 @@ const Header = ({ user }: { user: IUser }) => {
       <TouchableOpacity onPress={handleBackPress}>
         <Ionicons name="chevron-back" size={20} color={Colors['dark'].icon} />
       </TouchableOpacity>
-      <Text style={styles.text}>{user.name}</Text>
+      <Text style={styles.text}>{user.fullname}</Text>
       <Avatar
         imageSource={{
-          uri: user.displayPicture,
+          uri: user.profilePicture,
         }}
         style={styles.avatar}
         showBadge={true}

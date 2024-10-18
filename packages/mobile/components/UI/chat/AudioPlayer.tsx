@@ -19,12 +19,12 @@ export const AudioPlayer = ({ url, color }: { url: string; color: string }) => {
     await sound.playAsync();
     setIsPlaying(true);
 
-    const { durationMillis } = await sound.getStatusAsync();
-    setDuration(durationMillis);
+    const status = await sound.getStatusAsync();
+    setDuration((status as any).durationMillis);
 
     const interval = setInterval(async () => {
       const status = await sound.getStatusAsync();
-      if (status.isLoaded && status.positionMillis < durationMillis) {
+      if (status.isLoaded && status.positionMillis < (status as any).durationMillis) {
         setProgress(status.positionMillis);
       } else {
         clearInterval(interval);

@@ -4,11 +4,12 @@ import { FlashList } from '@shopify/flash-list';
 import Message from './Message';
 import { MESSAGES } from '@/constants/data';
 import TypingRipple from './TypingRipple';
+import { IMessage } from '@/types';
 
 const MsgFeed = () => {
   return (
-    <FlashList
-      data={MESSAGES.toReversed()}
+    <FlashList<IMessage>
+      data={MESSAGES.slice().reverse()}
       renderItem={({ item }) => <Message message={item} />}
       keyExtractor={(item) => item.id.toString()}
       inverted
