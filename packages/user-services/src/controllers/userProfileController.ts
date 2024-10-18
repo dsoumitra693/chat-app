@@ -23,18 +23,19 @@ export const createUserProfile = asyncErrorHandler(
     if (!!body.profilePictureBase64) {
       profilePicture = (await uploadImage(body.profilePictureBase64)) as string;
     }
-    console.log(body)
+    console.log(body);
     // Create the new user profile
     await userService.createUser({ ...body, profilePicture });
 
-    const data ={...body, profilePicture};
-    delete data.profilePictureBase64;
+    const user_profile = await userService.getUser({
+      accountId: body.accountId,
+    });
 
     // Respond with a standardized success message
     res.status(201).json({
       status: 'success',
       message: 'User profile created successfully',
-      data: {...body, profilePicture}, // No data to return in this case
+      data: user_profile, // No data to return in this case
     });
   }
 );

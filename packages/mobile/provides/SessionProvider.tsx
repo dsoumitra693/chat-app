@@ -4,7 +4,6 @@ import { deleteData, getData, storeData } from '@/utils/secureStore';
 import React, { useContext, useEffect, useState } from 'react';
 
 const SESSION_KEY = 'messenger-session';
-const USER_KEY = 'messenger-user-data';
 
 interface ISessionContext {
   session: ISession | undefined;
@@ -59,23 +58,43 @@ const SessionProvider: React.FC<SessionProviderProps> = ({ children }) => {
   useEffect(() => {
     (async () => {
       const session_data = await getData<ISession>(SESSION_KEY);
-      const user_data = await getData<IUser>(USER_KEY);
       if (!session_data.jwt) return;
+
       const headers = {
         'Content-Type': 'application/json',
-        authorization: `Bearer ${session_data.jwt}`,
+        authorization: `Bearer ${session_data.jwt!}`,
       };
-      let authRes = await authApiService.request<{ accountId: string }>(
+
+      // Create a promise for JWT validation
+      const authPromise = authApiService.request<{ accountId: string }>(
         'auth/jwt/validate',
         'POST',
-        {
-          token: session_data.jwt,
-        }
+        { token: session_data.jwt }
       );
 
-      if (authRes.success && !!session_data.jwt) {
+      // Create a promise for fetching user data
+      const userPromise = userApiService.request<IUser>(
+        `users`,
+        'GET',
+        { accountId: session_data?.account.accountId! },
+        headers
+      );
+
+      // Wait for both promises to resolve
+      const [authRes, userRes] = await Promise.all([authPromise, userPromise]);
+
+      // Validate authRes
+      if (
+        authRes.success &&
+        authRes.data &&
+        typeof authRes.data.accountId === 'string'
+      ) {
         setSession({ jwt: session_data.jwt, account: authRes.data });
-        setUser(user_data);
+      }
+
+      // Validate userRes
+      if (userRes.data && typeof userRes.data === 'object') {
+        setUser(userRes.data);
       }
     })();
   }, []);
@@ -131,9 +150,8 @@ const SessionProvider: React.FC<SessionProviderProps> = ({ children }) => {
       payload,
       headers
     );
-    console.log(res);
     setUser(res.data);
-    storeData<IUser>(USER_KEY, res.data);
+    // storeData<IUser>(USER_KEY, res.data);
   };
 
   /**
@@ -166,7 +184,7 @@ const SessionProvider: React.FC<SessionProviderProps> = ({ children }) => {
       headers
     );
     setUser(res.data);
-    storeData<IUser>(USER_KEY, res.data);
+    // storeData<IUser>(USER_KEY, res.data);
   };
 
   /**
@@ -195,8 +213,8 @@ const SessionProvider: React.FC<SessionProviderProps> = ({ children }) => {
         { accountId: session?.account.accountId! },
         headers
       );
-      setUser(user);
-      storeData<IUser>(USER_KEY, userRes.data);
+      setUser(userRes.data);
+      // storeData<IUser>(USER_KEY, userRes.data);
     }
   };
 
@@ -206,9 +224,9 @@ const SessionProvider: React.FC<SessionProviderProps> = ({ children }) => {
    */
   const signOut = async () => {
     await deleteData(SESSION_KEY);
-    await deleteData(USER_KEY);
+    // await deleteData(USER_KEY);
     setSession(undefined);
-    setUser(undefined);
+    // setUser(undefined);
   };
 
   return (
