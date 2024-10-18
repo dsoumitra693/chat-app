@@ -21,28 +21,40 @@ export const signUp = asyncErrorHandler(
     // Extract phone and password from the request body
     let { phone, password } = req.body;
 
-    // Return a 400 Bad Request status if phone or password is missing
+    // Return a standardized 400 Bad Request response if phone or password is missing
     if (!phone || !password) {
-      return res
-        .status(400)
-        .send({ message: 'Invalid data received from users.' });
+      return res.status(400).send({
+        success: false,
+        message: 'Invalid data received from users.',
+        errorCode: 'INVALID_INPUT',
+        data: null
+      });
     }
 
     // Attempt to create a new user with the provided phone and password
     let { response, error } = await createAccount(phone, password);
 
-    // If user creation fails (e.g., phone already exists), return a 409 Conflict status
+    // If user creation fails (e.g., phone already exists), return a standardized 409 Conflict response
     if (!response || error) {
-      return res.status(409).send({ error: error?.message });
+      return res.status(409).send({
+        success: false,
+        message: error?.message || 'Account creation failed.',
+        errorCode: 'ACCOUNT_CONFLICT',
+        data: null
+      });
     }
 
     // Create a JWT for the new user
     const jwt = createJWT({ id: response.id });
 
-    // Send back the JWT and account information
+    // Return a 200 OK status with a success message and the JWT
     return res.status(200).send({
-      jwt,
-      account: { accountId: response.id, phone: response.phone },
+      success: true,
+      message: 'Account created successfully',
+      data: {
+        jwt,
+        account: { accountId: response.id, phone: response.phone }
+      }
     });
   }
 );

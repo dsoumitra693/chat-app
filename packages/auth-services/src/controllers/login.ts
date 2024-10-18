@@ -22,33 +22,50 @@ const logIn = asyncErrorHandler(
     // Extract phone and password from the request body
     let { phone, password } = req.body;
 
-    // Return a 400 Bad Request status if phone or password is missing
+    // Return a standardized 400 Bad Request response if phone or password is missing
     if (!phone || !password) {
-      return res
-        .status(400)
-        .send({ message: 'Invalid data received from accounts.' });
+      return res.status(400).send({
+        success: false,
+        message: 'Invalid data received from accounts.',
+        errorCode: 'INVALID_INPUT',
+        data: {},
+      });
     }
 
     // Search for the account in the database using the provided phone
     const accounts = await searchAccount(eq(account.phone, phone));
 
-    // If the account doesn't exist, return a 409 Conflict status
+    // If the account doesn't exist, return a standardized 409 Conflict response
     if (accounts.length === 0) {
-      return res.status(409).send({ message: 'Phone does not exist' });
+      return res.status(409).send({
+        success: false,
+        message: 'Phone does not exist.',
+        errorCode: 'PHONE_NOT_FOUND',
+        data: {},
+      });
     }
 
-    // If the password is incorrect, return a 401 Unauthorized status
+    // If the password is incorrect, return a standardized 401 Unauthorized response
     if (!accounts[0].authenticate(password)) {
-      return res.status(401).send({ message: 'Password does not match' });
+      return res.status(401).send({
+        success: false,
+        message: 'Password does not match.',
+        errorCode: 'INVALID_PASSWORD',
+        data: {},
+      });
     }
     console.log(accounts[0]);
 
-    // If everything is correct, return a 200 OK status and send the account's JWT
+    // If everything is correct, return a standardized 200 OK response with the JWT
     const jwt = createJWT({ id: accounts[0].id });
 
     return res.status(200).send({
-      jwt,
-      account: { accountId: accounts[0].id, phone: accounts[0].phone },
+      success: true,
+      message: 'Login successful.',
+      data: {
+        jwt,
+        account: { accountId: accounts[0].id, phone: accounts[0].phone },
+      },
     });
   }
 );

@@ -19,41 +19,70 @@ import { eq } from 'drizzle-orm';
  * @throws 409 Conflict - If the new phone number is already associated with another account.
  * @returns 200 OK - If the phone number is updated successfully, it sends a success message.
  */
-const changeEmail = asyncErrorHandler(
+const changePhone = asyncErrorHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     // Extract the previous phone, new phone, and password from the request body
     let { previousPhone, newPhone, password } = req.body;
 
-    // Return a 400 Bad Request status if any required fields are missing
-    if (!previousPhone || !newPhone || !password)
-      return res.status(400).send({ error: 'Missing required fields' });
+    // Return a standardized 400 Bad Request response if any required fields are missing
+    if (!previousPhone || !newPhone || !password) {
+      return res.status(400).send({
+        success: false,
+        message: 'Missing required fields',
+        errorCode: 'INVALID_INPUT',
+        data: null
+      });
+    }
 
     // Search for the account with the previous phone number
     const accounts = await searchAccount(eq(account.phone, previousPhone));
 
-    // If the account does not exist, return a 404 Not Found status
-    if (!accounts[0])
-      return res.status(404).send({ error: 'account not found' });
+    // If the account does not exist, return a 404 Not Found response
+    if (!accounts[0]) {
+      return res.status(404).send({
+        success: false,
+        message: 'Account not found',
+        errorCode: 'ACCOUNT_NOT_FOUND',
+        data: null
+      });
+    }
 
-    // If the password does not match, return a 401 Unauthorized status
-    if (!accounts[0].authenticate(password))
-      return res.status(401).send({ error: 'Incorrect old password' });
+    // If the password does not match, return a 401 Unauthorized response
+    if (!accounts[0].authenticate(password)) {
+      return res.status(401).send({
+        success: false,
+        message: 'Incorrect old password',
+        errorCode: 'INVALID_PASSWORD',
+        data: null
+      });
+    }
 
-    // Check if the new phone number already exists
+    // Check if the new phone number is already associated with another account
     let existingAccountWithNewPhone = await searchAccount(eq(account.phone, newPhone));
 
-    // If there is already an account with the new phone number, return a 409 Conflict status
-    if (existingAccountWithNewPhone[0]) return res.sendStatus(409);
+    // If an account with the new phone number already exists, return a 409 Conflict response
+    if (existingAccountWithNewPhone[0]) {
+      return res.status(409).send({
+        success: false,
+        message: 'New phone number already in use',
+        errorCode: 'PHONE_CONFLICT',
+        data: null
+      });
+    }
 
     // Update the account's phone number with the new phone number
     await db
       .update(account)
-      .set({ phone: newPhone }) // Set the new phone number
+      .set({ phone: newPhone })
       .where(eq(account.phone, previousPhone));
 
-    // Return a 200 OK status
-    return res.status(200).send({ message: 'Phone number updated successfully' });
+    // Return a 200 OK status with a success message
+    return res.status(200).send({
+      success: true,
+      message: 'Phone number updated successfully',
+      data: { accountId: accounts[0].id, newPhone }
+    });
   }
 );
 
-export default changeEmail;
+export default changePhone;

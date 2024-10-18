@@ -22,11 +22,14 @@ const validateJWT = asyncErrorHandler(
     // Extract token from the request body
     let { token } = req.body;
 
-    // Return a 400 Bad Request status if token is missing
+    // Return a standardized 400 Bad Request response if token is missing
     if (!token) {
-      return res
-        .status(400)
-        .send({ message: 'Invalid data received from accounts.' });
+      return res.status(400).send({
+        success: false,
+        message: 'Invalid data received.',
+        errorCode: 'INVALID_INPUT',
+        data: null
+      });
     }
 
     // Verify the JWT and extract account data
@@ -36,13 +39,22 @@ const validateJWT = asyncErrorHandler(
     // Search for the account in the database using the provided account ID
     const accounts = await searchAccount(eq(account.id, _account.id));
 
-    // If the account doesn't exist, return a 409 Conflict status
+    // If the account doesn't exist, return a standardized 404 Not Found response
     if (accounts.length === 0) {
-      return res.status(409).send({ message: 'Account does not exist' });
+      return res.status(404).send({
+        success: false,
+        message: 'Account does not exist.',
+        errorCode: 'ACCOUNT_NOT_FOUND',
+        data: null
+      });
     }
 
     // Send back the account ID if validation is successful
-    res.status(200).send({ accountId: _account.id });
+    return res.status(200).send({
+      success: true,
+      message: 'JWT validation successful.',
+      data: { accountId: _account.id }
+    });
   }
 );
 

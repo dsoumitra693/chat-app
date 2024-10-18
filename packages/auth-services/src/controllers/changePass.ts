@@ -25,20 +25,38 @@ const changePass = asyncErrorHandler(
     // Extract phone, new password, and old password from the request body
     let { phone, newPass, oldPass } = req.body;
 
-    // Return a 400 Bad Request status if any required fields are missing
-    if (!phone || !newPass || !oldPass)
-      return res.status(400).send({ error: 'Missing required fields' });
+    // Return a standardized 400 Bad Request response if any required fields are missing
+    if (!phone || !newPass || !oldPass) {
+      return res.status(400).send({
+        success: false,
+        message: 'Missing required fields',
+        errorCode: 'INVALID_INPUT',
+        data: null
+      });
+    }
 
     // Search for the account in the database using the provided phone
     let accounts = await searchAccount(eq(account.phone, phone));
 
-    // If the account does not exist, return a 404 Not Found status
-    if (!accounts[0])
-      return res.status(404).send({ error: 'account not found' });
+    // If the account does not exist, return a 404 Not Found response
+    if (!accounts[0]) {
+      return res.status(404).send({
+        success: false,
+        message: 'Account not found',
+        errorCode: 'ACCOUNT_NOT_FOUND',
+        data: null
+      });
+    }
 
-    // If the old password does not match, return a 401 Unauthorized status
-    if (!accounts[0].authenticate(oldPass))
-      return res.status(401).send({ error: 'Incorrect old password' });
+    // If the old password does not match, return a 401 Unauthorized response
+    if (!accounts[0].authenticate(oldPass)) {
+      return res.status(401).send({
+        success: false,
+        message: 'Incorrect old password',
+        errorCode: 'INVALID_OLD_PASSWORD',
+        data: null
+      });
+    }
 
     // Update the account's password with the new password
     await db
@@ -49,8 +67,15 @@ const changePass = asyncErrorHandler(
     // Create a new JWT for the account
     const jwt = createJWT({ id: accounts[0].id });
 
-    // Return a 200 OK status and send the account's updated JWT
-    return res.status(200).send({ jwt });
+    // Return a 200 OK status with the new JWT in a standardized success response
+    return res.status(200).send({
+      success: true,
+      message: 'Password updated successfully',
+      data: {
+        jwt,
+        account: { accountId: accounts[0].id, phone: accounts[0].phone }
+      }
+    });
   }
 );
 
