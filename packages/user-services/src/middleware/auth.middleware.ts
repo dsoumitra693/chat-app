@@ -18,17 +18,41 @@ export const authenticate = asyncErrorHandler(
 
     if (authHeader) {
       const token = authHeader.split(' ')[1]; // Extract the JWT token from the header
-      const response = await axios.post(
-        `${process.env.AUTH_SERVER_URL}/auth/jwt/validate/`,
-        {
-          token,
+
+      try {
+        const response = await axios.post(
+          `${process.env.AUTH_SERVER_URL}/auth/jwt/validate/`,
+          { token }
+        );
+
+        // Add the accountId from the validated token response to the request body
+        req.body.accountId = response.data.accountId;
+        next(); // Proceed to the next middleware or route handler
+      } catch (error) {
+        // Handle errors from the token validation process
+        if (axios.isAxiosError(error) && error.response) {
+          // Check if the error has a response from the server
+          res.status(error.response.status).json({
+            status: 'error',
+            message: 'Token validation failed',
+            data: null, // You can include more details in the response if needed
+          });
+        } else {
+          // Handle other possible errors
+          res.status(500).json({
+            status: 'error',
+            message: 'Internal Server Error',
+            data: null,
+          });
         }
-      );
-      // Add the accountId from the validated token response to the request body
-      req.body.accountId = response.data.accountId;
-      next(); // Proceed to the next middleware or route handler
+      }
     } else {
-      res.sendStatus(401); // Unauthorized
+      // If no token is provided, respond with a standardized error message
+      res.status(401).json({
+        status: 'error',
+        message: 'No token provided',
+        data: null,
+      });
     }
   }
 );

@@ -12,7 +12,7 @@ const userService = new UserServices();
  * @param {string} fullname - The full name of the user from the request body
  * @param {string} bio - A short bio for the user's profile from the request body
  * @param {string} profilePictureBase64 - The base64-encoded profile picture from the request body
- * @returns {void} Responds with a 201 status code and success message on success
+ * @returns {void} Responds with a standardized success message on success
  */
 export const createUserProfile = asyncErrorHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -27,8 +27,12 @@ export const createUserProfile = asyncErrorHandler(
     // Create the new user profile
     await userService.createUser({ ...body, profilePicture });
 
-    // Respond with a 201 status indicating profile creation success
-    res.status(201).json({ message: 'User profile created successfully' });
+    // Respond with a standardized success message
+    res.status(201).json({
+      status: 'success',
+      message: 'User profile created successfully',
+      data: null, // No data to return in this case
+    });
   }
 );
 
@@ -37,7 +41,7 @@ export const createUserProfile = asyncErrorHandler(
  * @route GET /users/:id/profile
  * @param {string} accountId - The account ID from the request body
  * @returns {object} user_profile - The retrieved user's profile data
- * Responds with a 200 status code and the user's profile data on success
+ * Responds with a standardized success message on success
  */
 export const getUserProfile = asyncErrorHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -46,8 +50,12 @@ export const getUserProfile = asyncErrorHandler(
     // Retrieve the user profile using the account ID
     const user_profile = await userService.getUser({ accountId });
 
-    // Respond with a 200 status and the retrieved user profile
-    res.status(200).json({ user: user_profile });
+    // Respond with a standardized success message
+    res.status(200).json({
+      status: 'success',
+      message: 'User profile retrieved successfully',
+      data: user_profile,
+    });
   }
 );
 
@@ -59,7 +67,7 @@ export const getUserProfile = asyncErrorHandler(
  * @param {string} bio - The updated bio for the user's profile from the request body
  * @param {string} profilePictureBase64 - The updated base64-encoded profile picture from the request body
  * @returns {object} user_profile - The updated user profile data
- * Responds with a 200 status code and the updated user profile data on success
+ * Responds with a standardized success message on success
  */
 export const updateUserProfile = asyncErrorHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -77,7 +85,11 @@ export const updateUserProfile = asyncErrorHandler(
       profilePicture,
     });
 
-    // Respond with a 200 status and the updated user profile
-    res.status(200).json({ user: user_profile });
+    // Respond with a standardized success message
+    res.status(200).json({
+      status: 'success',
+      message: 'User profile updated successfully',
+      data: user_profile,
+    });
   }
 );

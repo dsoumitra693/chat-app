@@ -16,8 +16,24 @@ export const addContact = asyncErrorHandler(
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const userId = req.params.id;
     const contactId = req.body.contactId; // Assuming the body contains the contactId
+
+    if (!contactId) {
+      res.status(400).json({
+        success: false,
+        message: 'Missing required contactId',
+        errorCode: 'INVALID_INPUT',
+        data: null,
+      });
+      return
+    }
+
     await userService.addContact(userId, contactId);
-    res.status(201).json({ message: 'Contact added successfully' });
+
+    res.status(201).json({
+      success: true,
+      message: 'Contact added successfully',
+      data: { userId, contactId },
+    });
   }
 );
 
@@ -33,8 +49,14 @@ export const removeContact = asyncErrorHandler(
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const userId = req.params.id;
     const contactId = req.params.contactId;
+
     await userService.removeContact(userId, contactId);
-    res.status(204).send(); // No content
+
+    res.status(204).json({
+      success: true,
+      message: 'Contact removed successfully',
+      data: null,
+    });
   }
 );
 
@@ -49,7 +71,12 @@ export const removeContact = asyncErrorHandler(
 export const getUserContacts = asyncErrorHandler(
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const userId = req.params.id;
-    const user_contacts = await userService.getContacts(userId);
-    res.status(200).send({ user_contacts });
+    const userContacts = await userService.getContacts(userId);
+
+    res.status(200).json({
+      success: true,
+      message: 'User contacts retrieved successfully',
+      data: { userContacts },
+    });
   }
 );
