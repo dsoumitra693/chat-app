@@ -27,11 +27,14 @@ export const createUserProfile = asyncErrorHandler(
     // Create the new user profile
     await userService.createUser({ ...body, profilePicture });
 
+    const data ={...body, profilePicture};
+    delete data.profilePictureBase64;
+
     // Respond with a standardized success message
     res.status(201).json({
       status: 'success',
       message: 'User profile created successfully',
-      data: null, // No data to return in this case
+      data: {...body, profilePicture}, // No data to return in this case
     });
   }
 );
