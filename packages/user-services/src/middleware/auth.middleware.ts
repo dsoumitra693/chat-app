@@ -24,9 +24,8 @@ export const authenticate = asyncErrorHandler(
           `${process.env.AUTH_SERVER_URL}/auth/jwt/validate/`,
           { token }
         );
-
         // Add the accountId from the validated token response to the request body
-        req.body.accountId = response.data.accountId;
+        req.body.accountId = response.data.data.accountId;
         next(); // Proceed to the next middleware or route handler
       } catch (error) {
         // Handle errors from the token validation process

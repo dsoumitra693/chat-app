@@ -23,7 +23,7 @@ export const createUserProfile = asyncErrorHandler(
     if (!!body.profilePictureBase64) {
       profilePicture = (await uploadImage(body.profilePictureBase64)) as string;
     }
-
+    console.log(body)
     // Create the new user profile
     await userService.createUser({ ...body, profilePicture });
 
