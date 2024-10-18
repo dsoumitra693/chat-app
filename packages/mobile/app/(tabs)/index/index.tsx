@@ -2,7 +2,7 @@ import { StatusView, Feed } from '@/components/UI/home';
 import { Colors } from '@/constants/Colors';
 import { ScrollView, StyleSheet, StatusBar } from 'react-native';
 
-export default function Chats() {
+export default function Home() {
   return (
     <ScrollView style={styles.container}>
       <StatusView />

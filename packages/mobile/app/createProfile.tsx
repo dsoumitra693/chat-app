@@ -1,6 +1,6 @@
 import { Colors } from '@/constants/Colors';
 import { useSession } from '@/provides';
-import { Redirect, useRouter } from 'expo-router';
+import { Redirect } from 'expo-router';
 import { useState } from 'react';
 import {
   KeyboardAvoidingView,
@@ -8,57 +8,39 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View,
 } from 'react-native';
 
 export default function SignIn() {
-  const router = useRouter();
-  const { session, signIn } = useSession();
-  const goToSignUp = () => {
-    router.push('/signup');
+  const { user, createUserProfile } = useSession();
+
+  const [fullname, setFullname] = useState('');
+  const [bio, setBio] = useState('');
+  const [profilePic, setProfilePic] = useState('');
+
+  const handleCreateProfile = () => {
+    createUserProfile(fullname, bio, profilePic);
   };
 
-  const [phone, setPhone] = useState('');
-  const [password, setPassword] = useState('');
-
-  const handleSignin = () => {
-    signIn(phone, password);
-  };
-
-  if (session) return <Redirect href="/" />;
+  if (user) return <Redirect href="/" />;
   return (
     <KeyboardAvoidingView style={styles.conatainer} behavior="height">
       <TextInput
-        placeholder="Phone number"
-        inputMode="numeric"
-        dataDetectorTypes={'phoneNumber'}
-        autoComplete="cc-number"
+        placeholder="Fullname"
         style={styles.input}
         placeholderTextColor={Colors['dark'].text2}
-        keyboardType="number-pad"
-        value={phone}
-        onChangeText={setPhone}
+        value={fullname}
+        onChangeText={setFullname}
       />
       <TextInput
-        // secureTextEntry
-        placeholder="Password"
+        placeholder="Bio"
         style={styles.input}
-        autoComplete="password"
         placeholderTextColor={Colors['dark'].text2}
-        value={password}
-        onChangeText={setPassword}
+        value={bio}
+        onChangeText={setBio}
       />
-      <TouchableOpacity style={styles.btn} onPress={handleSignin}>
-        <Text style={styles.text}>Sign in</Text>
+      <TouchableOpacity style={styles.btn} onPress={handleCreateProfile}>
+        <Text style={styles.text}>Create your profile</Text>
       </TouchableOpacity>
-      <View style={styles.center}>
-        <Text style={styles.text}>Don't have an account? </Text>
-        <TouchableOpacity style={styles.center} onPress={goToSignUp}>
-          <Text style={{ ...styles.text, color: Colors['dark'].tint }}>
-            Sign up
-          </Text>
-        </TouchableOpacity>
-      </View>
     </KeyboardAvoidingView>
   );
 }

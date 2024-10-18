@@ -7,9 +7,11 @@ import { useSession } from '@/provides';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
-  const { session } = useSession();
+  const { session, user } = useSession();
+
 
   if (!session) return <Redirect href="/signin" />;
+  if (!user) return <Redirect href="/createProfile" />;
 
   return (
     <Tabs

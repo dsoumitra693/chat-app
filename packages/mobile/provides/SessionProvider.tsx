@@ -37,12 +37,8 @@ export const useSession = () => {
 };
 
 interface ISession {
-  token: string;
-  account: { id: string };
-}
-
-interface IUserResponse {
-  user: IUser;
+  jwt: string;
+  account: { accountId: string };
 }
 
 const SessionContext = React.createContext<ISessionContext | null>(null);
@@ -62,8 +58,33 @@ const SessionProvider: React.FC<SessionProviderProps> = ({ children }) => {
    */
   useEffect(() => {
     (async () => {
-      const _session = await getData<ISession>(SESSION_KEY);
-      if (_session) setSession(_session);
+      const data = await getData<ISession>(SESSION_KEY);
+      if (!data.jwt) return;
+      const headers = {
+        'Content-Type': 'application/json',
+        authorization: `Bearer ${data.jwt}`,
+      };
+      let [authRes, userRes] = await Promise.all([
+        authApiService.request<{ accountId: string }>(
+          'auth/jwt/validate',
+          'POST',
+          {
+            token: data.jwt,
+          }
+        ),
+        userApiService.request<IUser>(
+          `users`,
+          'GET',
+          { accountId: data.account.accountId },
+          headers
+        ),
+      ]);
+      if (authRes.success && !!data.jwt) {
+        setSession({ jwt: data.jwt, account: authRes.data });
+      }
+      if (userRes.success) {
+        setUser(userRes.data);
+      }
     })();
   }, []);
 
@@ -75,14 +96,16 @@ const SessionProvider: React.FC<SessionProviderProps> = ({ children }) => {
    */
   const signUp = async (phone: string, password: string) => {
     if (phone && password) {
-      const {
-        data: { token, account },
-      } = await authApiService.request<ISession>('auth/signup', 'POST', {
-        phone,
-        password,
-      });
-      setSession({ token, account });
-      storeData<string>(SESSION_KEY, token);
+      const res = await authApiService.request<ISession>(
+        'auth/signup',
+        'POST',
+        {
+          phone,
+          password,
+        }
+      );
+      setSession(res.data);
+      storeData<ISession>(SESSION_KEY, res.data);
     }
   };
 
@@ -99,22 +122,26 @@ const SessionProvider: React.FC<SessionProviderProps> = ({ children }) => {
     profilePicture?: string
   ) => {
     const payload: Record<string, any> = {
-      token: session?.token!,
+      accountId: session?.account.accountId!,
       fullname,
     };
 
     if (bio) payload.bio = bio;
     if (profilePicture) payload.profilePicture = profilePicture;
+    const headers = {
+      'Content-Type': 'application/json',
+      authorization: `Bearer ${session?.jwt}`,
+    };
 
-    const {
-      data: { user },
-    } = await userApiService.request<IUserResponse>(
-      `users/${session?.account.id}`,
+    const res = await userApiService.request<IUser>(
+      `users`,
       'POST',
-      payload
+      payload,
+      headers
     );
-    setUser(user);
-    storeData<IUser>(USER_KEY, user);
+    console.log(res)
+    setUser(res.data);
+    storeData<IUser>(USER_KEY, res.data);
   };
 
   /**
@@ -130,22 +157,24 @@ const SessionProvider: React.FC<SessionProviderProps> = ({ children }) => {
     profilePicture?: string
   ) => {
     const payload: Record<string, any> = {
-      token: session?.token!,
+      accountId: session?.account.accountId!,
     };
 
     if (fullname) payload.fullname = fullname;
     if (bio) payload.bio = bio;
     if (profilePicture) payload.profilePicture = profilePicture;
-    
-    const {
-      data: { user },
-    } = await userApiService.request<IUserResponse>(
-      `users/${session?.account.id}`,
-      'POST',
-      payload
+    const headers = {
+      'Content-Type': 'application/json',
+      authorization: `Bearer ${session?.jwt}`,
+    };
+    const res = await userApiService.request<IUser>(
+      `users`,
+      'PUT',
+      payload,
+      headers
     );
-    setUser(user);
-    storeData<IUser>(USER_KEY, user);
+    setUser(res.data);
+    storeData<IUser>(USER_KEY, res.data);
   };
 
   /**
@@ -156,23 +185,26 @@ const SessionProvider: React.FC<SessionProviderProps> = ({ children }) => {
    */
   const signIn = async (phone: string, password: string) => {
     if (phone && password) {
-      const { data } = await authApiService.request<ISession>(
+      const authRes = await authApiService.request<ISession>(
         'auth/login',
         'POST',
         { phone, password }
       );
-      setSession(data);
-      storeData<ISession>(SESSION_KEY, data);
+      setSession(authRes.data);
+      storeData<ISession>(SESSION_KEY, authRes.data);
+      const headers = {
+        'Content-Type': 'application/json',
+        authorization: `Bearer ${authRes.data.jwt}`,
+      };
 
-      const {
-        data: { user },
-      } = await userApiService.request<IUserResponse>(
-        `users/${data.account.id}`,
+      const userRes = await userApiService.request<IUser>(
+        `users`,
         'GET',
-        { token: data.token }
+        { accountId: session?.account.accountId! },
+        headers
       );
       setUser(user);
-      storeData<IUser>(USER_KEY, user);
+      storeData<IUser>(USER_KEY, userRes.data);
     }
   };
 

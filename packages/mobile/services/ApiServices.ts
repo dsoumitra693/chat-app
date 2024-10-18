@@ -1,8 +1,14 @@
 import { RequestOptionsBuilder } from '@/utils/requestOptionsBuilder';
-import axios, { AxiosResponse } from 'axios';
+import axios from 'axios';
 
 const AUTH_API_URL = process.env.EXPO_PUBLIC_AUTH_API_URL!;
 const USER_API_URL = process.env.EXPO_PUBLIC_USER_API_URL!;
+
+interface APIResponse<T> {
+  success: boolean;
+  message: string;
+  data: T;
+}
 
 /**
  * Service class responsible for making API requests.
@@ -21,16 +27,13 @@ export class ApiService {
   }
 
   /**
-   * Retrieves the singleton instance of `ApiService` for the given base URL.
+   * Creates a new instance of `ApiService` for the given base URL.
    * @param baseUrl - The base URL for the API requests.
-   * @returns The singleton instance of `ApiService`.
+   * @returns A new instance of `ApiService` that can be used independently.
    */
-  static getInstance(baseUrl: string): ApiService {
-    if (!ApiService.instance) {
-      const requestOptionsBuilder = RequestOptionsBuilder.getInstance(baseUrl);
-      ApiService.instance = new ApiService(requestOptionsBuilder);
-    }
-    return ApiService.instance;
+  static createInstance(baseUrl: string): ApiService {
+    const requestOptionsBuilder = RequestOptionsBuilder.getInstance(baseUrl);
+    return new ApiService(requestOptionsBuilder);
   }
 
   /**
@@ -50,7 +53,7 @@ export class ApiService {
     headers: Record<string, string> = {
       'Content-Type': 'application/json',
     }
-  ): Promise<AxiosResponse<T>> {
+  ): Promise<APIResponse<T>> {
     try {
       const requestOptions = this.requestOptionsBuilder.buildRequestOptions(
         url,
@@ -59,20 +62,15 @@ export class ApiService {
         headers
       );
       const response = await axios.request<T>(requestOptions);
-      return response;
+      return response.data as APIResponse<T>;
     } catch (error: any) {
-      console.error('Error:', error);
+      console.error('Error:', error, url);
       throw new Error(error);
     }
   }
 }
 
-/**
- * Singleton instance of `ApiService` for authentication API requests.
- */
-export const authApiService = ApiService.getInstance(AUTH_API_URL);
+// Create separate instances of `ApiService` for authentication and user-related API requests
+export const authApiService = ApiService.createInstance(AUTH_API_URL);
+export const userApiService = ApiService.createInstance(USER_API_URL);
 
-/**
- * Singleton instance of `ApiService` for user-related API requests.
- */
-export const userApiService = ApiService.getInstance(USER_API_URL);

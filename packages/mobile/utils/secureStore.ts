@@ -1,25 +1,29 @@
 import * as SecureStore from 'expo-secure-store';
 
-// Store the data
+
 export const storeData = async <T>(token: string, data: T) => {
   try {
-    await SecureStore.setItemAsync(token, JSON.stringify(data));
+    // Ensure data is serializable
+    const stringData = JSON.stringify(data);
+    
+    await SecureStore.setItemAsync(token, stringData);
   } catch (error) {
     console.error('Error while storing data:', error);
   }
 };
 
+
 // Retrieve the data
-export const getData = async <T>(token: string): Promise<T | null> => {
+export const getData = async <T>(token: string): Promise<T> => {
   try {
     const data = await SecureStore.getItemAsync(token);
     if (data) {
       return JSON.parse(data) as T;
     }
-    return null;
+    return {} as T;
   } catch (error) {
     console.error('Error while retrieving data:', error);
-    return null;
+    return {} as T;
   }
 };
 
