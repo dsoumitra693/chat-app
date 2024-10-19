@@ -1,20 +1,12 @@
-import { neon } from '@neondatabase/serverless';
-import { drizzle } from 'drizzle-orm/neon-http';
-import { config } from 'dotenv';
-
-// Load environment variables from a .env file into process.env
-config();
-
-// Ensure that the database URL is defined in the environment variables
-if (!process.env.DRIZZLE_DATABASE_URL) {
-  throw new Error('Database URL is not defined in .env');
-}
-
-// Initialize the Neon database client using the provided database URL
-const neonClient = neon(process.env.DRIZZLE_DATABASE_URL!);
+import { init_db } from 'shared';
 
 /**
- * Create a Drizzle ORM instance with the Neon database client.
- * This instance can be used to interact with the database.
+ * Initializes a Neon database client and Drizzle ORM instance.
+ * 
+ * @const {NeonClient} neonClient - The Neon database client initialized with the provided database URL.
+ * @const {Database} db - The Drizzle ORM instance configured to interact with the Neon database.
+ * 
+ * @throws {Error} Throws an error if the DRIZZLE_DATABASE_URL is not defined.
  */
-export const db = drizzle(neonClient);
+
+export const db = init_db()

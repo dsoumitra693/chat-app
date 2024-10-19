@@ -2864,11 +2864,6 @@
   dependencies:
     "@types/node" "*"
 
-"@types/k6@^0.54.1":
-  version "0.54.1"
-  resolved "https://registry.yarnpkg.com/@types/k6/-/k6-0.54.1.tgz#8767bddd51b8bb1a451d5af14baf14c7dcd977c4"
-  integrity sha512-ezTMhuWr3TZIMOqAv51/4rD5T4FE1pSryrh5BCgxsniuqxbi5jQ3YEiOlO9C1+LvJcliC2byyd2Cw6cnUY7CLg==
-
 "@types/mdast@^4.0.0":
   version "4.0.4"
   resolved "https://registry.yarnpkg.com/@types/mdast/-/mdast-4.0.4.tgz#7ccf72edd2f1aa7dd3437e180c64373585804dd6"
