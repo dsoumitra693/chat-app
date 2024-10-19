@@ -64,14 +64,14 @@ userRouter.get('/contacts', authenticate, getUserContacts);
  * @route POST /presence
  * @returns {void}
  */
-userRouter.post('/presence', authenticate, setUserPresence);
+userRouter.post('/presence/:userId', authenticate, setUserPresence);
 
 /**
  * Route to get the user's presence status.
  * @route GET /presence
  * @returns {void}
  */
-userRouter.get('/presence', authenticate, getUserPresence);
+userRouter.get('/presence/:userId', authenticate, getUserPresence);
 
 /**
  * Route to retrieve the user's settings.
