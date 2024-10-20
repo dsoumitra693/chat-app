@@ -5,33 +5,38 @@ import userRouter from './user.router';
 /**
  * Initializes a new Router instance for handling database-related routes.
  *
+ * This router consolidates routes for account and user operations, delegating
+ * to their respective sub-routers.
+ *
  * @constant {Router} dbRouter - The router instance that defines the database operation routes.
  */
 const dbRouter = Router();
 
-
 /**
- * Route to handle SQL read operations.
+ * Mounts the accountRouter to handle routes under `/account`.
  * 
- * @name POST /read
+ * This handles SQL operations like reading and deleting account-related data.
+ * 
+ * @name /account
  * @function
- * @memberof dbRouter
+ * @memberof module:dbRouter
  * @inner
- * @param {Request} req - The request object containing the query parameters for reading data.
+ * @param {Request} req - The request object for account operations.
  * @param {Response} res - The response object for sending the result back to the client.
  * @param {NextFunction} next - The next middleware function in the stack.
  */
 dbRouter.use('/account', accountRouter);
 
-
 /**
- * Route to handle SQL delete operations.
+ * Mounts the userRouter to handle routes under `/user`.
  * 
- * @name DELETE /delete
+ * This handles SQL operations like reading and deleting user-related data.
+ * 
+ * @name /user
  * @function
- * @memberof dbRouter
+ * @memberof module:dbRouter
  * @inner
- * @param {Request} req - The request object containing the conditions for deleting data.
+ * @param {Request} req - The request object for user operations.
  * @param {Response} res - The response object for sending the result back to the client.
  * @param {NextFunction} next - The next middleware function in the stack.
  */

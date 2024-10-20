@@ -3,7 +3,6 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import dbRouter from './routes';
 
-
 // Load environment variables from a .env file into process.env
 dotenv.config();
 
@@ -30,7 +29,7 @@ app.get('/', (_, res) => {
   res.send('Welcome to Messenger-Database-Service');
 });
 
-// Authentication routes, handles routes defined in the dbRouter
+// Database routes, handles routes defined in the dbRouter
 app.use('/db', dbRouter);
 
 /**

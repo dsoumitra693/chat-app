@@ -1,8 +1,12 @@
 /**
  * Module exporting authentication-related controller functions.
  *
- * These functions handle user authentication tasks such as logging in, signing up,
- * password management, and token validation.
+ * These functions handle tasks related to accounts and users, including:
+ * - Account: Reading and deleting account data.
+ * - User: Reading and deleting user data.
+ *
+ * The functions are responsible for performing database operations and
+ * returning appropriate responses to client requests.
  *
  * @module dbControllers
  */
