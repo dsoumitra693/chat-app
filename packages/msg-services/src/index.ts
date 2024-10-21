@@ -1,30 +1,58 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import authRouter from './routes';
+import { Server } from 'socket.io';
+import http from 'http';
 
-// Load environment variables from a .env file into process.env
+// Load environment variables
 dotenv.config();
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 3000;
 const app = express();
 
-// Middleware to parse incoming JSON requests with a body size limit of 50mb
-app.use(express.json({ limit: '50mb' }));
+// Create an HTTP server (required for Socket.IO)
+const server = http.createServer(app);
 
-// Middleware to parse URL-encoded payloads (like form submissions)
-app.use(express.urlencoded({ extended: true }));
-
-// Middleware to enable Cross-Origin Resource Sharing (CORS) for all routes
-app.use(cors());
-
-// Root route for the API, provides a simple welcome message
-app.get('/', (_, res) => {
-  res.send('Welcome to Messenger');
+// Initialize Socket.IO server
+const io = new Server(server, {
+  cors: {
+    origin: "*", // Allow CORS for all origins
+    methods: ["GET", "POST"]
+  }
 });
 
-// Authentication routes, handles routes defined in the authRouter
-app.use('/auth', authRouter);
+// Middleware
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true }));
+app.use(cors());
 
-// Start the Express server and listen on the specified port
-app.listen(PORT, () => console.log(`App listening on port ${PORT}!`));
+// Serve a simple HTML file for the client
+app.get('/', (_, res) => {
+  res.send("Welcome to Messenger-Msg-Services");
+});
+
+// Handle WebSocket connection using Socket.IO
+io.on('connection', (socket) => {
+  console.log('A user connected');
+
+  // Listen for incoming messages
+  socket.on('message', (msg) => {
+    console.log('Received message:', msg);
+    console.log(socket.id);
+    // Echo the message back to the client
+    socket.emit('message', `Server response: ${msg}`);
+  });
+
+  // Handle client disconnection
+  socket.on('disconnect', () => {
+    console.log('User disconnected');
+  });
+
+  // Send a welcome message when a user connects
+  socket.emit('message', 'Welcome to the Socket.IO server!');
+});
+
+// Start the server
+server.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
