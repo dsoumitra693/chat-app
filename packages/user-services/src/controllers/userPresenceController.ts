@@ -12,7 +12,7 @@ import { asyncErrorHandler } from '../utils/asyncErrorHandler';
  */
 export const setUserPresence = asyncErrorHandler(
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const { userId } = req.params;
+    const { userId, socketId } = req.params;
     const { status } = req.body;
 
     if (!status || !['online', 'offline'].includes(status)) {
@@ -20,7 +20,7 @@ export const setUserPresence = asyncErrorHandler(
       return 
     }
 
-    const key = `presence:${userId}`;
+    const key = `presence:${userId}-${socketId}`;
 
     if (status === 'online') {
       await redisClient.set(key, 'online', 'EX', 60); // Set user as online for 1 hour (3600 seconds)
@@ -42,8 +42,8 @@ export const setUserPresence = asyncErrorHandler(
  */
 export const getUserPresence = asyncErrorHandler(
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const { userId } = req.params;
-    const presenceStatus = await redisClient.get(`presence:${userId}`);
+    const { userId,socketId } = req.params;
+    const presenceStatus = await redisClient.get(`presence:${userId}-${socketId}`);
 
     if (presenceStatus) {
       res.status(200).json({ userId, status: presenceStatus });
