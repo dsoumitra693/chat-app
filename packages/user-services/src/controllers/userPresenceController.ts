@@ -17,13 +17,21 @@ export const setUserPresence = asyncErrorHandler(
 
     if (!status || !['online', 'offline'].includes(status)) {
       res.status(400).json({ message: 'Invalid status value.' });
-      return 
+      return;
     }
 
-    const key = `presence:${userId}-${socketId}`;
+    const key = `presence:${userId}`;
 
     if (status === 'online') {
-      await redisClient.set(key, 'online', 'EX', 60); // Set user as online for 1 hour (3600 seconds)
+      await redisClient.set(
+        key,
+        JSON.stringify({
+          status,
+          socketId,
+        }),
+        'EX',
+        60
+      ); // Set user as online for 1 hour (3600 seconds)
     } else if (status === 'offline') {
       await redisClient.del(key); // Remove user presence status
     }
@@ -42,13 +50,13 @@ export const setUserPresence = asyncErrorHandler(
  */
 export const getUserPresence = asyncErrorHandler(
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const { userId,socketId } = req.params;
-    const presenceStatus = await redisClient.get(`presence:${userId}-${socketId}`);
+    const { userId, socketId } = req.params;
+    const presenceStatus = await redisClient.get(`presence:${userId}`);
 
     if (presenceStatus) {
-      res.status(200).json({ userId, status: presenceStatus });
+      res.status(200).json({ userId, ...JSON.parse(presenceStatus) });
     } else {
-      res.status(200).json({ userId, status: 'offline' });
+      res.status(200).json({ userId, status: 'offline', socketId: null });
     }
   }
 );
