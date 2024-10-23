@@ -1,58 +1,37 @@
-import express from 'express';
-import cors from 'cors';
-import dotenv from 'dotenv';
-import { Server } from 'socket.io';
 import http from 'http';
+import SocketServices from './SocketServices';
 
-// Load environment variables
-dotenv.config();
+/**
+ * Initializes the HTTP server and socket services, and starts listening on the specified port.
+ * 
+ * This asynchronous function creates an HTTP server, initializes socket services for real-time communication,
+ * and listens on the specified port (defaults to 4000 if not provided via the environment).
+ *
+ * @async
+ * @function init
+ * @returns {Promise<void>} - A promise that resolves once the server has started.
+ */
+const init = async (): Promise<void> => {
+  // Create an HTTP server instance
+  let httpServer = http.createServer();
 
-const PORT = process.env.PORT || 3000;
-const app = express();
+  // Define the port to listen on, defaulting to 4000 if not specified
+  const PORT = process.env.PORT || 4000;
 
-// Create an HTTP server (required for Socket.IO)
-const server = http.createServer(app);
+  // Initialize the SocketServices instance
+  const socketServices = new SocketServices();
 
-// Initialize Socket.IO server
-const io = new Server(server, {
-  cors: {
-    origin: "*", // Allow CORS for all origins
-    methods: ["GET", "POST"]
-  }
-});
+  // Attach the socket.io instance to the HTTP server
+  socketServices.io.attach(httpServer);
 
-// Middleware
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ extended: true }));
-app.use(cors());
+  // Set up the necessary event listeners for socket communication
+  socketServices.initListeners();
 
-// Serve a simple HTML file for the client
-app.get('/', (_, res) => {
-  res.send("Welcome to Messenger-Msg-Services");
-});
-
-// Handle WebSocket connection using Socket.IO
-io.on('connection', (socket) => {
-  console.log('A user connected');
-
-  // Listen for incoming messages
-  socket.on('message', (msg) => {
-    console.log('Received message:', msg);
-    console.log(socket.id);
-    // Echo the message back to the client
-    socket.emit('message', `Server response: ${msg}`);
+  // Start the server and listen on the specified port
+  httpServer.listen(PORT, () => {
+    console.log("Server listening on PORT %d", PORT);
   });
+};
 
-  // Handle client disconnection
-  socket.on('disconnect', () => {
-    console.log('User disconnected');
-  });
-
-  // Send a welcome message when a user connects
-  socket.emit('message', 'Welcome to the Socket.IO server!');
-});
-
-// Start the server
-server.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+// Call the init function to start the server
+init();
