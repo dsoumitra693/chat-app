@@ -1,5 +1,5 @@
 import http from 'http';
-import SocketServices from './SocketServices';
+import SocketServices from './services/SocketServices';
 
 /**
  * Initializes the HTTP server and socket services, and starts listening on the specified port.
