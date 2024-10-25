@@ -1,12 +1,14 @@
 import { Server, Socket } from 'socket.io';
-import { sub, pub, redisKV } from './redis';
+import { redisKV } from './redis';
 import { socketAuth } from '../middleware/socket';
 import { FileUploader } from './fileUploader';
+import { ConversationService } from './conversationService';
+import { MessageService } from './MessageService';
 
 // Extend the Socket interface to include userId
 declare module 'socket.io' {
   interface Socket {
-    userId: string; // Add userId to the Socket type for easy access
+    userId: string;
   }
 }
 
@@ -14,129 +16,88 @@ const MAX_BUFFER_SIZE = 2e20 * 7; // Maximum buffer size for HTTP requests
 
 /**
  * The `SocketServices` class manages the setup and configuration of the Socket.IO server
- * and handles socket events such as connections, messages, and disconnections.
+ * and handles socket events such as connections, messages, reactions, and file uploads.
  */
 class SocketServices {
-  private _io: Server; // Instance of the Socket.IO server
+  private _io: Server;
 
   /**
-   * Constructs a new `SocketServices` instance and initializes the Socket.IO server.
-   *
-   * - Configures CORS options to allow cross-origin requests from any origin.
-   * - Sets up middleware to validate `userId` and JWT tokens on socket connections.
-   * - Subscribes to Redis channels to handle incoming messages and emit events to connected clients.
+   * Constructs a new `SocketServices` instance and initializes the Socket.IO server with
+   * CORS options, middleware for authentication, and Redis subscriptions for real-time communication.
    */
   constructor() {
-    // Initialize a new instance of Socket.IO with CORS options
     this._io = new Server({
       cors: {
-        origin: '*', // Allow requests from any origin
+        origin: '*', // Allow all origins
         methods: ['GET', 'POST'], // Allowed HTTP methods
-        credentials: true, // Allow cookies or auth headers to be sent with requests
+        credentials: true, // Allow cookies and authentication headers
       },
-      maxHttpBufferSize: MAX_BUFFER_SIZE, // Set the maximum buffer size for HTTP requests
+      maxHttpBufferSize: MAX_BUFFER_SIZE, // Set the max buffer size
     });
 
-    // Middleware to validate userId and JWT on socket connection
+    // Middleware for socket authentication
     this._io.use(socketAuth);
-
-    // Subscribe to Redis messages for handling different channels
-    sub.subscribe('MESSAGE'); // Subscribe to MESSAGE channel for incoming messages
-    sub.subscribe('REACTION'); // Subscribe to REACTION channel for incoming reactions
-
-    // Handle incoming messages from Redis
-    sub.on('message', async (channel, message) => {
-      const parsedMessage = JSON.parse(message); // Parse the incoming message from Redis
-      const socketId = await redisKV.get(parsedMessage.to.userId); // Retrieve the socket ID associated with the user
-
-      // Emit the message event to the recipient if they're online
-      if (socketId) {
-        this._io
-          .to(socketId)
-          .emit(`event:${channel.toLowerCase()}`, parsedMessage); // Emit the message to the specific socket ID
-      }
-    });
   }
 
   /**
    * Provides access to the Socket.IO server instance.
    *
-   * @returns {Server} The Socket.IO server instance for handling socket connections.
+   * @returns The Socket.IO server instance.
    */
   get io(): Server {
-    return this._io; // Return the Socket.IO server instance
+    return this._io;
   }
 
   /**
-   * Initializes event listeners for socket connections.
+   * Initializes event listeners for socket connections, handling various socket events.
    *
-   * - Sets up listeners for the `connection` event to log when a new socket connects.
-   * - Listens for `event:message` events from the client to handle incoming messages.
-   * - Listens for `event:reaction` events from the client to handle reactions.
-   * - Handles socket disconnections and removes the user from Redis when they disconnect.
+   * - `event:message`: Handles incoming messages.
+   * - `event:reaction`: Handles message reactions.
+   * - `event:initiate-upload`, `event:part-upload`, `event:complete-upload`: Handle file uploads in parts.
+   * - `event:conversation`: Initializes a new conversation.
+   * - `disconnect`: Cleans up Redis entries on disconnection.
    */
   public initListeners(): void {
-    let io = this._io; // Get the Socket.IO server instance
-    const fileUploader = new FileUploader(); // Create an instance of FileUploader to handle file uploads
+    const io = this._io;
+    const fileUploader = new FileUploader();
+    const conversationService = new ConversationService();
+    const messageService = new MessageService(io);
 
     io.on('connection', async (socket: Socket) => {
-      // Store the user's socket ID in Redis with the associated userId
-      await redisKV.set(socket.userId, socket.id); // Store socket ID with userId
+      await redisKV.set(socket.userId, socket.id); // Store socket ID by userId in Redis
 
-      // Listen for messages sent from the client
       socket.on('event:message', async (message) => {
-        // Publish the message to Redis for other subscribers
-        await pub.publish('MESSAGE', JSON.stringify(message)); // Publish message to Redis
+        await messageService.send(message, 'MESSAGE'); // Send message to Redis
       });
 
-      // Listen for reactions sent from the client
       socket.on('event:reaction', async (reaction) => {
-        // Publish the reaction to Redis for other subscribers
-        await pub.publish('REACTION', JSON.stringify(reaction)); // Publish reaction to Redis
+        await messageService.send(reaction, 'REACTION'); // Send reaction to Redis
       });
 
-      socket.on(
-        'event:initiate-upload',
-        async ({ filename, filetype }, callback) => {
-          const uploadId = await fileUploader.initiateMultipartUpload(
-            filename,
-            filetype
-          );
+      socket.on('event:initiate-upload', async ({ filename, filetype }, callback) => {
+        const uploadId = await fileUploader.initiateMultipartUpload(filename, filetype);
+        callback({ status: 'success', uploadId });
+      });
 
-          callback({ status: 'success', uploadId });
-        }
-      );
-      socket.on(
-        'event:part-upload',
-        async ({ key, uploadId, partNumber, chunk }, callback) => {
-          const uploadPart = await fileUploader.uploadPart(
-            key,
-            uploadId,
-            partNumber,
-            chunk
-          );
-          callback({ status: 'success', uploadPart });
-        }
-      );
-      socket.on(
-        'event:complete-upload',
-        async ({ key, uploadId, parts }, callback) => {
-          const url = await fileUploader.completeMultipartUpload(
-            key,
-            uploadId,
-            parts
-          );
-          callback({ status: 'success', url });
-        }
-      );
+      socket.on('event:part-upload', async ({ key, uploadId, partNumber, chunk }, callback) => {
+        const uploadPart = await fileUploader.uploadPart(key, uploadId, partNumber, chunk);
+        callback({ status: 'success', uploadPart });
+      });
 
-      // Handle socket disconnection
+      socket.on('event:complete-upload', async ({ key, uploadId, parts }, callback) => {
+        const url = await fileUploader.completeMultipartUpload(key, uploadId, parts);
+        callback({ status: 'success', url });
+      });
+
+      socket.on('event:conversation', async ({ userId_1, userId_2 }) => {
+        await conversationService.create(userId_1, userId_2); // Start a new conversation
+      });
+
       socket.on('disconnect', async () => {
-        // Remove the userId from Redis when the socket disconnects
-        await redisKV.del(socket.userId); // Remove the userId from Redis when disconnected
+        await redisKV.del(socket.userId); // Remove userId from Redis on disconnect
       });
     });
   }
 }
 
-export default SocketServices; // Export the SocketServices class for use in other modules
+export default SocketServices;
