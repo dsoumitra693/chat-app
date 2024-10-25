@@ -10,7 +10,7 @@ declare module 'socket.io' {
   }
 }
 
-const MAX_BUFFER_SIZE = 2e20 * 2; // Maximum buffer size for HTTP requests
+const MAX_BUFFER_SIZE = 2e20 * 7; // Maximum buffer size for HTTP requests
 
 /**
  * The `SocketServices` class manages the setup and configuration of the Socket.IO server
@@ -46,24 +46,14 @@ class SocketServices {
 
     // Handle incoming messages from Redis
     sub.on('message', async (channel, message) => {
-      if (channel === 'MESSAGE') {
-        const parsedMessage = JSON.parse(message); // Parse the incoming message from Redis
-        const socketId = await redisKV.get(parsedMessage.to.userId); // Retrieve the socket ID associated with the user
+      const parsedMessage = JSON.parse(message); // Parse the incoming message from Redis
+      const socketId = await redisKV.get(parsedMessage.to.userId); // Retrieve the socket ID associated with the user
 
-        // Emit the message event to the recipient if they're online
-        if (socketId) {
-          this._io.to(socketId).emit('event:message', parsedMessage); // Emit the message to the specific socket ID
-        }
-      }
-
-      if (channel === 'REACTION') {
-        const parsedReaction = JSON.parse(message); // Parse the incoming reaction from Redis
-        const socketId = await redisKV.get(parsedReaction.to.userId); // Retrieve the socket ID associated with the user
-
-        // Emit the reaction event to the recipient if they're online
-        if (socketId) {
-          this._io.to(socketId).emit('event:reaction', parsedReaction); // Emit the reaction to the specific socket ID
-        }
+      // Emit the message event to the recipient if they're online
+      if (socketId) {
+        this._io
+          .to(socketId)
+          .emit(`event:${channel.toLowerCase()}`, parsedMessage); // Emit the message to the specific socket ID
       }
     });
   }
@@ -95,11 +85,6 @@ class SocketServices {
 
       // Listen for messages sent from the client
       socket.on('event:message', async (message) => {
-        if (message.fileType !== 'NONE') { // Check if there is a file to upload
-          const { file } = message; // Extract the file from the message
-          let filename = await fileUploader.upload(file); // Upload the file and get the filename
-          message.file = filename; // Attach the uploaded filename to the message
-        }
         // Publish the message to Redis for other subscribers
         await pub.publish('MESSAGE', JSON.stringify(message)); // Publish message to Redis
       });
@@ -109,6 +94,41 @@ class SocketServices {
         // Publish the reaction to Redis for other subscribers
         await pub.publish('REACTION', JSON.stringify(reaction)); // Publish reaction to Redis
       });
+
+      socket.on(
+        'event:initiate-upload',
+        async ({ filename, filetype }, callback) => {
+          const uploadId = await fileUploader.initiateMultipartUpload(
+            filename,
+            filetype
+          );
+
+          callback({ status: 'success', uploadId });
+        }
+      );
+      socket.on(
+        'event:part-upload',
+        async ({ key, uploadId, partNumber, chunk }, callback) => {
+          const uploadPart = await fileUploader.uploadPart(
+            key,
+            uploadId,
+            partNumber,
+            chunk
+          );
+          callback({ status: 'success', uploadPart });
+        }
+      );
+      socket.on(
+        'event:complete-upload',
+        async ({ key, uploadId, parts }, callback) => {
+          const url = await fileUploader.completeMultipartUpload(
+            key,
+            uploadId,
+            parts
+          );
+          callback({ status: 'success', url });
+        }
+      );
 
       // Handle socket disconnection
       socket.on('disconnect', async () => {
