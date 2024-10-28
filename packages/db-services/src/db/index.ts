@@ -35,8 +35,8 @@ export class DBService {
    * @param db_table - The database table into which data will be inserted.
    * @returns A promise resolving to the result of the insertion.
    */
-  async insert(data: any, db_table: PgTableWithColumns<any>) {
-    return await this.db.insert(db_table).values(data);
+  async insert(data: string, db_table: PgTableWithColumns<any>) {
+    return await this.db.insert(db_table).values(JSON.parse(data));
   }
 
   /**

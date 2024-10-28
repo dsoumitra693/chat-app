@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import dbRouter from './routes';
+import { initConsumers } from './consumer';
 
 // Load environment variables from a .env file into process.env
 dotenv.config();
@@ -36,4 +37,6 @@ app.use('/db', dbRouter);
  * Start the Express server and listen on the specified port.
  * Logs a message to the console when the server is running.
  */
+
+initConsumers();
 app.listen(PORT, () => console.log(`App listening on port ${PORT}!`));
