@@ -1,7 +1,11 @@
 import { NextFunction, Request, Response } from 'express';
 import { asyncErrorHandler } from '../utils/asyncErrorHandler';
-import { createAccount } from '../db';
+import { searchAccount } from '../db';
 import { createJWT } from '../utils/jwt';
+import { produceToKafka } from '../producers';
+import { account, generateUUID } from 'shared';
+import { eq } from 'drizzle-orm';
+import { getHash } from '../utils/password';
 
 /**
  * Controller function for handling user sign-up.
@@ -20,6 +24,7 @@ export const signUp = asyncErrorHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     // Extract phone and password from the request body
     let { phone, password } = req.body;
+    const id = generateUUID();
 
     // Return a standardized 400 Bad Request response if phone or password is missing
     if (!phone || !password) {
@@ -27,25 +32,26 @@ export const signUp = asyncErrorHandler(
         success: false,
         message: 'Invalid data received from users.',
         errorCode: 'INVALID_INPUT',
-        data: null
+        data: null,
       });
     }
 
-    // Attempt to create a new user with the provided phone and password
-    let { response, error } = await createAccount(phone, password);
+    // Check if an Account with the given phone already exists
+    const accounts = await searchAccount(eq(account.phone, phone));
+    password = getHash(password);
 
-    // If user creation fails (e.g., phone already exists), return a standardized 409 Conflict response
-    if (!response || error) {
-      return res.status(409).send({
+    if (accounts.length > 0)
+      return res.status(400).send({
         success: false,
-        message: error?.message || 'Account creation failed.',
-        errorCode: 'ACCOUNT_CONFLICT',
-        data: null
+        message: 'Phone already exists.',
+        errorCode: 'PHONE_EXISTS',
+        data: null,
       });
-    }
+
+    produceToKafka('account.create', phone, { id, phone, password });
 
     // Create a JWT for the new user
-    const jwt = createJWT({ id: response.id });
+    const jwt = createJWT({ id });
 
     // Return a 200 OK status with a success message and the JWT
     return res.status(200).send({
@@ -53,8 +59,8 @@ export const signUp = asyncErrorHandler(
       message: 'Account created successfully',
       data: {
         jwt,
-        account: { accountId: response.id, phone: response.phone }
-      }
+        account: { accountId: id, phone },
+      },
     });
   }
 );
