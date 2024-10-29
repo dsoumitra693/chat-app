@@ -2,6 +2,10 @@ import { and, eq, inArray } from 'drizzle-orm';
 import { z } from 'zod';
 import { db } from '../db/db';
 import { account, userContacts, users } from '../db/schema';
+import { KafkaService } from '../kafka';
+import { generateUUID } from 'shared';
+
+const kafkaService = new KafkaService();
 
 // Validation schema using Zod
 const createUserSchema = z.object({
@@ -61,7 +65,9 @@ export class UserServices {
       bio?: string;
       profilePicture?: string;
       phone: string;
+      id: string;
     } = {
+      id: generateUUID(),
       accountId: input.accountId,
       phone: user_account[0].phone, // Copy phone from the account
     };
@@ -78,7 +84,7 @@ export class UserServices {
     }
 
     // Ensure that fields are defined and not undefined before insertion
-    await db.insert(users).values(insertData as Required<typeof insertData>);
+    await kafkaService.produce('user.create', insertData.id, insertData);
   }
 
   /**
@@ -124,10 +130,8 @@ export class UserServices {
 
     // Perform the update only if there are fields to update
     if (Object.keys(updateFields).length > 0) {
-      return await db
-        .update(users)
-        .set(updateFields)
-        .where(eq(users.accountId, input.accountId));
+      kafkaService.produce('user.update', input.accountId, updateFields);
+      return input;
     }
   }
   /**
