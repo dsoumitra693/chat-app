@@ -1,10 +1,14 @@
 import { kafka } from '../config/kafka.config';
-import { EachMessageHandler } from 'kafkajs';
-import { account } from 'shared';
+import { EachMessagePayload } from 'kafkajs';
+import { account, users } from 'shared';
 import { DBService } from '../db';
 
 export class KafkaConsumer {
   private consumer;
+  private dbService = new DBService();
+  private batchSize = 10; // Define batch size
+  private batchInterval = 1000; // Interval in milliseconds
+  private batchMap: Record<string, string[]> = {};
 
   constructor() {
     this.consumer = kafka.consumer({ groupId: 'default' });
@@ -19,27 +23,71 @@ export class KafkaConsumer {
     }
   }
 
-  public async consume(topic: string, eachMessage: EachMessageHandler) {
+  public async subscribe(topics: string[]) {
     try {
-      await this.consumer.subscribe({ topic });
-      await this.consumer.run({
-        autoCommit: true,
-        eachMessage,
-      });
-      console.log(`Kafka consumer subscribed to topic: ${topic}`);
+      await Promise.all(
+        topics.map(async (topic) => {
+          await this.consumer.subscribe({ topic, fromBeginning: true });
+          console.log(`Kafka consumer subscribed to topic: ${topic}`);
+        })
+      );
     } catch (error) {
-      console.error(`Error in Kafka consumer for topic ${topic}:`, error);
+      console.error('Error subscribing to topics:', error);
+    }
+  }
+
+  public async consume() {
+    await this.consumer.run({
+      eachMessage: async ({ topic, message }: EachMessagePayload) => {
+        const messageValue = message.value?.toString();
+        if (messageValue) {
+          // Push message to appropriate batch
+          if (!this.batchMap[topic]) this.batchMap[topic] = [];
+          this.batchMap[topic].push(messageValue);
+
+          // Check if the batch size has been reached
+          if (this.batchMap[topic].length >= this.batchSize) {
+            await this.flushBatch(topic);
+          }
+        } else {
+          console.warn(`Received empty message on topic '${topic}'`);
+        }
+      },
+    });
+
+    // Periodically flush remaining messages
+    setInterval(() => {
+      for (const topic in this.batchMap) {
+        if (this.batchMap[topic].length > 0) {
+          this.flushBatch(topic);
+        }
+      }
+    }, this.batchInterval);
+  }
+
+  private async flushBatch(topic: string) {
+    const batch = this.batchMap[topic];
+    this.batchMap[topic] = []; // Reset batch array
+
+    try {
+      if (topic === 'user.create') {
+        await this.dbService.insertBatch(batch, users);
+      } else if (topic === 'account.create') {
+        await this.dbService.insertBatch(batch, account);
+      }
+      console.log(
+        `Batch inserted for topic '${topic}': ${batch.length} messages`
+      );
+    } catch (error) {
+      this.batchMap[topic].push(...batch);
+      console.error(`Error inserting batch for topic '${topic}':`, error);
     }
   }
 }
 
 export async function initConsumers() {
   const kafkaConsumer = new KafkaConsumer();
-  const dbService = new DBService();
-
-  await kafkaConsumer.connect(); // Awaiting connection
-  await kafkaConsumer.consume('account.create', async ({ message }) => {
-    console.log(`Received message: ${message.value?.toString()}`);
-    dbService.insert(message.value?.toString()!, account);
-  });
+  await kafkaConsumer.connect(); // Ensure connection before subscribing
+  await kafkaConsumer.subscribe(['account.create', 'user.create']);
+  await kafkaConsumer.consume();
 }

@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import userRouter from './routes';
+import { initConsumer } from './kafka';
 
 // Load environment variables from a .env file into process.env
 dotenv.config();
@@ -20,7 +21,7 @@ app.use(cors());
 
 /**
  * Root route for the API.
- * 
+ *
  * @returns A welcome message to the client.
  */
 app.get('/', (_, res) => {
@@ -30,9 +31,11 @@ app.get('/', (_, res) => {
 // Authentication routes, handles routes defined in the userRouter
 app.use('/users', userRouter);
 
+initConsumer();
+
 /**
  * Starts the Express server and listens on the specified port.
- * 
+ *
  * @param PORT - The port number the server listens on.
  */
 app.listen(PORT, () => console.log(`App listening on port ${PORT}!`));

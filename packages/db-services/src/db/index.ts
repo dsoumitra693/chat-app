@@ -29,14 +29,26 @@ export class DBService {
   }
 
   /**
-   * Inserts data into the specified database table.
+   * Inserts a single record into the specified database table.
    *
-   * @param data - The data to be inserted.
+   * @param data - The data to be inserted as a string.
    * @param db_table - The database table into which data will be inserted.
    * @returns A promise resolving to the result of the insertion.
    */
   async insert(data: string, db_table: PgTableWithColumns<any>) {
     return await this.db.insert(db_table).values(JSON.parse(data));
+  }
+
+  /**
+   * Inserts a batch of records into the specified database table.
+   *
+   * @param dataBatch - An array of data records to be inserted.
+   * @param db_table - The database table into which data will be inserted.
+   * @returns A promise resolving to the result of the batch insertion.
+   */
+  async insertBatch(dataBatch: string[], db_table: PgTableWithColumns<any>) {
+    const parsedData = dataBatch.map((data) => JSON.parse(data));
+    return await this.db.insert(db_table).values(parsedData);
   }
 
   /**
@@ -71,6 +83,6 @@ export class DBService {
    * @returns A promise resolving to the result of the deletion operation.
    */
   async delete(query: any, db_table: PgTableWithColumns<any>) {
-    return await db.delete(db_table).where(query);
+    return await this.db.delete(db_table).where(query);
   }
 }

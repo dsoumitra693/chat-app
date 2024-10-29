@@ -10,18 +10,11 @@ import {
   setUserPresence,
   getUserPresence,
 } from '../controllers';
-import { createUserProfile } from '../controllers/userProfileController';
 import { authenticate } from '../middleware/auth.middleware';
 
 // Initialize a new Router instance for handling user-related routes
 const userRouter = Router();
 
-/**
- * Route to create a user profile.
- * @route POST /
- * @returns {void}
- */
-userRouter.post('/', authenticate, createUserProfile);
 
 /**
  * Route to retrieve user profile data.
