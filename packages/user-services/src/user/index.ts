@@ -92,15 +92,15 @@ export class UserServices {
     // Validate input
     updateUserSchema.parse(input);
 
-    // // Ensure the account exists
-    // const user_account = await db
-    //   .select()
-    //   .from(account)
-    //   .where(eq(account.id, input.accountId));
+    // Ensure the account exists
+    const user_account = await db
+      .select()
+      .from(account)
+      .where(eq(account.id, input.accountId));
 
-    // if (user_account.length === 0) {
-    //   throw new Error('DBError: Account does not exist');
-    // }
+    if (user_account.length === 0) {
+      throw new Error('DBError: Account does not exist');
+    }
 
     // Prepare an update object with only non-empty fields
     const updateFields: Partial<{
