@@ -44,19 +44,10 @@ export class UserServices {
     fullname?: string;
     bio?: string;
     profilePicture?: string;
+    phone: string;
   }) {
     // Validate input
     createUserSchema.parse(input);
-
-    // Check if the account exists
-    const user_account = await db
-      .select()
-      .from(account)
-      .where(eq(account.id, input.accountId));
-
-    if (user_account.length === 0) {
-      throw new Error('DBError: Account does not exist');
-    }
 
     // Prepare the insert data
     const insertData: {
@@ -69,7 +60,7 @@ export class UserServices {
     } = {
       id: generateUUID(),
       accountId: input.accountId,
-      phone: user_account[0].phone, // Copy phone from the account
+      phone: input.phone, // Copy phone from the account
     };
 
     // Conditionally add fields if they are not empty or undefined
@@ -101,15 +92,15 @@ export class UserServices {
     // Validate input
     updateUserSchema.parse(input);
 
-    // Ensure the account exists
-    const user_account = await db
-      .select()
-      .from(account)
-      .where(eq(account.id, input.accountId));
+    // // Ensure the account exists
+    // const user_account = await db
+    //   .select()
+    //   .from(account)
+    //   .where(eq(account.id, input.accountId));
 
-    if (user_account.length === 0) {
-      throw new Error('DBError: Account does not exist');
-    }
+    // if (user_account.length === 0) {
+    //   throw new Error('DBError: Account does not exist');
+    // }
 
     // Prepare an update object with only non-empty fields
     const updateFields: Partial<{
