@@ -116,7 +116,10 @@ export class UserServices {
       fullname: string;
       bio: string;
       profilePicture: string;
-    }> = {};
+      accountId: string;
+    }> = {
+      accountId: input.accountId,
+    };
 
     if (input.fullname && input.fullname.trim()) {
       updateFields.fullname = input.fullname;

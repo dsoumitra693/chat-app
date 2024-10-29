@@ -74,12 +74,36 @@ export class KafkaConsumer {
         await this.dbService.insertBatch(batch, users);
       } else if (topic === 'account.create') {
         await this.dbService.insertBatch(batch, account);
+      } else if (topic === 'user.update') {
+        // Parse the batch for updates
+        const updates = batch.map((message) => {
+          const { accountId, ...updates } = JSON.parse(message);
+          return {
+            accountId,
+            updates,
+          };
+        });
+
+        // Perform batch update
+        await this.dbService.updateBatch(updates, 'users');
+      }else if (topic === 'account.update') {
+        // Parse the batch for updates
+        const updates = batch.map((message) => {
+          const { accountId, ...updates } = JSON.parse(message);
+          return {
+            accountId,
+            updates,
+          };
+        });
+
+        // Perform batch update
+        await this.dbService.updateBatch(updates, 'users');
       }
       console.log(
         `Batch inserted for topic '${topic}': ${batch.length} messages`
       );
     } catch (error) {
-      this.batchMap[topic].push(...batch);
+      // this.batchMap[topic].push(...batch);
       console.error(`Error inserting batch for topic '${topic}':`, error);
     }
   }
@@ -88,6 +112,10 @@ export class KafkaConsumer {
 export async function initConsumers() {
   const kafkaConsumer = new KafkaConsumer();
   await kafkaConsumer.connect(); // Ensure connection before subscribing
-  await kafkaConsumer.subscribe(['account.create', 'user.create']);
+  await kafkaConsumer.subscribe([
+    'account.create',
+    'user.create',
+    'user.update',
+  ]);
   await kafkaConsumer.consume();
 }
