@@ -103,7 +103,7 @@ export class KafkaConsumer {
         `Batch inserted for topic '${topic}': ${batch.length} messages`
       );
     } catch (error) {
-      // this.batchMap[topic].push(...batch);
+      this.batchMap[topic].push(...batch);
       console.error(`Error inserting batch for topic '${topic}':`, error);
     }
   }
