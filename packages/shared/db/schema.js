@@ -48,18 +48,10 @@ exports.userContacts = (0, pg_core_1.pgTable)('user_contacts', {
     userId: (0, pg_core_1.uuid)('user_id').references(() => exports.users.id, {
         onDelete: 'cascade', // Cascade delete on user removal
     }),
-    contactId: (0, pg_core_1.uuid)('contact_id').references(() => exports.users.id, {
+    contactUserId: (0, pg_core_1.uuid)('contact_user_id').references(() => exports.users.id, {
         onDelete: 'cascade', // Cascade delete on contact removal
     }),
     createdAt: (0, pg_core_1.timestamp)('created_at').defaultNow(), // Creation timestamp
-}, (table) => {
-    // Composite unique index to prevent duplicate entries for user-contact pairs
-    return {
-        uniqueConstraint: {
-            columns: [table.userId, table.contactId],
-            name: 'unique_user_contact',
-        },
-    };
 });
 /**
  * Defines the User Settings Table.

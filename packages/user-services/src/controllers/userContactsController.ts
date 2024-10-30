@@ -12,30 +12,30 @@ const userService = new UserServices();
  * @param {NextFunction} next - The next middleware function.
  * @returns {Promise<void>}
  */
-export const addContact = asyncErrorHandler(
+export const addContact = 
+// asyncErrorHandler(
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const userId = req.params.id;
-    const contactId = req.body.contactId; // Assuming the body contains the contactId
+    const { userId, contactPhone } = req.body;
 
-    if (!contactId) {
+    if (!contactPhone) {
       res.status(400).json({
         success: false,
         message: 'Missing required contactId',
         errorCode: 'INVALID_INPUT',
         data: null,
       });
-      return
+      return;
     }
 
-    await userService.addContact(userId, contactId);
+    const contact = await userService.addContact(userId, contactPhone);
 
     res.status(201).json({
       success: true,
       message: 'Contact added successfully',
-      data: { userId, contactId },
+      data: contact,
     });
   }
-);
+// );
 
 /**
  * Controller to remove a contact from the user's contact list.
@@ -47,10 +47,9 @@ export const addContact = asyncErrorHandler(
  */
 export const removeContact = asyncErrorHandler(
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const userId = req.params.id;
     const contactId = req.params.contactId;
 
-    await userService.removeContact(userId, contactId);
+    await userService.removeContact(contactId);
 
     res.status(204).json({
       success: true,

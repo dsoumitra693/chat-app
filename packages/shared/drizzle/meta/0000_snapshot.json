@@ -1,5 +1,5 @@
 {
-  "id": "d9758923-9c1d-4116-a3fd-d706fed2dcc2",
+  "id": "fec07ef9-11e4-440c-be1a-2818aff4a488",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -52,7 +52,8 @@
             "phone"
           ]
         }
-      }
+      },
+      "checkConstraints": {}
     },
     "public.user_contacts": {
       "name": "user_contacts",
@@ -71,8 +72,8 @@
           "primaryKey": false,
           "notNull": false
         },
-        "contact_id": {
-          "name": "contact_id",
+        "contact_user_id": {
+          "name": "contact_user_id",
           "type": "uuid",
           "primaryKey": false,
           "notNull": false
@@ -100,12 +101,12 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "user_contacts_contact_id_users_id_fk": {
-          "name": "user_contacts_contact_id_users_id_fk",
+        "user_contacts_contact_user_id_users_id_fk": {
+          "name": "user_contacts_contact_user_id_users_id_fk",
           "tableFrom": "user_contacts",
           "tableTo": "users",
           "columnsFrom": [
-            "contact_id"
+            "contact_user_id"
           ],
           "columnsTo": [
             "id"
@@ -115,7 +116,8 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "public.user_settings": {
       "name": "user_settings",
@@ -173,7 +175,8 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "public.users": {
       "name": "users",
@@ -258,12 +261,14 @@
             "phone"
           ]
         }
-      }
+      },
+      "checkConstraints": {}
     }
   },
   "enums": {},
   "schemas": {},
   "sequences": {},
+  "views": {},
   "_meta": {
     "columns": {},
     "schemas": {},

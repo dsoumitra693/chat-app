@@ -1,4 +1,4 @@
-import { and, eq, inArray } from 'drizzle-orm';
+import { eq, inArray } from 'drizzle-orm';
 import { z } from 'zod';
 import { db } from '../db/db';
 import { account, userContacts, users } from '../db/schema';
@@ -158,11 +158,23 @@ export class UserServices {
    * @param userId - The ID of the user.
    * @param contactId - The ID of the contact to add.
    */
-  async addContact(userId: string, contactId: string) {
+  async addContact(userId: string, contactPhone: string) {
+    const contact = await db
+      .select()
+      .from(users)
+      .where(eq(users.phone, contactPhone));
+    const id = generateUUID();
+    console.log(contact, id)
     await db.insert(userContacts).values({
+      id,
       userId,
-      contactId,
+      contactUserId: contact[0].id,
     });
+    return {
+      id,
+      userId,
+      contactUserId: contact[0].id,
+    };
   }
 
   /**
@@ -171,15 +183,8 @@ export class UserServices {
    * @param userId - The ID of the user.
    * @param contactId - The ID of the contact to remove.
    */
-  async removeContact(userId: string, contactId: string): Promise<void> {
-    await db
-      .delete(userContacts)
-      .where(
-        and(
-          eq(userContacts.userId, userId),
-          eq(userContacts.contactId, contactId)
-        )
-      );
+  async removeContact(contactId: string): Promise<void> {
+    await db.delete(userContacts).where(eq(userContacts.id, contactId));
   }
 
   /**
@@ -195,8 +200,8 @@ export class UserServices {
       .from(userContacts)
       .where(eq(userContacts.userId, userId));
 
-    // You can fetch additional user info here if needed
-    const contactIds = contacts.map((contact) => contact.contactId);
+    // fetch additional user info
+    const contactIds = contacts.map((contact) => contact.contactUserId);
     const filteredContactIds = contactIds.filter((id) => id !== null);
     return await db
       .select()
