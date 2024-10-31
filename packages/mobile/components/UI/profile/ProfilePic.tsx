@@ -1,12 +1,13 @@
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { Image, StyleSheet, View } from 'react-native';
 import React from 'react';
-import { IMAGE_1, IMAGE_2 } from '@/constants/data';
+import { IMAGE_1 } from '@/constants/data';
+import Animated from 'react-native-reanimated';
 
 const ProfilePic = () => {
   return (
-    <View style={styles.container}>
+    <Animated.View style={styles.container}>
       <Image source={{ uri: IMAGE_1 }} style={styles.image} />
-    </View>
+    </Animated.View>
   );
 };
 

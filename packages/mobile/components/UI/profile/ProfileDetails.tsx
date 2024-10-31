@@ -26,7 +26,7 @@ const ProfileDetails = () => {
       <View style={{ ...styles.detail, borderBottomWidth: 0 }}>
         <Feather name="phone" style={styles.icon2} />
         <View style={styles.textWrapper}>
-          <Text style={styles.textPrimary}>+917478398178</Text>
+          <Text style={styles.textPrimary}>+917478XXXXX8</Text>
           <Text style={styles.textSecondary}>Phone</Text>
         </View>
       </View>

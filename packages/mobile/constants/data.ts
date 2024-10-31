@@ -1,7 +1,7 @@
 import { IMessage, IUser } from '@/types';
 
 export const IMAGE_1 =
-  'https://media.licdn.com/dms/image/v2/D4D03AQH-8LgR_l_JyQ/profile-displayphoto-shrink_200_200/profile-displayphoto-shrink_200_200/0/1729601428575?e=1735776000&v=beta&t=6YOGkEww7JQHlad3inKpAFfcjUVKuyLXx04Kpi4jc-o';
+  'https://imgs.search.brave.com/72trltXZ6MMq2g_7Fs1QcepIlTfv-lQVYPR2rGxhUyk/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9wcmV2/aWV3LnJlZGQuaXQv/aWYteW91ci1jYXQt/bmVlZGVkLWEtcHJv/ZmlsZS1waWN0dXJl/LXdoYXQtcGljdHVy/ZS13b3VsZC1pdC12/MC1nMmZheHA0OHJ1/b2IxLmpwZWc_d2lk/dGg9MTA4MCZmb3Jt/YXQ9cGpwZyZhdXRv/PXdlYnAmcz02OGFi/MTVjZDk1YjkyZTc1/NjllMjgxYjRkYWNi/NTQxN2VjYmU5YmJk';
 export const IMAGE_2 =
   'https://www.pixel4k.com/wp-content/uploads/2021/08/girl-adjusting-hairs-4k_1629241627-1536x864.jpg';
 export const WALLPAPER_URI =
