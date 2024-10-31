@@ -14,7 +14,7 @@ const ChatFeed = () => {
         {'  '}PIN CHATS
       </Text>
       <ChatCard unread={true} online={true} />
-      <View style={{ height: 20 }} />
+      <View style={{ height: 15 }} />
       <Text style={styles.heading}>ALL MESSAGES</Text>
       {CHATS.map((chat, index) => (
         <ChatCard key={index} unread={false} online={!!(Math.random() > 0.8)} />
@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     backgroundColor: Colors['dark'].background,
-    padding: 30,
+    padding: 20,
   },
   heading: {
     color: Colors['dark'].text,

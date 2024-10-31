@@ -27,7 +27,7 @@ export function TabBarIcon({
       {focused && (
         <View
           style={{
-            width: 60,
+            width: 40,
             backgroundColor: color,
             height: 3,
             position: 'absolute',

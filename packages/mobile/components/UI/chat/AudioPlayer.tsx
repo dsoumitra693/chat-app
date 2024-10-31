@@ -55,7 +55,6 @@ export const AudioPlayer = ({ url, color }: { url: string; color: string }) => {
     return (
       <Waveform
         height={30}
-        activeColor={color}
         progress={progress / duration}
         seed={stringToSeed(url)}
       />

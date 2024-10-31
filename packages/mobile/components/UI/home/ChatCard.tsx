@@ -21,7 +21,7 @@ const ChatCard = ({ unread, online }: { unread: boolean; online: boolean }) => {
         }}
       />
       <View style={styles.msgDetailsWrapper}>
-        <Text style={styles.heading}>Disha</Text>
+        <Text style={styles.heading}>Emma</Text>
         <Text style={styles.secondary}>Hello world!</Text>
       </View>
       <View style={styles.timestampWrapper}>
@@ -45,7 +45,7 @@ export default ChatCard;
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    height: 80,
+    height: 65,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',

@@ -22,7 +22,7 @@ const Waveform = ({
 
     for (let i = 0; i < numBars; i++) {
       const x = i * (barWidth + barGap);
-      const barHeight = random() * height * 0.6 + height * 0.1;
+      const barHeight = random() * height*0.8;
       bars.push({ x, barHeight });
     }
 

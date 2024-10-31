@@ -38,7 +38,7 @@ export default Avatar;
 
 const styles = StyleSheet.create({
   imageWrapper: {
-    width: 65,
+    width: 55,
     aspectRatio: 1,
     borderRadius: 35,
   },

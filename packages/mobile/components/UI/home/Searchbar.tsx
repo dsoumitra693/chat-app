@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     height: 55,
-    paddingHorizontal: 30,
+    paddingHorizontal: 10,
   },
   inputWrapper: {
     width: '100%',

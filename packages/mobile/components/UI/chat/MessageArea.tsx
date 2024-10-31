@@ -49,10 +49,9 @@ export default MessageArea;
 
 const styles = StyleSheet.create({
   container: {
-    width: '92%',
     marginVertical: 5,
     paddingVertical: 5,
-    margin: 20,
+    margin: 5,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -60,7 +59,7 @@ const styles = StyleSheet.create({
   inputWrapper: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    width: '85%',
+    width: '88%',
     height: 50,
     backgroundColor: Colors['dark'].background,
     paddingHorizontal: 10,

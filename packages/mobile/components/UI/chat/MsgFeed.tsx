@@ -15,7 +15,7 @@ const MsgFeed = () => {
       inverted
       estimatedItemSize={50}
       contentContainerStyle={styles.contentContainer}
-      ListHeaderComponent={<TypingRipple name="Puchu🦋" />}
+      ListHeaderComponent={<TypingRipple name="Emma" />}
     />
   );
 };
@@ -24,7 +24,6 @@ export default MsgFeed;
 
 const styles = StyleSheet.create({
   contentContainer: {
-    paddingHorizontal: 20,
     padding: 10,
     paddingBottom: 90,
   },

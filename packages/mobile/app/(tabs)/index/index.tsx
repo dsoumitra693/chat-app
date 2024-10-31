@@ -5,7 +5,7 @@ import { ScrollView, StyleSheet, StatusBar } from 'react-native';
 export default function Home() {
   return (
     <ScrollView style={styles.container}>
-      <StatusView />
+      {/* <StatusView /> */}
       <Feed />
     </ScrollView>
   );

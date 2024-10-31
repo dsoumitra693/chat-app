@@ -10,8 +10,8 @@ export default function TabLayout() {
   const { session, user } = useSession();
 
 
-  if (!session) return <Redirect href="/signin" />;
-  if (!user) return <Redirect href="/createProfile" />;
+  // if (!session) return <Redirect href="/signin" />;
+  // if (!user) return <Redirect href="/createProfile" />;
 
   return (
     <Tabs
