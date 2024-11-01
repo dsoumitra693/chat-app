@@ -17,12 +17,14 @@ export const VideoPlayer = ({ url }: { url: string }) => {
   };
 
   const handleFullscreenUpdate = (event: any) => {
+    setisPlaying(false)
     if (event.fullscreenUpdate === FULLSCREEN_ENTER) {
       setIsFullScreen(true);
     }
     if (event.fullscreenUpdate === FULLSCREEN_EXIT) {
       setIsFullScreen(false);
     }
+    setisPlaying(true)
   };
   return (
     <TouchableOpacity style={styles.videoWrapper} onPress={handleFullScreen}>

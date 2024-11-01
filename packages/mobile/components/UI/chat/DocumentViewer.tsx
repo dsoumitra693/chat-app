@@ -31,7 +31,7 @@ const DocumentViewer = ({ url }: { url: string }) => {
         setFileSize('Unknown');
       }
     } catch (error) {
-      Alert.alert('Error', 'Error fetching file size:');
+      // Alert.alert('Error', 'Error fetching file size:');
       setFileSize('Unknown');
     }
   };
