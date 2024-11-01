@@ -7,10 +7,12 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
   interpolate,
-  Extrapolate,
 } from 'react-native-reanimated';
 
 const SCROLL_THRESHOLD = 100;
+const Extrapolate = {
+  CLAMP: { extrapolateRight: 'clamp', extrapolateLeft: 'clamp' },
+};
 
 export default function Profile() {
   const scrollY = useSharedValue(0);
@@ -20,34 +22,94 @@ export default function Profile() {
   });
 
   const animatedProfilePicStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: interpolate(scrollY.value, [0, SCROLL_THRESHOLD], [1, 0.15], Extrapolate.CLAMP) }],
-    opacity: interpolate(scrollY.value, [0, SCROLL_THRESHOLD-20], [1, 0], Extrapolate.CLAMP),
-    right: interpolate(scrollY.value, [0, SCROLL_THRESHOLD], [0, 150], Extrapolate.CLAMP),
+    transform: [
+      {
+        scale: interpolate(
+          scrollY.value,
+          [0, SCROLL_THRESHOLD],
+          [1, 0.12],
+          Extrapolate.CLAMP
+        ),
+      },
+    ],
+    opacity: interpolate(
+      scrollY.value,
+      [0, SCROLL_THRESHOLD - 20],
+      [1, 0],
+      Extrapolate.CLAMP
+    ),
+    right: interpolate(
+      scrollY.value,
+      [0, SCROLL_THRESHOLD],
+      [0, 160],
+      Extrapolate.CLAMP
+    ),
   }));
 
   const animatedProfileDetailsStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: interpolate(scrollY.value, [0, SCROLL_THRESHOLD], [1, 1.2], Extrapolate.CLAMP) }],
+    transform: [
+      {
+        scale: interpolate(
+          scrollY.value,
+          [0, SCROLL_THRESHOLD],
+          [1, 1.2],
+          Extrapolate.CLAMP
+        ),
+      },
+    ],
     opacity: interpolate(scrollY.value, [0, 80], [1, 0], Extrapolate.CLAMP),
   }));
 
   const animatedHeaderImageStyle = useAnimatedStyle(() => ({
     transform: [
-      { scale: interpolate(scrollY.value, [0, SCROLL_THRESHOLD], [1, 0.15], Extrapolate.CLAMP) },
-      { translateY: interpolate(scrollY.value, [0, SCROLL_THRESHOLD], [0, 100], Extrapolate.CLAMP) },
+      {
+        scale: interpolate(
+          scrollY.value,
+          [0, SCROLL_THRESHOLD],
+          [1, 0.12],
+          Extrapolate.CLAMP
+        ),
+      },
+      {
+        translateY: interpolate(
+          scrollY.value,
+          [0, SCROLL_THRESHOLD],
+          [0, 100],
+          Extrapolate.CLAMP
+        ),
+      },
     ],
-    right: interpolate(scrollY.value, [0, SCROLL_THRESHOLD], [0, 150], Extrapolate.CLAMP),
-    borderRadius: interpolate(scrollY.value, [0, SCROLL_THRESHOLD], [0, 200], Extrapolate.CLAMP),
+    right: interpolate(
+      scrollY.value,
+      [0, SCROLL_THRESHOLD],
+      [0, 160],
+      Extrapolate.CLAMP
+    ),
+    borderRadius: interpolate(
+      scrollY.value,
+      [0, SCROLL_THRESHOLD],
+      [0, 200],
+      Extrapolate.CLAMP
+    ),
     aspectRatio: 1,
   }));
 
   const animatedHeaderStyle = useAnimatedStyle(() => ({
     opacity: interpolate(scrollY.value, [50, 100], [0, 1], Extrapolate.CLAMP),
-    height: interpolate(scrollY.value, [0, SCROLL_THRESHOLD], [0, 120], Extrapolate.CLAMP),
+    height: interpolate(
+      scrollY.value,
+      [0, SCROLL_THRESHOLD],
+      [0, 90],
+      Extrapolate.CLAMP
+    ),
   }));
 
   return (
     <>
-      <StickyHeader style={animatedHeaderStyle} imageStyle={animatedHeaderImageStyle} />
+      <StickyHeader
+        style={animatedHeaderStyle}
+        imageStyle={animatedHeaderImageStyle}
+      />
       <View style={styles.container}>
         <Animated.ScrollView onScroll={scrollHandler} scrollEventThrottle={16}>
           <Animated.View style={animatedProfilePicStyle}>
@@ -115,12 +177,14 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   profileName: {
-    color: '#fff',
+    color: Colors['dark'].text,
     fontSize: 18,
     fontWeight: 'bold',
+    textAlign: 'center',
   },
   profilePhone: {
-    color: '#fff',
+    color: Colors['dark'].text2,
     fontSize: 14,
+    textAlign: 'center',
   },
 });
