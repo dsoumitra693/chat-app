@@ -1,4 +1,10 @@
-import { StyleSheet, Text, StatusBar, TouchableOpacity } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  StatusBar,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import React from 'react';
 import { BlurView } from 'expo-blur';
 import { Colors } from '@/constants/Colors';
@@ -16,17 +22,43 @@ const Header = ({ user }: { user: IUser }) => {
   };
   return (
     <BlurView intensity={90} tint="dark" style={styles.container}>
-      <TouchableOpacity onPress={handleBackPress}>
-        <Ionicons name="chevron-back" size={20} color={Colors['dark'].icon} />
-      </TouchableOpacity>
-      <Text style={styles.text}>{user.fullname}</Text>
-      <Avatar
-        imageSource={{
-          uri: user.profilePicture,
+      <View
+        style={{
+          flexDirection: 'row',
+          height: '100%',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          width: '20%',
         }}
-        style={styles.avatar}
-        showBadge={true}
-      />
+      >
+        <TouchableOpacity onPress={handleBackPress}>
+          <Ionicons name="chevron-back" size={20} color={Colors['dark'].icon} />
+        </TouchableOpacity>
+        <Avatar
+          imageSource={{
+            uri: user.profilePicture,
+          }}
+          style={styles.avatar}
+          showBadge={true}
+        />
+      </View>
+      <Text style={styles.text}>{user.fullname}</Text>
+      <View
+        style={{
+          flexDirection: 'row',
+          height: '100%',
+          justifyContent: 'space-around',
+          alignItems: 'center',
+          width: '20%',
+        }}
+      >
+        <TouchableOpacity onPress={handleBackPress}>
+          <Ionicons name="call-outline" size={20} color={Colors['dark'].icon} />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={handleBackPress}>
+          <Ionicons name="videocam-outline" size={20} color={Colors['dark'].icon} />
+        </TouchableOpacity>
+      </View>
     </BlurView>
   );
 };
