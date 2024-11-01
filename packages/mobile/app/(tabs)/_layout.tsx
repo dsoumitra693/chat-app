@@ -1,4 +1,4 @@
-import { Redirect, Tabs } from 'expo-router';
+import { Redirect, Tabs, usePathname } from 'expo-router';
 import React, { useState } from 'react';
 import { TabBarIcon } from '@/components/navigation/TabBarIcon';
 import { Colors } from '@/constants/Colors';
@@ -8,7 +8,7 @@ import { useSession } from '@/provides';
 export default function TabLayout() {
   const colorScheme = useColorScheme();
   const { session, user } = useSession();
-
+  const pathname = usePathname();
 
   // if (!session) return <Redirect href="/signin" />;
   // if (!user) return <Redirect href="/createProfile" />;
@@ -40,7 +40,7 @@ export default function TabLayout() {
         name="index"
         options={{
           tabBarStyle: {
-            // display: "none",
+            display: pathname != '/' ? 'none' : 'flex',
           },
           title: '',
           tabBarIcon: ({ color, focused }) => (
