@@ -21,10 +21,10 @@ const Header = ({ user }: { user: IUser }) => {
     router.replace('/(tabs)/');
   };
   const handleAudioCall = ()=>{
-    router.replace('/(tabs)/call');
+    router.push('/(tabs)/call');
   }
   const handleVideoCall = ()=>{
-    router.replace('/(tabs)/call');
+    router.push('/(tabs)/call');
   }
   return (
     <BlurView intensity={90} tint="dark" style={styles.container}>

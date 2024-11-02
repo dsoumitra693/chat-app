@@ -31,7 +31,7 @@ const IndexLayout = () => {
     >
       <Stack.Screen name="index" />
       <Stack.Screen name="chat" />
-      <Stack.Screen name="home" />
+      <Stack.Screen name="call" />
     </Stack>
   );
 };
