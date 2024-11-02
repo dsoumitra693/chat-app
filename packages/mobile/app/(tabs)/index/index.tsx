@@ -1,5 +1,7 @@
+import FAB from '@/components/UI/fab';
 import { StatusView, Feed } from '@/components/UI/home';
 import { Colors } from '@/constants/Colors';
+import { Ionicons } from '@expo/vector-icons';
 import { ScrollView, StyleSheet, StatusBar } from 'react-native';
 
 export default function Home() {
@@ -7,6 +9,12 @@ export default function Home() {
     <ScrollView style={styles.container}>
       {/* <StatusView /> */}
       <Feed />
+      <FAB
+        Icon={Ionicons}
+        name={'add'}
+        size={30}
+        color={Colors['dark'].text}
+      />
     </ScrollView>
   );
 }
