@@ -1,6 +1,5 @@
 import { StyleSheet, Text, View } from 'react-native';
 import React from 'react';
-import { Ionicons } from '@expo/vector-icons';
 
 const Heading = () => {
   return (
@@ -12,7 +11,6 @@ const Heading = () => {
           48 <Text style={styles.text3}>New</Text>
         </Text>
       </Text>
-      <Ionicons name="create-outline" color={'#2ACBE2'} size={28} />
     </View>
   );
 };
