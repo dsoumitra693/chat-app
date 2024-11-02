@@ -20,6 +20,12 @@ const Header = ({ user }: { user: IUser }) => {
     if (router.canGoBack()) router.back();
     router.replace('/(tabs)/');
   };
+  const handleAudioCall = ()=>{
+    router.replace('/(tabs)/call');
+  }
+  const handleVideoCall = ()=>{
+    router.replace('/(tabs)/call');
+  }
   return (
     <BlurView intensity={90} tint="dark" style={styles.container}>
       <View
@@ -52,10 +58,10 @@ const Header = ({ user }: { user: IUser }) => {
           width: '20%',
         }}
       >
-        <TouchableOpacity onPress={handleBackPress}>
+        <TouchableOpacity onPress={handleAudioCall}>
           <Ionicons name="call-outline" size={20} color={Colors['dark'].icon} />
         </TouchableOpacity>
-        <TouchableOpacity onPress={handleBackPress}>
+        <TouchableOpacity onPress={handleVideoCall}>
           <Ionicons name="videocam-outline" size={20} color={Colors['dark'].icon} />
         </TouchableOpacity>
       </View>

@@ -24,7 +24,7 @@ export default function TabLayout() {
       }}
     >
       <Tabs.Screen
-        name="calls"
+        name="calls-history"
         options={{
           title: '',
           tabBarIcon: ({ color, focused }) => (
@@ -40,7 +40,8 @@ export default function TabLayout() {
         name="index"
         options={{
           tabBarStyle: {
-            display: pathname != '/' ? 'none' : 'flex',
+            // display: pathname != '/' ? 'none' : 'flex',
+            display:'none'
           },
           title: '',
           tabBarIcon: ({ color, focused }) => (
