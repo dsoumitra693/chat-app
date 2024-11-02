@@ -40,11 +40,13 @@ const Call = () => {
           Icon={Ionicons}
           name={showVideo ? 'videocam-outline' : 'videocam-off-outline'}
           color={Colors.dark.icon as string}
+          onPress={() => setShowVideo((prev) => !prev)}
         />
         <TextIcon
           Icon={Ionicons}
           name={audioOn ? 'mic-outline' : 'mic-off-outline'}
           color={Colors.dark.icon as string}
+          onPress={() => setAudioOn((prev) => !prev)}
         />
         <TextIcon
           Icon={MaterialCommunityIcons}

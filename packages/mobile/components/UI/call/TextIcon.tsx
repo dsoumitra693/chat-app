@@ -1,4 +1,5 @@
 import {
+  GestureResponderEvent,
   StyleProp,
   StyleSheet,
   Text,
@@ -16,6 +17,7 @@ const TextIcon = ({
   text,
   name,
   size,
+  onPress,
 }: {
   Icon: Icon<any, any>;
   style?: StyleProp<ViewStyle>;
@@ -23,9 +25,10 @@ const TextIcon = ({
   text?: string;
   name: string;
   size?: number;
+  onPress?: ((event: GestureResponderEvent) => void) | undefined;
 }) => {
   return (
-    <TouchableOpacity style={[styles.iconWrapper, style]}>
+    <TouchableOpacity style={[styles.iconWrapper, style]} onPress={onPress}>
       <Icon name={name} size={size || 25} color={color} />
       {!!text && <Text style={styles.text}>{text}</Text>}
     </TouchableOpacity>
