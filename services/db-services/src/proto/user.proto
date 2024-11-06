@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package user;
+
+import "google/protobuf/timestamp.proto";
+
+// User message represents the Users table in the database.
+message User {
+  string id = 1; // UUID for the user (Primary key)
+  string fullname = 2; // User's full name
+  string bio = 3; // User's biography
+  string phone = 4; // User's phone number (unique)
+  string profilePicture = 5; // URL of the user's profile picture
+  string accountId = 6; // Foreign key linking to the Account table
+  google.protobuf.Timestamp createdAt = 7; // User creation timestamp
+  google.protobuf.Timestamp updatedAt = 8; // User update timestamp
+}
+
+// Request message for getting user information
+message GetUserRequest {
+  string userId = 1;
+  string phone = 2;
+}
+
+// Response message for getting user information
+message GetUserResponse {
+  User user = 1;
+}
+
+// UserService defines the service for user-related operations
+service UserService {
+  rpc GetUser (GetUserRequest) returns (GetUserResponse);
+}

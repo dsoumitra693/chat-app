@@ -19,20 +19,11 @@ const dbService = new DBService();
  * - Returns a 400 status if neither `userId` nor `phone` is provided.
  * - Returns the retrieved user data if a match is found.
  */
-export const readUsersData = asyncErrorHandler(
-  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const { userId, phone } = req.body;
+export const readUsersData = 
+  async ({ userId, phone }:{userId?:string; phone?:string}): Promise<{
+    [x: string]: any;
+}[]> => {
 
-    // Check if neither userId nor phone is provided
-    if (!userId && !phone) {
-      res.status(400).json({
-        success: false,
-        message: 'Invalid data received',
-        errorCode: 'INVALID_DATA',
-        data: null,
-      });
-      return
-    }
 
     // Initialize an array to hold conditions
     const conditions = [];
@@ -53,13 +44,8 @@ export const readUsersData = asyncErrorHandler(
     // Execute the database read operation
     const result = await dbService.read(queryCondition, users);
 
-    res.status(200).json({
-      success: true,
-      message: 'Data retrieved successfully',
-      data: result,
-    });
+    return result
   }
-);
 
 /**
  * Handler for deleting user data based on userId or phone number.
@@ -74,20 +60,7 @@ export const readUsersData = asyncErrorHandler(
  * - Returns a 400 status if neither `userId` nor `phone` is provided.
  * - Returns the deleted user data if the deletion is successful.
  */
-export const deleteUserData = asyncErrorHandler(
-  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const { userId, phone } = req.body;
-
-    // Check if neither userId nor phone is provided
-    if (!userId && !phone) {
-      res.status(400).json({
-        success: false,
-        message: 'Invalid data received',
-        errorCode: 'INVALID_DATA',
-        data: null,
-      });
-      return
-    }
+export const deleteUserData = async ({ userId, phone }:{ userId?:string; phone?:string }): Promise<boolean> => {
 
     // Initialize an array to hold conditions
     const conditions = [];
@@ -108,10 +81,5 @@ export const deleteUserData = asyncErrorHandler(
     // Execute the database delete operation
     const result = await dbService.delete(queryCondition, users);
 
-    res.status(200).json({
-      success: true,
-      message: 'Data deleted successfully',
-      data: result,
-    });
+    return !!result
   }
-);

@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package account;
+
+import "google/protobuf/timestamp.proto";
+
+// Account message represents the Account table in the database.
+message Account {
+  string id = 1; // UUID for the account (Primary key)
+  string phone = 2; // Phone number (unique)
+  string password = 3; // Hashed password
+  google.protobuf.Timestamp createdAt = 4; // Account creation timestamp
+  google.protobuf.Timestamp updatedAt = 5; // Account update timestamp
+}
+
+// Request message for getting an account by accountId or phone
+message GetAccountRequest {
+  string accountId = 1;
+  string phone = 2;
+}
+
+// Response message for getting an account
+message GetAccountResponse {
+  Account account = 1;
+}
+
+// Request message for deleting an account by accountId or phone
+message DeleteAccountRequest {
+  string accountId = 1;
+  string phone = 2;
+}
+
+// Response message for account deletion
+message DeleteAccountResponse {
+  bool success = 1;
+}
+
+// AccountService defines the service for account-related operations
+service AccountService {
+  rpc GetAccount (GetAccountRequest) returns (GetAccountResponse);
+  rpc DeleteAccount (DeleteAccountRequest) returns (DeleteAccountResponse);
+}

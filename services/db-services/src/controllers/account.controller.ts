@@ -1,5 +1,3 @@
-import { NextFunction, Request, Response } from 'express';
-import { asyncErrorHandler } from 'shared';
 import { DBService } from '../db';
 import { account } from 'shared';
 import { eq, or } from 'drizzle-orm';
@@ -19,20 +17,11 @@ const dbService = new DBService();
  * - Returns a 400 status if neither `accountId` nor `phone` is provided.
  * - Returns a 404 status if no matching account is found.
  */
-export const readAccountData = asyncErrorHandler(
-  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const { accountId, phone } = req.body;
+export const readAccountData = 
+  async ({accountId, phone}:{accountId:string; phone:string}): Promise<{
+    [x: string]: any;
+}[] | null> => {
 
-    // Check if neither accountId nor phone is provided
-    if (!accountId && !phone) {
-      res.status(400).json({
-        success: false,
-        message: 'Invalid data received',
-        errorCode: 'INVALID_DATA',
-        data: null,
-      });
-      return
-    }
 
     // Initialize an array to hold conditions
     const conditions = [];
@@ -54,22 +43,10 @@ export const readAccountData = asyncErrorHandler(
     const result = await dbService.read(queryCondition, account);
 
     // Handle the case where no records are found
-    if (result.length === 0) {
-      res.status(404).json({
-        success: false,
-        message: 'No accounts found',
-        data: null,
-      });
-      return
-    }
+    if (result.length === 0) return null
 
-    res.status(200).json({
-      success: true,
-      message: 'Data retrieved successfully',
-      data: result,
-    });
+    return result
   }
-);
 
 /**
  * Handler for deleting account data based on accountId or phone number.
@@ -84,20 +61,9 @@ export const readAccountData = asyncErrorHandler(
  * - Returns a 400 status if neither `accountId` nor `phone` is provided.
  * - Returns a 404 status if no account matching the provided details was deleted.
  */
-export const deleteAccountData = asyncErrorHandler(
-  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const { accountId, phone } = req.body;
+export const deleteAccountData =
+async ({accountId, phone}:{accountId:string; phone:string}): Promise<boolean> => {
 
-    // Check if neither accountId nor phone is provided
-    if (!accountId && !phone) {
-      res.status(400).json({
-        success: false,
-        message: 'Invalid data received',
-        errorCode: 'INVALID_DATA',
-        data: null,
-      });
-      return
-    }
 
     // Initialize an array to hold conditions
     const conditions = [];
@@ -118,20 +84,5 @@ export const deleteAccountData = asyncErrorHandler(
     // Execute the database delete operation
     const result = await dbService.delete(queryCondition, account);
 
-    // Check if any records were deleted
-    if (!result) { // Assuming `result` indicates number of deleted rows
-      res.status(404).json({
-        success: false,
-        message: 'No accounts deleted, matching records not found',
-        data: null,
-      });
-      return
-    }
-
-    res.status(200).json({
-      success: true,
-      message: 'Data deleted successfully',
-      data: result, // You might want to return the deleted account's data if needed
-    });
+    return !!result
   }
-);
