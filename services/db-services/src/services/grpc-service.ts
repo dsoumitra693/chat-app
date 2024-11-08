@@ -47,7 +47,7 @@ export class GRPCService {
     const getAccountHandler = async (call: any, callback: any) => {
       const { phone, accountId } = call.request;
       try {
-        if (!phone || !accountId) {
+        if (!phone && !accountId) {
           // Validate request data
           const grpcError = {
             code: grpc.status.INVALID_ARGUMENT,
@@ -88,7 +88,7 @@ export class GRPCService {
     const getUserHandler = async (call: any, callback: any) => {
       const { phone, userId } = call.request;
       try {
-        if (!phone || !userId) {
+        if (!phone && !userId) {
           // Validate request data
           const grpcError = {
             code: grpc.status.INVALID_ARGUMENT,
