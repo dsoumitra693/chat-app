@@ -1,30 +1,38 @@
 import { NextFunction, Request, Response } from 'express';
 import { asyncErrorHandler } from '../utils/asyncErrorHandler';
-import { searchAccount } from '../db';
 import { createJWT } from '../utils/jwt';
 import { produceToKafka } from '../producers';
-import { account, generateUUID } from 'shared';
-import { eq } from 'drizzle-orm';
+import { generateUUID } from 'shared';
 import { getHash } from '../utils/password';
+import { getAccount } from '../db';
 
 /**
  * Controller function for handling user sign-up.
- *
+ * 
  * @async
  * @function signUp
- * @param {Request} req - The Express request object containing the user's sign-up data.
- * @param {Response} res - The Express response object used to send back the desired HTTP response.
- * @param {NextFunction} next - The Express next middleware function.
- * @returns {Promise<void>} - Sends back a JWT and account information if sign-up is successful,
+ * @param {Request} req - The Express request object containing the user's sign-up data. 
+ *                         It should include the following fields in the request body:
+ *                         - `phone`: The user's phone number.
+ *                         - `password`: The user's password.
+ * @param {Response} res - The Express response object used to send back the desired HTTP response. 
+ *                          It returns a `200 OK` with a JWT and account details if sign-up is successful.
+ *                          It returns an error response if sign-up fails (e.g., phone already exists).
+ * @param {NextFunction} next - The Express next middleware function to pass control to the next middleware if needed.
+ * 
+ * @returns {Promise<void>} - Sends back a JWT and account information if sign-up is successful, 
  *                            or an error message with the appropriate status code if unsuccessful.
- *
- * This function is wrapped in `asyncErrorHandler` to catch and handle any asynchronous errors.
+ * 
+ * This function is wrapped in `asyncErrorHandler` to catch and handle any asynchronous errors gracefully.
+ * 
+ * @throws {400} - If required fields (`phone`, `password`) are missing or if the phone already exists.
  */
 export const signUp = asyncErrorHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     // Extract phone and password from the request body
-    let { phone, password } = req.body;
-    const id = generateUUID();
+    const { phone, password } = req.body;
+
+    console.log("signUp attempt:", phone, password);
 
     // Return a standardized 400 Bad Request response if phone or password is missing
     if (!phone || !password) {
@@ -37,18 +45,26 @@ export const signUp = asyncErrorHandler(
     }
 
     // Check if an Account with the given phone already exists
-    const accounts = await searchAccount(eq(account.phone, phone));
-    password = getHash(password);
+    const accounts = await getAccount({ phone });
 
-    if (accounts.length > 0)
+    // If the account already exists, return a 400 Bad Request response
+    if (accounts) {
       return res.status(400).send({
         success: false,
         message: 'Phone already exists.',
         errorCode: 'PHONE_EXISTS',
         data: null,
       });
+    }
 
-    produceToKafka('account.create', phone, { id, phone, password });
+    // Hash the password before storing it
+    const hashedPassword = getHash(password);
+
+    // Generate a new UUID for the new account
+    const id = generateUUID();
+
+    // Produce the account creation event to Kafka for processing
+    produceToKafka('account.create', phone, { id, phone, password: hashedPassword });
 
     // Create a JWT for the new user
     const jwt = createJWT({ id });

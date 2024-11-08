@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package account;
+
+message Account {
+  string id = 1;
+  string phone = 2;
+  string password = 3;
+  string createdAt = 4;
+  string updatedAt = 5;
+}
+
+// Request message for getting an account by accountId or phone
+message GetAccountRequest {
+  string accountId = 1;
+  string phone = 2;
+}
+
+// Response message for getting an account
+message GetAccountResponse {
+  Account account = 1;
+}
+
+// Request message for deleting an account by accountId or phone
+message DeleteAccountRequest {
+  string accountId = 1;
+  string phone = 2;
+}
+
+// Response message for account deletion
+message DeleteAccountResponse {
+  bool success = 1;
+}
+
+// AccountService defines the service for account-related operations
+service AccountService {
+  rpc GetAccount (GetAccountRequest) returns (GetAccountResponse);
+  rpc DeleteAccount (DeleteAccountRequest) returns (DeleteAccountResponse);
+}

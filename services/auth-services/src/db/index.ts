@@ -1,30 +1,66 @@
-import { db } from './db'; // Drizzle db instance
-import { account } from './schema'; // Drizzle user schema
 import { Account } from '../account';
-import { getHash } from '../utils/password';
-import { eq } from 'drizzle-orm';
-import { generateUUID } from '../utils/uuid';
-
-export { db, account };
+import { grpcClient } from '../grpc';
 
 /**
- * Function to search for users in the database based on the provided query.
+ * Fetches an account by either phone number or account ID.
  *
- * @async
- * @function searchAccount
- * @param {any} query - The query criteria for searching accounts in the database.
- * @returns {Promise<Account[]>} - A promise that resolves to an array of Account instances.
- *
- * This function catches any errors during the search and logs them, returning an empty array if an error occurs.
+ * @param {Object} params - The parameters for fetching the account.
+ * @param {string} [params.phone] - The phone number associated with the account.
+ * @param {string} [params.accountId] - The account ID to retrieve.
+ * @returns {Promise<Account>} - A promise that resolves to the account if found.
+ * @throws {Error} - If there is an error with the gRPC call or the account doesn't exist.
  */
-export const searchAccount = async (query: any): Promise<Account[]> => {
-  try {
-    const data = await db.select().from(account).where(query);
-    return data.map(
-      (account) => new Account(account.phone, account.password, account.id)
-    ) as Account[];
-  } catch (error) {
-    console.error('Error searching for users:', error);
-    return [];
-  }
+export const getAccount = async ({
+  phone,
+  accountId,
+}: {
+  phone?: string;
+  accountId?: string;
+}): Promise<Account> => {
+  return new Promise((resolve, reject) => {
+    grpcClient.GetAccount({ phone, accountId }, (error: any, response: any) => {
+      if (error) {
+        reject(new Error(`Failed to fetch account: ${error.message}`));
+      } else if (!response || !response.account) {
+        reject(new Error('Account not found'));
+      } else {
+        const _account = new Account(
+          response.account.phone,
+          response.account.password,
+          response.account.id
+        );
+        resolve(_account);
+      }
+    });
+  });
+};
+
+/**
+ * Deletes an account by phone number or account ID.
+ *
+ * @param {Object} params - The parameters for deleting the account.
+ * @param {string} [params.phone] - The phone number associated with the account.
+ * @param {string} [params.accountId] - The account ID to delete.
+ * @returns {Promise<any>} - A promise that resolves with the response if successful.
+ * @throws {Error} - If there is an error with the gRPC call.
+ */
+export const deleteAccount = async ({
+  phone,
+  accountId,
+}: {
+  phone?: string;
+  accountId?: string;
+}): Promise<any> => {
+  return new Promise((resolve, reject) => {
+    grpcClient.DeleteAccount(
+      { phone, accountId },
+      (error: any, response: any) => {
+        if (error) {
+          reject(new Error(`Failed to delete account: ${error.message}`));
+        } else {
+          resolve(response);
+        }
+      }
+    );
+  });
 };
