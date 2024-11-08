@@ -23,12 +23,12 @@ export const createUserProfile = asyncErrorHandler(
     if (!!body.profilePictureBase64) {
       profilePicture = (await uploadImage(body.profilePictureBase64)) as string;
     }
-    console.log(body);
+    
     // Create the new user profile
     await userService.createUser({ ...body, profilePicture });
 
     const user_profile = await userService.getUser({
-      accountId: body.accountId,
+      phone: body.phone,
     });
 
     // Respond with a standardized success message
@@ -49,10 +49,10 @@ export const createUserProfile = asyncErrorHandler(
  */
 export const getUserProfile = asyncErrorHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { accountId } = req.body;
+    const { phone, userId } = req.body;
 
     // Retrieve the user profile using the account ID
-    const user_profile = await userService.getUser({ accountId });
+    const user_profile = await userService.getUser({ phone, userId });
 
     // Respond with a standardized success message
     res.status(200).json({

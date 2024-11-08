@@ -13,6 +13,8 @@
     "run-kafka-admin": "ts-node src/kafka.admin.ts"
   },
   "dependencies": {
+    "@grpc/grpc-js": "^1.12.2",
+    "@grpc/proto-loader": "^0.7.13",
     "@neondatabase/serverless": "^0.10.1",
     "axios": "^1.7.7",
     "bcrypt": "^5.1.1",

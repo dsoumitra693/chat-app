@@ -4,6 +4,7 @@ import { db } from '../db/db';
 import { account, userContacts, users } from '../db/schema';
 import { KafkaService } from '../kafka';
 import { generateUUID } from 'shared';
+import { grpcClient } from '../grpc';
 
 const kafkaService = new KafkaService();
 
@@ -137,21 +138,25 @@ export class UserServices {
    *
    * @throws {Error} If the user does not exist.
    */
-  async getUser({ accountId }: { accountId: string }) {
-    // Ensure the accountId is a valid UUID
-    z.string().uuid().parse(accountId);
-
-    const user = await db
-      .select()
-      .from(users)
-      .where(eq(users.accountId, accountId));
-
-    if (user.length === 0) {
-      throw new Error('DBError: User does not exist');
-    }
-
-    return user[0]; // Return the first matching user
-  }
+  async getUser ({
+    phone,
+    userId,
+  }: {
+    phone?: string;
+    userId?: string;
+  }): Promise<Object> {
+    return new Promise((resolve, reject) => {
+      grpcClient.GetUser({ phone, userId }, (error: any, response: any) => {
+        if (error) {
+          reject(new Error(`Failed to fetch user: ${error.message}`));
+        } else if (!response || !response.user) {
+          reject(new Error('User not found'));
+        } else {
+          resolve(response.user);
+        }
+      });
+    });
+  };
   /**
    * Adds a contact for a user.
    *
@@ -164,7 +169,6 @@ export class UserServices {
       .from(users)
       .where(eq(users.phone, contactPhone));
     const id = generateUUID();
-    console.log(contact, id)
     await db.insert(userContacts).values({
       id,
       userId,

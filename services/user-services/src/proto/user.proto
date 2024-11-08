@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package user;
+
+// User message represents the Users table in the database.
+message User {
+  string id = 1;
+  string fullname = 2;
+  string bio = 3;
+  string phone = 4;
+  string profilePicture = 5;
+  string accountId = 6;
+  string createdAt = 7;
+  string updatedAt = 8;
+}
+
+// Request message for getting user information
+message GetUserRequest {
+  string userId = 1;
+  string phone = 2;
+}
+
+// Response message for getting user information
+message GetUserResponse {
+  User user = 1;
+}
+
+// UserService defines the service for user-related operations
+service UserService {
+  rpc GetUser (GetUserRequest) returns (GetUserResponse);
+}
