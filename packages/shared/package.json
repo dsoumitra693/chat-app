@@ -4,6 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
+    "build":"npx tsc",
     "db-generate": "tsc && drizzle-kit generate",
     "db-migrate": "drizzle-kit migrate",
     "db-studio": "drizzle-kit studio"
