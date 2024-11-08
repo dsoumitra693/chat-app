@@ -32,7 +32,6 @@ export const signUp = asyncErrorHandler(
     // Extract phone and password from the request body
     const { phone, password } = req.body;
 
-    console.log("signUp attempt:", phone, password);
 
     // Return a standardized 400 Bad Request response if phone or password is missing
     if (!phone || !password) {

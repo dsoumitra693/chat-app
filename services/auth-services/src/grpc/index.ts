@@ -11,7 +11,6 @@ let packageDefinition;
 try {
   packageDefinition = protoLoader.loadSync(PROTO_PATH);
 } catch (error) {
-  console.error('Error loading proto file:', error);
   process.exit(1); // Exit if the proto file loading fails
 }
 
@@ -21,7 +20,6 @@ const proto = loadPackageDefinition(packageDefinition).account as any;
 // Ensure the DB_SERVICE_URL is defined in the environment variables
 const dbServiceUrl = process.env.DB_SERVICE_URL;
 if (!dbServiceUrl) {
-  console.error('DB_SERVICE_URL is not defined in environment variables.');
   process.exit(1); // Exit if DB_SERVICE_URL is not set
 }
 
@@ -31,5 +29,4 @@ export const grpcClient = new proto.AccountService(
   grpc.credentials.createInsecure() // This can be updated for secure connections in production
 );
 
-// Optionally, log the creation of the client
-console.log('gRPC Client created successfully for AccountService');
+

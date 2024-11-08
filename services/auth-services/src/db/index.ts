@@ -16,7 +16,7 @@ export const getAccount = async ({
 }: {
   phone?: string;
   accountId?: string;
-}): Promise<Account> => {
+}): Promise<Account | undefined> => {
   return new Promise((resolve, reject) => {
     grpcClient.GetAccount({ phone, accountId }, (error: any, response: any) => {
       if (error) {
@@ -24,6 +24,7 @@ export const getAccount = async ({
       } else if (!response || !response.account) {
         reject(new Error('Account not found'));
       } else {
+        if (!Object.keys(response.account).length) return resolve(undefined);
         const _account = new Account(
           response.account.phone,
           response.account.password,
