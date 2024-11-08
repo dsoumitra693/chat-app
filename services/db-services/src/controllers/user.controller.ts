@@ -7,79 +7,101 @@ import { eq, or } from 'drizzle-orm';
 const dbService = new DBService();
 
 /**
- * Handler for reading user data based on userId or phone number.
+ * Handler for reading user data based on `userId` or `phone` number.
+ * The function retrieves the user data from the database by checking the provided 
+ * `userId` and/or `phone`. If both are provided, it uses an OR condition to match either.
+ *
+ * @param {Object} params - The input parameters for the request.
+ * @param {string} [params.userId] - The user ID to query for (optional).
+ * @param {string} [params.phone] - The phone number to query for (optional).
  * 
- * @param req - Express request object, expecting `userId` and/or `phone` in the body.
- * @param res - Express response object, used to send back the result.
- * @param next - Next function to pass control to the next middleware in case of errors.
+ * @returns {Promise<{[key: string]: any}>} 
+ *   - Resolves to the user data if a match is found, or an empty object if no matching user is found.
  * 
- * @returns {Promise<void>} Sends back a JSON response with the user data if found.
+ * @throws {Error} - Throws an error if the database query fails.
  * 
- * Error Handling:
- * - Returns a 400 status if neither `userId` nor `phone` is provided.
- * - Returns the retrieved user data if a match is found.
+ * @example
+ * // Usage:
+ * const userData = await readUsersData({ userId: '12345', phone: '9876543210' });
  */
-export const readUsersData = 
-  async ({ userId, phone }:{userId?:string; phone?:string}): Promise<{
-    [x: string]: any;
-}[]> => {
+export const readUsersData = async ({
+  userId,
+  phone,
+}: {
+  userId?: string;
+  phone?: string;
+}): Promise<{
+  [x: string]: any;
+}> => {
+  // Initialize an array to hold conditions
+  const conditions = [];
 
-
-    // Initialize an array to hold conditions
-    const conditions = [];
-
-    // Add the userId condition if it's provided
-    if (userId) {
-      conditions.push(eq(users.id, userId));
-    }
-
-    // Add the phone condition if it's provided
-    if (phone) {
-      conditions.push(eq(users.phone, phone));
-    }
-
-    // Use `or` if there are multiple conditions, otherwise use the single condition
-    const queryCondition = conditions.length > 1 ? or(...conditions) : conditions[0];
-
-    // Execute the database read operation
-    const result = await dbService.read(queryCondition, users);
-
-    return result
+  // Add the userId condition if it's provided
+  if (userId) {
+    conditions.push(eq(users.id, userId));
   }
+
+  // Add the phone condition if it's provided
+  if (phone) {
+    conditions.push(eq(users.phone, phone));
+  }
+
+  // Use `or` if there are multiple conditions, otherwise use the single condition
+  const queryCondition =
+    conditions.length > 1 ? or(...conditions) : conditions[0];
+
+  // Execute the database read operation
+  const result = await dbService.read(queryCondition, users);
+  // Handle the case where no records are found
+  if (result.length === 0) return {};
+
+  return result[0];
+};
 
 /**
- * Handler for deleting user data based on userId or phone number.
+ * Handler for deleting user data based on `userId` or `phone` number.
+ * This function deletes a user matching either the `userId` or `phone` provided in the request.
+ * If both are provided, it deletes the user matching either condition.
+ *
+ * @param {Object} params - The input parameters for the request.
+ * @param {string} [params.userId] - The user ID to delete (optional).
+ * @param {string} [params.phone] - The phone number to delete (optional).
  * 
- * @param req - Express request object, expecting `userId` and/or `phone` in the body.
- * @param res - Express response object, used to send back the result.
- * @param next - Next function to pass control to the next middleware in case of errors.
+ * @returns {Promise<boolean>} 
+ *   - Resolves to `true` if the user was successfully deleted, `false` if no matching user was found.
  * 
- * @returns {Promise<void>} Sends back a JSON response indicating the success or failure of the deletion.
+ * @throws {Error} - Throws an error if the database query fails.
  * 
- * Error Handling:
- * - Returns a 400 status if neither `userId` nor `phone` is provided.
- * - Returns the deleted user data if the deletion is successful.
+ * @example
+ * // Usage:
+ * const wasDeleted = await deleteUserData({ userId: '12345', phone: '9876543210' });
  */
-export const deleteUserData = async ({ userId, phone }:{ userId?:string; phone?:string }): Promise<boolean> => {
+export const deleteUserData = async ({
+  userId,
+  phone,
+}: {
+  userId?: string;
+  phone?: string;
+}): Promise<boolean> => {
+  // Initialize an array to hold conditions
+  const conditions = [];
 
-    // Initialize an array to hold conditions
-    const conditions = [];
-
-    // Add the userId condition if it's provided
-    if (userId) {
-      conditions.push(eq(users.id, userId));
-    }
-
-    // Add the phone condition if it's provided
-    if (phone) {
-      conditions.push(eq(users.phone, phone));
-    }
-
-    // Use `or` if there are multiple conditions, otherwise use the single condition
-    const queryCondition = conditions.length > 1 ? or(...conditions) : conditions[0];
-
-    // Execute the database delete operation
-    const result = await dbService.delete(queryCondition, users);
-
-    return !!result
+  // Add the userId condition if it's provided
+  if (userId) {
+    conditions.push(eq(users.id, userId));
   }
+
+  // Add the phone condition if it's provided
+  if (phone) {
+    conditions.push(eq(users.phone, phone));
+  }
+
+  // Use `or` if there are multiple conditions, otherwise use the single condition
+  const queryCondition =
+    conditions.length > 1 ? or(...conditions) : conditions[0];
+
+  // Execute the database delete operation
+  const result = await dbService.delete(queryCondition, users);
+
+  return !!result;
+};

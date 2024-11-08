@@ -2,15 +2,12 @@ syntax = "proto3";
 
 package account;
 
-import "google/protobuf/timestamp.proto";
-
-// Account message represents the Account table in the database.
 message Account {
-  string id = 1; // UUID for the account (Primary key)
-  string phone = 2; // Phone number (unique)
-  string password = 3; // Hashed password
-  google.protobuf.Timestamp createdAt = 4; // Account creation timestamp
-  google.protobuf.Timestamp updatedAt = 5; // Account update timestamp
+  string id = 1;
+  string phone = 2;
+  string password = 3;
+  string createdAt = 4;
+  string updatedAt = 5;
 }
 
 // Request message for getting an account by accountId or phone
