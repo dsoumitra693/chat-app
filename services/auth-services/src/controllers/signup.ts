@@ -49,7 +49,6 @@ export const signUp = asyncErrorHandler(
 
     // Check if an Account with the given phone already exists
     const isAccountExists = await bloomFilter.check(phone);
-    console.log(isAccountExists);
 
     // If the account already exists, return a 400 Bad Request response
     if (isAccountExists) {
