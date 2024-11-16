@@ -1,6 +1,6 @@
 import { Consumer, EachMessageHandler, Kafka, Producer } from 'kafkajs';
 import { kafka } from '../config/kafka.config';
-import { generateUUID } from 'shared';
+import { generateUUID } from '../utils/uuid';
 
 export class KafkaService {
   private producer: Producer;

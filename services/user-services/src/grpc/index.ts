@@ -4,7 +4,7 @@ import * as protoLoader from '@grpc/proto-loader';
 import path from 'path';
 
 // Path to the Proto file
-const PROTO_PATH = path.resolve(__dirname, '../proto/user.proto');
+const PROTO_PATH = path.resolve(__dirname, '../../proto/user.proto');
 
 // Load the Proto file and handle any potential errors
 let packageDefinition;

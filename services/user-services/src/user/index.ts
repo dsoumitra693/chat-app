@@ -1,10 +1,8 @@
 import { eq, inArray } from 'drizzle-orm';
 import { z } from 'zod';
-import { db } from '../db/db';
-import { account, userContacts, users } from '../db/schema';
 import { KafkaService } from '../kafka';
-import { generateUUID } from 'shared';
 import { grpcClient } from '../grpc';
+import { generateUUID } from '../utils/uuid';
 
 const kafkaService = new KafkaService();
 
@@ -93,15 +91,15 @@ export class UserServices {
     // Validate input
     updateUserSchema.parse(input);
 
-    // Ensure the account exists
-    const user_account = await db
-      .select()
-      .from(account)
-      .where(eq(account.id, input.accountId));
+    // // Ensure the account exists
+    // const user_account = await db
+    //   .select()
+    //   .from(account)
+    //   .where(eq(account.id, input.accountId));
 
-    if (user_account.length === 0) {
-      throw new Error('DBError: Account does not exist');
-    }
+    // if (user_account.length === 0) {
+    //   throw new Error('DBError: Account does not exist');
+    // }
 
     // Prepare an update object with only non-empty fields
     const updateFields: Partial<{
@@ -138,7 +136,7 @@ export class UserServices {
    *
    * @throws {Error} If the user does not exist.
    */
-  async getUser ({
+  async getUser({
     phone,
     userId,
   }: {
@@ -156,7 +154,7 @@ export class UserServices {
         }
       });
     });
-  };
+  }
   /**
    * Adds a contact for a user.
    *
@@ -164,21 +162,18 @@ export class UserServices {
    * @param contactId - The ID of the contact to add.
    */
   async addContact(userId: string, contactPhone: string) {
-    const contact = await db
-      .select()
-      .from(users)
-      .where(eq(users.phone, contactPhone));
     const id = generateUUID();
-    await db.insert(userContacts).values({
+
+    await kafkaService.produce(
+      'contact.create',
       id,
-      userId,
-      contactUserId: contact[0].id,
-    });
-    return {
-      id,
-      userId,
-      contactUserId: contact[0].id,
-    };
+      JSON.stringify({
+        id,
+        userId,
+        contactPhone,
+      })
+    );
+    return id;
   }
 
   /**
@@ -187,9 +182,7 @@ export class UserServices {
    * @param userId - The ID of the user.
    * @param contactId - The ID of the contact to remove.
    */
-  async removeContact(contactId: string): Promise<void> {
-    await db.delete(userContacts).where(eq(userContacts.id, contactId));
-  }
+  async removeContact(contactId: string): Promise<void> {}
 
   /**
    * Retrieves all contacts for a user.
@@ -198,18 +191,5 @@ export class UserServices {
    *
    * @returns An array of user objects representing the contacts.
    */
-  async getContacts(userId: string) {
-    const contacts = await db
-      .select()
-      .from(userContacts)
-      .where(eq(userContacts.userId, userId));
-
-    // fetch additional user info
-    const contactIds = contacts.map((contact) => contact.contactUserId);
-    const filteredContactIds = contactIds.filter((id) => id !== null);
-    return await db
-      .select()
-      .from(users)
-      .where(inArray(users.id, filteredContactIds));
-  }
+  async getContacts(userId: string) {}
 }
