@@ -2,9 +2,8 @@ import { NextFunction, Request, Response } from 'express';
 import { asyncErrorHandler } from '../utils/asyncErrorHandler';
 import { createJWT } from '../utils/jwt';
 import { produceToKafka } from '../producers';
-import { generateUUID } from 'shared';
+import { generateUUID } from '../utils/uuid';
 import { getHash } from '../utils/password';
-import { getAccount } from '../db';
 import { BloomFilter } from '../utils/bloomfilters';
 
 const bloomFilter = new BloomFilter({
