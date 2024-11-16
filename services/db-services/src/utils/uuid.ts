@@ -1,11 +1,10 @@
+import { v4 as uuidv4 } from 'uuid';
+
 /**
- * Exports the `generateUUID` function from the shared module.
+ * Generates a new universally unique identifier (UUID).
  *
- * This function generates a universally unique identifier (UUID),
- * which can be used for identifying resources, records, or sessions
- * in a unique manner across different contexts.
- *
- * @module shared
- * @function generateUUID
+ * @returns {string} A randomly generated UUID.
  */
-export { generateUUID } from 'shared';
+export function generateUUID(): string {
+  return uuidv4();
+}

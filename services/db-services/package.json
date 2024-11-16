@@ -12,6 +12,7 @@
     "db-studio": "drizzle-kit studio"
   },
   "dependencies": {
+    "@dsoumitra693/async-error-handler": "^1.0.0",
     "@grpc/grpc-js": "^1.12.2",
     "@grpc/proto-loader": "^0.7.13",
     "@neondatabase/serverless": "^0.10.1",
@@ -23,7 +24,6 @@
     "express": "^4.21.1",
     "jsonwebtoken": "^9.0.2",
     "kafkajs": "^2.2.4",
-    "shared": "1.0.0",
     "uuid": "^10.0.0"
   },
   "devDependencies": {

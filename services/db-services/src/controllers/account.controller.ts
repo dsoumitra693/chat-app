@@ -1,6 +1,6 @@
 import { DBService } from '../db';
-import { account } from 'shared';
 import { eq, or } from 'drizzle-orm';
+import { account } from '../db/schema';
 
 const dbService = new DBService();
 

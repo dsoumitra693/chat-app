@@ -1,8 +1,6 @@
-import { NextFunction, Request, Response } from 'express';
-import { asyncErrorHandler } from 'shared';
 import { DBService } from '../db';
-import { users } from 'shared';
 import { eq, or } from 'drizzle-orm';
+import { users } from '../db/schema';
 
 const dbService = new DBService();
 

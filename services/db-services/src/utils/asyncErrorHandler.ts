@@ -1,11 +1,30 @@
+import { Request, Response, NextFunction } from 'express';
+import createHttpError from 'http-errors';
+
 /**
- * Exports the `asyncErrorHandler` middleware function from the shared module.
+ * Higher-order function that wraps asynchronous Express route handlers
+ * to automatically catch and handle errors.
  *
- * This function is designed to handle asynchronous errors in route handlers,
- * ensuring that any errors thrown in asynchronous operations are passed to
- * the next error-handling middleware.
- *
- * @module shared
- * @function asyncErrorHandler
+ * @param {Function} func - The asynchronous function to wrap. It should
+ * take (req: Request, res: Response, next: NextFunction) as parameters
+ * and return a Promise.
+ * @returns {Function} A new function that wraps the original async function,
+ *                     providing automatic error handling.
  */
-export { asyncErrorHandler } from "shared";
+export const asyncErrorHandler = (
+  func: (req: Request, res: Response, next: NextFunction) => Promise<any>
+) => {
+  // Returns a new function that wraps the original async function
+  return (req: Request, res: Response, next: NextFunction) =>
+    // Execute the original function and catch any errors
+    func(req, res, next).catch((err) => {
+      // Default status code for internal server errors
+      let statusCode = 500;
+
+      // Extract error message from the error object if available
+      let message = err instanceof Error ? err.message : 'Server Error';
+
+      // Pass the error to the Express error-handling middleware
+      next(createHttpError(statusCode, message));
+    });
+};

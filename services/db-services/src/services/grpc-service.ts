@@ -4,8 +4,8 @@ import { loadproto } from '../utils/load_proto';
 import path from 'path';
 
 // Define the paths for the proto files
-const accountProtoPath = path.resolve(__dirname, '../proto/account.proto');
-const userProtoPath = path.resolve(__dirname, '../proto/user.proto');
+const accountProtoPath = path.resolve(__dirname, '../../proto/account.proto');
+const userProtoPath = path.resolve(__dirname, '../../proto/user.proto');
 
 // Load the proto files
 const account_proto = loadproto(accountProtoPath);

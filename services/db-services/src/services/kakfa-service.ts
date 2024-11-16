@@ -1,7 +1,7 @@
 import { kafka } from '../config/kafka.config';
 import { EachMessagePayload } from 'kafkajs';
-import { account, users } from 'shared';
 import { DBService } from '../db';
+import { account, users } from '../db/schema';
 
 export class KafkaConsumer {
   private consumer;
@@ -86,7 +86,7 @@ export class KafkaConsumer {
 
         // Perform batch update
         await this.dbService.updateBatch(updates, 'users');
-      }else if (topic === 'account.update') {
+      } else if (topic === 'account.update') {
         // Parse the batch for updates
         const updates = batch.map((message) => {
           const { accountId, ...updates } = JSON.parse(message);
