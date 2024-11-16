@@ -29,7 +29,7 @@ export class MessageService {
     sub.subscribe('REACTION'); // REACTION channel for message reactions
 
     // Listen for messages on subscribed Redis channels
-    sub.on('message', async (channel, message) => {
+    sub.on('message', async (channel:string, message:string) => {
       const parsedMessage: ParsedMessage = JSON.parse(message);
       const socketId = await redisKV.get(parsedMessage.to.userId); // Get recipient's socket ID
 
