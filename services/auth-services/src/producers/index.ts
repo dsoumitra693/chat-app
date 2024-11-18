@@ -7,6 +7,7 @@ export class KafkaProducers {
 
   constructor() {
     this.producer = kafka.producer();
+    console.log(this.producer)
     this.connect();
   }
 
