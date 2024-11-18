@@ -91,16 +91,6 @@ export class UserServices {
     // Validate input
     updateUserSchema.parse(input);
 
-    // // Ensure the account exists
-    // const user_account = await db
-    //   .select()
-    //   .from(account)
-    //   .where(eq(account.id, input.accountId));
-
-    // if (user_account.length === 0) {
-    //   throw new Error('DBError: Account does not exist');
-    // }
-
     // Prepare an update object with only non-empty fields
     const updateFields: Partial<{
       fullname: string;
@@ -182,7 +172,26 @@ export class UserServices {
    * @param userId - The ID of the user.
    * @param contactId - The ID of the contact to remove.
    */
-  async removeContact(contactId: string): Promise<void> {}
+  async removeContact(
+    contactId: string,
+    userId?: string,
+    contactUserId?: string
+  ): Promise<void> {
+    return new Promise((resolve, reject) => {
+      grpcClient.DeleteContact(
+        { contactId, userId, contactUserId },
+        (error: any, response: any) => {
+          if (error) {
+            reject(new Error(`Failed to delete contact: ${error.message}`));
+          } else if (!response || !response.status) {
+            reject(new Error('Contact not found'));
+          } else {
+            resolve(response.status);
+          }
+        }
+      );
+    });
+  }
 
   /**
    * Retrieves all contacts for a user.
@@ -191,5 +200,24 @@ export class UserServices {
    *
    * @returns An array of user objects representing the contacts.
    */
-  async getContacts(userId: string) {}
+  async getContacts(
+    contactId: string,
+    userId?: string,
+    contactUserId?: string
+  ): Promise<void> {
+    return new Promise((resolve, reject) => {
+      grpcClient.GetContact(
+        { contactId, userId, contactUserId },
+        (error: any, response: any) => {
+          if (error) {
+            reject(new Error(`Failed to fetch contact: ${error.message}`));
+          } else if (!response || !response.contact) {
+            reject(new Error('Contact not found'));
+          } else {
+            resolve(response.contact);
+          }
+        }
+      );
+    });
+  }
 }

@@ -5,6 +5,7 @@
   "license": "MIT",
   "scripts": {
     "build": "npx tsc",
+    "kafka-partition":"node dist/kafka.admin.js",
     "start": "node dist/index",
     "dev": "nodemon src/index.ts",
     "db-generate": "drizzle-kit generate",
@@ -40,6 +41,7 @@
     "@types/node": "^22.4.1",
     "@types/uuid": "^10.0.0",
     "drizzle-kit": "^0.26.2",
+    "nodemon": "^3.1.7",
     "ts-node": "^10.9.2",
     "typescript": "^5.6.3"
   }

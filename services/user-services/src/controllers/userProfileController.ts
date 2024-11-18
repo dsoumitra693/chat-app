@@ -23,7 +23,7 @@ export const createUserProfile = asyncErrorHandler(
     if (!!body.profilePictureBase64) {
       profilePicture = (await uploadImage(body.profilePictureBase64)) as string;
     }
-    
+
     // Create the new user profile
     await userService.createUser({ ...body, profilePicture });
 
@@ -47,12 +47,15 @@ export const createUserProfile = asyncErrorHandler(
  * @returns {object} user_profile - The retrieved user's profile data
  * Responds with a standardized success message on success
  */
-export const getUserProfile = asyncErrorHandler(
+export const getUserProfile = ()=>{}
+  // asyncErrorHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const { phone, userId } = req.body;
 
     // Retrieve the user profile using the account ID
-    const user_profile = await userService.getUser({ phone, userId });
+    // const user_profile = await userService.getUser({ phone, userId });
+
+    const user_profile = {};
 
     // Respond with a standardized success message
     res.status(200).json({
@@ -60,8 +63,8 @@ export const getUserProfile = asyncErrorHandler(
       message: 'User profile retrieved successfully',
       data: user_profile,
     });
-  }
-);
+  };
+// );
 
 /**
  * @desc Update an existing user profile associated with an account ID

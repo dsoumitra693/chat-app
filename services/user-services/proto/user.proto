@@ -29,3 +29,40 @@ message GetUserResponse {
 service UserService {
   rpc GetUser (GetUserRequest) returns (GetUserResponse);
 }
+
+message Contact {
+  string id = 1;
+  string userId = 2;
+  string contactUserId = 3;
+  string createdAt = 4;
+}
+
+// Request message for getting contact information
+message GetContactRequest {
+  string contactId = 1;
+  string userId = 2;
+  string contactUserId = 3;
+}
+
+// Response message for getting contact information
+message GetContactResponse {
+  Contact contact = 1;
+}
+
+
+// Request message for deleting contact information
+message DeletContactRequest {
+  string contactId = 1;
+  string userId = 2;
+  string contactUserId = 3;
+}
+
+// Response message for deleting contact information
+message DeleteContactResponse {
+  bool contact = 1;
+}
+
+service ContactService {
+  rpc GetContact (GetContactRequest) returns (GetUserResponse);
+  rpc DeleteContact (DeletContactRequest) returns (DeleteContactResponse);
+}
