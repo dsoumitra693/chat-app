@@ -1,22 +1,86 @@
-version: "3"
-
+version: "3.8"
 services:
   zookeeper:
-    image: 'wurstmeister/zookeeper:latest'
+    image: confluentinc/cp-zookeeper:latest
+    container_name: zookeeper
     ports:
-      - '2181:2181'
+      - "2181:2181"
     environment:
-      - ALLOW_ANONYMOUS_LOGIN=yes
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - chat-network
 
   kafka:
-    image: 'wurstmeister/kafka:latest'
+    image: confluentinc/cp-kafka:latest
+    container_name: kafka
     ports:
-      - '9092:9092'
+      - "9092:9092"
     environment:
-      - KAFKA_BROKER_ID=1
-      - KAFKA_LISTENERS=PLAINTEXT://:9092
-      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://127.0.0.1:9092
-      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
-      - ALLOW_PLAINTEXT_LISTENER=yes
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_CREATE_TOPICS: "account.create:1:1,account.update:1:1,user.create:1:1,user.update:1:1"
     depends_on:
       - zookeeper
+    networks:
+      - chat-network
+      
+  auth-services:
+    build:
+      context: ./services/auth-services
+      dockerfile: Dockerfile
+    ports:
+      - '3000:3000'
+    env_file:
+      - ./services/auth-services/.env
+    depends_on:
+      - kafka
+    networks:
+      - chat-network
+
+  user-services:
+    build:
+      context: ./services/user-services
+      dockerfile: Dockerfile
+    ports:
+      - '4000:4000'
+    env_file:
+      - ./services/user-services/.env
+    depends_on:
+      - kafka
+    networks:
+      - chat-network
+
+  msg-services:
+    build:
+      context: ./services/msg-services
+      dockerfile: Dockerfile
+    ports:
+      - '5000:5000'
+    env_file:
+      - ./services/msg-services/.env
+    depends_on:
+      - kafka
+    networks:
+      - chat-network
+
+  db-services:
+    build:
+      context: ./services/db-services
+      dockerfile: Dockerfile
+    ports:
+      - '6000:6000'
+    env_file:
+      - ./services/db-services/.env
+    depends_on:
+      - kafka
+    networks:
+      - chat-network
+
+
+networks:
+  chat-network:
+    driver: bridge
