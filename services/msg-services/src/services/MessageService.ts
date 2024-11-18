@@ -59,7 +59,7 @@ export class MessageService {
    * @param lastMsgTimestamp - The timestamp of the last retrieved message.
    * @returns A promise that resolves to an array of messages after the specified timestamp.
    */
-  static async get(conversationId: string, lastMsgTimestamp: Date): Promise<any[]> {
+  static async get(conversationId: string, lastMsgTimestamp: string): Promise<any[]> {
     // Implementation for retrieving messages, likely from a database
     // TODO: Replace `any[]` with the actual type of the message objects
     return []; // Placeholder implementation
