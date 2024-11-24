@@ -1,0 +1,14 @@
+FROM node:latest
+
+WORKDIR /usr/src/app
+
+COPY package.json ./
+
+RUN yarn install
+RUN yarn global add typescript
+
+COPY . .
+
+RUN yarn build
+
+CMD ["yarn", "start"]
