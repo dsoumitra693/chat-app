@@ -88,3 +88,7 @@ export class BloomFilter {
     await pipeline.exec();
   }
 }
+
+export const bloomFilter = new BloomFilter({
+  filterKey: 'ACCOUNT_BLOOM_FLITER_KEY',
+});

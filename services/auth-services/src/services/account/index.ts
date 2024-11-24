@@ -1,4 +1,10 @@
-import { compareHash, getHash } from '../utils/password';
+import { error } from 'console';
+import { AccountRepo } from '../../account-repo';
+import { accountSchema } from '../../db/schema';
+import { produceToKafka } from '../../producers';
+import { compareHash, getHash } from '../../utils/password';
+
+const accountRepo = new AccountRepo();
 
 export class Account {
   // Private properties for storing phone and password
@@ -91,5 +97,45 @@ export class Account {
    */
   json(): string {
     return JSON.stringify(this._id);
+  }
+
+  static async findOne({ phone, id }: { phone?: string; id?: string }) {
+    let query: string[] = [];
+    if (phone) query.push(`phone = '${phone}'`);
+    if (id) query.push(`id = ${id}`);
+
+    if (query.length == 0) throw new Error('Phone or Id is not given.');
+
+    let queryStr = query.join(' OR ');
+
+    let result = await accountRepo.getAccount(queryStr);
+
+    if(!result.length) return undefined
+
+    return new Account(result[0].phone, result[0].password, result[0].id);
+  }
+
+  public async delete() {
+    return accountRepo.deleteAccount(
+      `id = ${this.id} OR phone = '${this.phone}'`
+    );
+  }
+
+  public async save() {
+    produceToKafka('account.create', this.phone, {
+      id: this.id,
+      phone: this.phone.toString(),
+      password: this.password,
+    });
+    return this;
+  }
+
+  public async update() {
+    produceToKafka('account.update', this.phone, {
+      id: this.id,
+      phone: this.phone,
+      password: this.password,
+    });
+    return this;
   }
 }

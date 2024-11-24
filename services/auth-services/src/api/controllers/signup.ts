@@ -1,14 +1,11 @@
 import { NextFunction, Request, Response } from 'express';
-import { asyncErrorHandler } from '../utils/asyncErrorHandler';
-import { createJWT } from '../utils/jwt';
-import { produceToKafka } from '../producers';
-import { generateUUID } from '../utils/uuid';
-import { getHash } from '../utils/password';
-import { BloomFilter } from '../utils/bloomfilters';
-
-const bloomFilter = new BloomFilter({
-  filterKey: 'ACCOUNT_BLOOM_FLITER_KEY',
-});
+import { bloomFilter, BloomFilter } from '../../redis/bloomfilters';
+import { asyncErrorHandler } from '../../utils/asyncErrorHandler';
+import { getHash } from '../../utils/password';
+import { generateUUID } from '../../utils/uuid';
+import { createJWT } from '../../utils/jwt';
+import { Account } from '../../services/account';
+import { jwtStore } from '../../redis/jwt-store';
 
 /**
  * Controller function for handling user sign-up.
@@ -51,7 +48,6 @@ export const signUp = asyncErrorHandler(
 
     // If the account already exists, return a 400 Bad Request response
     if (isAccountExists) {
-      bloomFilter.delete(phone);
       return res.status(400).send({
         success: false,
         message: 'Phone already exists.',
@@ -66,24 +62,29 @@ export const signUp = asyncErrorHandler(
     // Generate a new UUID for the new account
     const id = generateUUID();
 
-    // Produce the account creation event to Kafka for processing
-    produceToKafka('account.create', phone, {
-      id,
-      phone,
-      password: hashedPassword,
-    });
-    bloomFilter.add(phone);
+    let account = new Account(phone, hashedPassword, id);
+    await bloomFilter.add(phone);
+    account.save();
 
     // Create a JWT for the new user
-    const jwt = createJWT({ id });
+    // Create a new JWT for the account
+    const token = createJWT(account);
+
+    jwtStore.store(
+      token,
+      JSON.stringify({
+        phone: account.phone,
+        id: account.id,
+      })
+    );
 
     // Return a 200 OK status with a success message and the JWT
     res.status(200).send({
       success: true,
       message: 'Account created successfully',
       data: {
-        jwt,
-        account: { accountId: id, phone },
+        token,
+        account,
       },
     });
   }

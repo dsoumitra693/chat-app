@@ -80,12 +80,12 @@ authRouter.put('/password/forget', forgetPass);
  * @param {Response} res - The response object for sending the result back to the client.
  * @param {NextFunction} next - The next middleware function in the stack.
  */
-authRouter.put('/change/password', changePass);
+authRouter.put('/password/change', changePass);
 
 /**
  * Route to handle changing the user's phone number.
  * 
- * @name PUT /change/phone
+ * @name PUT /phone/change
  * @function
  * @memberof authRouter
  * @inner
@@ -93,7 +93,7 @@ authRouter.put('/change/password', changePass);
  * @param {Response} res - The response object for sending the result back to the client.
  * @param {NextFunction} next - The next middleware function in the stack.
  */
-authRouter.put('/change/phone', changePhone);
+authRouter.put('/phone/change', changePhone);
 
 // Export the authRouter for use in the main application file
 export default authRouter;

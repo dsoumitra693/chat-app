@@ -1,14 +1,15 @@
 import { Request, Response, NextFunction } from 'express';
-import { asyncErrorHandler } from '../utils/asyncErrorHandler';
-import { createJWT } from '../utils/jwt';
-import { getAccount } from '../db';
+import { asyncErrorHandler } from '../../utils/asyncErrorHandler';
+import { Account } from '../../services/account';
+import { createJWT } from '../../utils/jwt';
+import { jwtStore } from '../../redis/jwt-store';
 
 /**
  * Controller function to handle password change requests.
- * 
+ *
  * This function processes the password change request by verifying the old password,
  * updating the account with the new password, and returning a new JWT for the updated account.
- * 
+ *
  * @param req - Express Request object containing the request data. The request body should include:
  *               - `phone`: The phone number of the account whose password is to be changed.
  *               - `oldPass`: The current password of the user.
@@ -19,11 +20,11 @@ import { getAccount } from '../db';
  *              - `404 Not Found` if the account is not found for the given phone number.
  *              - `401 Unauthorized` if the old password is incorrect.
  * @param next - Express NextFunction to pass control to the next middleware (if applicable).
- * 
+ *
  * @throws {400} - If required fields (phone, newPass, oldPass) are missing.
  * @throws {404} - If the account associated with the provided phone number is not found.
  * @throws {401} - If the old password provided is incorrect.
- * 
+ *
  * @returns {200} - If the password is updated successfully, returns a JSON object containing:
  *                   - `jwt`: The new JWT for the updated account.
  *                   - `account`: The account details (accountId and phone).
@@ -39,49 +40,53 @@ const changePass = asyncErrorHandler(
         success: false,
         message: 'Missing required fields',
         errorCode: 'INVALID_INPUT',
-        data: null
+        data: null,
       });
     }
 
     // Search for the account in the database using the provided phone
-    let accounts = await getAccount({phone});
+    let account = await Account.findOne({ phone });
 
     // If the account does not exist, return a 404 Not Found response
-    if (!accounts) {
+    if (!account) {
       return res.status(404).send({
         success: false,
         message: 'Account not found',
         errorCode: 'ACCOUNT_NOT_FOUND',
-        data: null
+        data: null,
       });
     }
 
     // If the old password does not match, return a 401 Unauthorized response
-    if (!accounts.authenticate(oldPass)) {
+    if (!account.authenticate(oldPass)) {
       return res.status(401).send({
         success: false,
         message: 'Incorrect old password',
         errorCode: 'INVALID_OLD_PASSWORD',
-        data: null
+        data: null,
       });
     }
 
-    //TODO: Update the password in the database
-    // Example:
-    // accounts.password = newPass;
-    // await accounts.save();
+    //Update the password in the database
+    account.setPassword(oldPass, newPass);
+    await account.update();
 
     // Create a new JWT for the account
-    const jwt = createJWT({ id: accounts.id });
+    const token = createJWT(account);
+
+    jwtStore.store(token, JSON.stringify({
+      phone:account.phone,
+      id:account.id
+    }))
 
     // Return a 200 OK status with the new JWT in a standardized success response
     return res.status(200).send({
       success: true,
       message: 'Password updated successfully',
       data: {
-        jwt,
-        account: { accountId: accounts.id, phone: accounts.phone }
-      }
+        token,
+        account,
+      },
     });
   }
 );

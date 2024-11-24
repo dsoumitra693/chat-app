@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
-import { asyncErrorHandler } from '../utils/asyncErrorHandler';
+import { asyncErrorHandler } from '../../utils/asyncErrorHandler';
+
 
 /**
  * Controller function to handle forgotten password requests.

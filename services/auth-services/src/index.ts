@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import authRouter from './routes';
+import authRouter from './api/routes';
 
 // Load environment variables from a .env file into process.env
 dotenv.config();
@@ -21,7 +21,7 @@ app.use(cors());
 /**
  * Root route for the API.
  * Provides a simple welcome message.
- * 
+ *
  * @param {Request} req - The incoming request object.
  * @param {Response} res - The outgoing response object.
  */

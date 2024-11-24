@@ -1,67 +1,27 @@
-import { Account } from '../account';
-import { grpcClient } from '../grpc';
+import { neon } from '@neondatabase/serverless';
+import { drizzle } from 'drizzle-orm/neon-http';
+import { config } from 'dotenv';
+
+config();
 
 /**
- * Fetches an account by either phone number or account ID.
+ * Initializes a Neon database client and Drizzle ORM instance.
  *
- * @param {Object} params - The parameters for fetching the account.
- * @param {string} [params.phone] - The phone number associated with the account.
- * @param {string} [params.accountId] - The account ID to retrieve.
- * @returns {Promise<Account>} - A promise that resolves to the account if found.
- * @throws {Error} - If there is an error with the gRPC call or the account doesn't exist.
+ * @param db_url - The database URL used to connect to the Neon database.
+ *
+ * @returns {Database} - The Drizzle ORM instance configured to interact with the Neon database.
+ *
+ * @throws {Error} Throws an error if the provided database URL is not defined.
  */
-export const getAccount = async ({
-  phone,
-  accountId,
-}: {
-  phone?: string;
-  accountId?: string;
-}): Promise<Account | undefined> => {
-  return new Promise((resolve, reject) => {
-    grpcClient.GetAccount({ phone, accountId }, (error: any, response: any) => {
-      if (error) {
-        reject(new Error(`Failed to fetch account: ${error.message}`));
-      } else if (!response || !response.account) {
-        reject(new Error('Account not found'));
-      } else {
-        if (!Object.keys(response.account).length) return resolve(undefined);
-        const _account = new Account(
-          response.account.phone,
-          response.account.password,
-          response.account.id
-        );
-        resolve(_account);
-      }
-    });
-  });
-};
+export function init_db() {
+  // Ensure the DRIZZLE_DATABASE_URL environment variable is defined
+  if (!process.env.DRIZZLE_DATABASE_URL) {
+    // Fix the condition to check if db_url is not defined
+    throw new Error('Database URL is not defined in .env');
+  }
+  const neonClient = neon(process.env.DRIZZLE_DATABASE_URL!); // Initialize the Neon database client
+  return drizzle(process.env.DRIZZLE_DATABASE_URL!); // Return the Drizzle ORM instance
+}
 
-/**
- * Deletes an account by phone number or account ID.
- *
- * @param {Object} params - The parameters for deleting the account.
- * @param {string} [params.phone] - The phone number associated with the account.
- * @param {string} [params.accountId] - The account ID to delete.
- * @returns {Promise<any>} - A promise that resolves with the response if successful.
- * @throws {Error} - If there is an error with the gRPC call.
- */
-export const deleteAccount = async ({
-  phone,
-  accountId,
-}: {
-  phone?: string;
-  accountId?: string;
-}): Promise<any> => {
-  return new Promise((resolve, reject) => {
-    grpcClient.DeleteAccount(
-      { phone, accountId },
-      (error: any, response: any) => {
-        if (error) {
-          reject(new Error(`Failed to delete account: ${error.message}`));
-        } else {
-          resolve(response);
-        }
-      }
-    );
-  });
-};
+export const db = init_db();
+export type DB = typeof db;
