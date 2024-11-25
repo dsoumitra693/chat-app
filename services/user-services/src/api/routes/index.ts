@@ -21,7 +21,7 @@ const userRouter = Router();
  * @route GET /
  * @returns {void}
  */
-userRouter.get('/', getUserProfile);
+userRouter.get('/', authenticate, getUserProfile);
 
 /**
  * Route to update user profile data.

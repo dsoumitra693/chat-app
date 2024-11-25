@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
-import { asyncErrorHandler } from '../utils/asyncErrorHandler';
-import { UserServices } from '../user';
-
-const userService = new UserServices();
+import { UserContact } from '../../services/UserContactService';
+import { asyncErrorHandler } from '../../utils/asyncErrorHandler';
+import { User } from '../../services/UserService';
+import { generateUUID } from '../../utils/uuid';
 
 /**
  * Controller to add a new contact for the user.
@@ -12,8 +12,7 @@ const userService = new UserServices();
  * @param {NextFunction} next - The next middleware function.
  * @returns {Promise<void>}
  */
-export const addContact = 
-// asyncErrorHandler(
+export const addContact = asyncErrorHandler(
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { userId, contactPhone } = req.body;
 
@@ -27,7 +26,34 @@ export const addContact =
       return;
     }
 
-    const contact = await userService.addContact(userId, contactPhone);
+    const contact_user = await User.findOne({ phone: contactPhone });
+
+    if (!contact_user) {
+      res.status(404).json({
+        success: true,
+        message: 'No user is found with this phone',
+        errorCode: 'USER_NOT_FOUND',
+        data: null,
+      });
+      return;
+    }
+    const contact = new UserContact({
+      contactUserId: contact_user.id,
+      userId,
+      id: generateUUID(),
+    });
+
+    if (!contact) {
+      res.status(500).json({
+        success: false,
+        message: 'Error while creating contact',
+        errorCode: 'CONTACT_NOT_CREATED',
+        data: null,
+      });
+      return;
+    }
+
+    contact.save();
 
     res.status(201).json({
       success: true,
@@ -35,7 +61,7 @@ export const addContact =
       data: contact,
     });
   }
-// );
+);
 
 /**
  * Controller to remove a contact from the user's contact list.
@@ -49,7 +75,7 @@ export const removeContact = asyncErrorHandler(
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const contactId = req.params.contactId;
 
-    await userService.removeContact(contactId);
+    await UserContact.delete({ id: contactId });
 
     res.status(204).json({
       success: true,
@@ -70,12 +96,22 @@ export const removeContact = asyncErrorHandler(
 export const getUserContacts = asyncErrorHandler(
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const userId = req.params.id;
-    const userContacts = await userService.getContacts(userId);
+    const contacts = await UserContact.find({ userId });
+
+    if (!contacts?.length) {
+      res.status(404).json({
+        success: false,
+        message: 'Retriving user contacts failed',
+        errorCode: 'CONTACT_NOT_FOUND',
+        data: null,
+      });
+      return;
+    }
 
     res.status(200).json({
       success: true,
       message: 'User contacts retrieved successfully',
-      data: { userContacts },
+      data: { contacts },
     });
   }
 );

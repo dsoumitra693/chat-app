@@ -1,6 +1,7 @@
 import { Consumer, EachMessageHandler, Kafka, Producer } from 'kafkajs';
 import { kafka } from '../config/kafka.config';
 import { generateUUID } from '../utils/uuid';
+import { User } from '../services/UserService';
 
 export class KafkaService {
   private producer: Producer;
@@ -51,25 +52,31 @@ export class KafkaService {
     }
   }
 
-  public async consume(topic: string, eachMessage: EachMessageHandler) {
+  public async consume(eachMessage: EachMessageHandler) {
     await this.connectConsumer(); // Ensure consumer is connected before subscribing
+    await this.consumer.run({
+      autoCommit: true,
+      eachMessage,
+    });
+  }
 
+  public async subscribe(topics: string[]) {
     try {
-      await this.consumer.subscribe({ topic, fromBeginning: true });
-      await this.consumer.run({
-        autoCommit: true,
-        eachMessage,
-      });
-      console.log(`Kafka consumer subscribed to topic: ${topic}`);
+      await Promise.all(
+        topics.map(async (topic) => {
+          await this.consumer.subscribe({ topic, fromBeginning: true });
+          console.log(`Kafka consumer subscribed to topic: ${topic}`);
+        })
+      );
     } catch (error) {
-      console.error(`Error in Kafka consumer for topic ${topic}:`, error);
+      console.error('Error subscribing to topics:', error);
     }
   }
 }
 
 export async function initConsumer() {
   const kafkaService = new KafkaService();
-  await kafkaService.consume('account.create', async ({ message }) => {
+  await kafkaService.consume(async ({ topic, message }) => {
     if (!message.value) {
       console.warn('Received empty message');
       return;
@@ -78,20 +85,22 @@ export async function initConsumer() {
     const id = generateUUID();
     const data = JSON.parse(message.value.toString());
 
-    console.log(`Received message on 'account.create':`, data);
+    if (topic == 'account.create') {
+      try {
+        let user_profile = new User({
+          ...data,
+        });
 
-    try {
-      await kafkaService.produce('user.create', id, {
-        accountId: data.id,
-        phone: data.phone,
-        id,
-        fullname: '',
+        user_profile.save();
+      } catch (error) {
+        console.error('Error producing user.create message:', error);
+      }
+    } else if (topic == 'account.update') {
+      let user_profile = new User({
+        ...data,
       });
-      console.log(
-        `Produced message to 'user.create' for accountId: ${data.id}`
-      );
-    } catch (error) {
-      console.error('Error producing user.create message:', error);
+
+      user_profile.update();
     }
   });
 }

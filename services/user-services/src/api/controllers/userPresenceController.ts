@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
-import redisClient from '../db/redis';
-import { asyncErrorHandler } from '../utils/asyncErrorHandler';
+import { asyncErrorHandler } from '../../utils/asyncErrorHandler';
+import redisClient from '../../redis/redis';
 
 /**
  * Controller to set the user's presence status in Redis.
@@ -31,7 +31,7 @@ export const setUserPresence = asyncErrorHandler(
         }),
         'EX',
         60
-      ); // Set user as online for 1 hour (3600 seconds)
+      );
     } else if (status === 'offline') {
       await redisClient.del(key); // Remove user presence status
     }
