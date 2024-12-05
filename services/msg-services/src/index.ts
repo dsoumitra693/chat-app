@@ -1,7 +1,8 @@
 import http from 'http';
 import SocketServices from './services/SocketServices';
 import express from 'express';
-import { msgRouter } from './routes';
+import { msgRouter } from './api/routes';
+import { connectToDB } from './db';
 
 /**
  * Initializes the HTTP server and socket services, and starts listening on the specified port.
@@ -31,6 +32,8 @@ const init = async (): Promise<void> => {
 
   // Set up the necessary event listeners for socket communication
   socketServices.initListeners();
+
+  connectToDB();
 
   // Start the server and listen on the specified port
   app.listen(PORT, () => {

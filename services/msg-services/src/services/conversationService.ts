@@ -1,3 +1,7 @@
+import { Conversation } from '../models';
+import { produceToKafka } from '../kafka';
+import { generateUUID } from '../utils/generateUUID';
+
 /**
  * Service responsible for managing conversations between users.
  */
@@ -11,7 +15,17 @@ export class ConversationService {
    */
   public async create(user1: string, user2: string): Promise<any> {
     // Implementation for creating a new conversation
-    // TODO: Replace `any` with the actual conversation object type
+    const conversation = {
+      id: generateUUID(),
+      participants: [{ userId: user1 }, { userId: user2 }],
+      conversationType: 'private',
+    };
+    try {
+      produceToKafka('conversation.create', conversation.id, conversation);
+      console.log('Conversation send to kafka successfullys');
+    } catch (error) {
+      console.error('Error saving conversation:', error);
+    }
   }
 
   /**
@@ -20,9 +34,66 @@ export class ConversationService {
    * @param conversationId - The unique identifier of the conversation to retrieve.
    * @returns A promise that resolves to the conversation object if found, or `null` if not.
    */
-  public async get(conversationId: string): Promise<any> {
-    // Implementation for retrieving a specific conversation
-    // TODO: Replace `any` with the actual conversation object type
+  public async get(conversationId: string, userIds: string[]): Promise<any> {
+    if (conversationId) {
+      // If conversationId is provided, find the conversation by id
+      const conversation = await Conversation.findOne({ id: conversationId });
+      return conversation;
+    } else if (userIds && userIds.length > 0) {
+      // If no conversationId is provided, find the conversation where all userIds match
+      const conversation = await Conversation.findOne({
+        participants: { $all: userIds.map((userId) => ({ userId })) },
+      });
+
+      // Check if the conversation is found
+      if (conversation) {
+        return conversation;
+      } else {
+        // If no conversation is found, return a relevant message
+        throw new Error('No conversation found with the provided user IDs.');
+      }
+    } else {
+      // If neither conversationId nor userIds is provided, return an error or handle as needed
+      throw new Error('Either conversationId or userIds must be provided.');
+    }
+  }
+
+  public async update(
+    conversationId: string,
+    {
+      groupDetails,
+      isArchived,
+      isDeleted,
+    }: {
+      groupDetails: {
+        name: string;
+        avatar: string;
+        createdBy: string;
+      };
+      isArchived: boolean;
+      isDeleted: boolean;
+    }
+  ): Promise<any> {
+    produceToKafka('conversation.update', conversationId, {
+      id: conversationId,
+      groupDetails,
+      isArchived,
+      isDeleted,
+    });
+  }
+
+  public async updateLastMessage(
+    conversationId: string,
+    lastMessage: {
+      messageId: string;
+      content: string;
+      timestamp: Date;
+    }
+  ): Promise<any> {
+    produceToKafka('lastmessage.update', conversationId, {
+      id: conversationId,
+      lastMessage,
+    });
   }
 
   /**
@@ -33,6 +104,6 @@ export class ConversationService {
    */
   public async delete(conversationId: string): Promise<void> {
     // Implementation for deleting a specific conversation
-    // TODO: Add any necessary logic for deletion and handling of related data
+    await Conversation.deleteOne({ id: conversationId });
   }
 }

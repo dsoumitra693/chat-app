@@ -1,9 +1,9 @@
 import { Server, Socket } from 'socket.io';
-import { redisKV } from './redis';
-import { socketAuth } from '../middleware/socket';
 import { FileUploader } from './fileUploader';
 import { ConversationService } from './conversationService';
 import { MessageService } from './MessageService';
+import { socketAuth } from '../api/middleware/socket';
+import { redisKV } from '../redis/redis';
 
 // Extend the Socket interface to include userId
 declare module 'socket.io' {

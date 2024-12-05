@@ -1,7 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
-import { asyncErrorHandler } from '../utils/asyncErrorHandler';
-import { ConversationService } from '../services/conversationService';
-import { MessageService } from '../services/MessageService';
+import { ConversationService } from '../../services/conversationService';
+import { asyncErrorHandler } from '../../utils/asyncErrorHandler';
+import { MessageService } from '../../services/MessageService';
+
 
 const conversationService = new ConversationService();
 
