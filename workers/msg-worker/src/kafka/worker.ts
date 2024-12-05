@@ -86,7 +86,7 @@ export class KafkaConsumer {
         await this.dbService.updateBatch(updates, Conversation);
       } else if (topic === 'message.create') {
         await this.dbService.insertBatch(batch, Message);
-      } else if (topic === 'Message.update') {
+      } else if (topic === 'message.update') {
         // Parse the batch for updates
         const updates = batch.map((message) => {
           const { id, ...updates } = JSON.parse(message);
@@ -98,6 +98,20 @@ export class KafkaConsumer {
 
         // Perform batch update
         await this.dbService.updateBatch(updates, Message);
+      } else if (topic === 'lastmessage.update') {
+        // Parse the batch for updates
+        const updates = Array.from(
+          batch
+            .reduce((map, message) => {
+              const { id, ...updates } = JSON.parse(message);
+              map.set(id, { id, updates }); // Overwrite the entry if the id already exists
+              return map;
+            }, new Map())
+            .values()
+        );
+
+        // Perform batch update
+        await this.dbService.updateBatch(updates, Conversation);
       }
       console.log(
         `Batch inserted for topic '${topic}': ${batch.length} messages`
