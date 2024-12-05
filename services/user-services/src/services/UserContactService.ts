@@ -1,5 +1,6 @@
 import { KafkaService } from '../kafka';
 import { UserRepo } from '../user-repo';
+import { User } from './UserService';
 
 const kafkaService = new KafkaService();
 const userRepo = new UserRepo();
@@ -11,6 +12,7 @@ export class UserContact {
   private _id: string;
   private _userId: string;
   private _contactUserId: string;
+  private _contactUserProfile: User;
 
   /**
    * Constructor to initialize a new Account instance with phone, password, and ID.
@@ -22,14 +24,24 @@ export class UserContact {
     id,
     userId,
     contactUserId,
+    contactUserProfile,
   }: {
     id: string;
     userId: string;
     contactUserId: string;
+    contactUserProfile?: {
+      id: string;
+      fullname?: string;
+      bio?: string;
+      phone: string;
+      profilePicture?: string;
+      accountId: string;
+    };
   }) {
     this._id = id;
     this._userId = userId;
     this._contactUserId = contactUserId;
+    this._contactUserProfile = new User(contactUserProfile!);
   }
 
   /**
@@ -83,8 +95,19 @@ export class UserContact {
     if (!result.length) return undefined;
 
     let users = result.map(
-      (r: { id: string; userId: string; contactUserId: string }) =>
-        new UserContact(r)
+      (r: {
+        id: string;
+        userId: string;
+        contactUserId: string;
+        contactUserProfile: {
+          id: string;
+          fullname?: string;
+          bio?: string;
+          phone: string;
+          profilePicture?: string;
+          accountId: string;
+        };
+      }) => new UserContact(r)
     );
 
     return users;

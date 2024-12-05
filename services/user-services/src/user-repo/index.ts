@@ -1,4 +1,4 @@
-import { sql } from 'drizzle-orm';
+import { sql, eq } from 'drizzle-orm';
 import { db, DB } from '../db';
 import {
   userContactsSchema,
@@ -43,8 +43,24 @@ export class UserRepo {
 
   public async getUserContacts(query: string): Promise<any> {
     return await db
-      .select()
+      .select({
+        id: userContactsSchema.id,
+        userId: userContactsSchema.userId,
+        contactUserId: userContactsSchema.contactUserId,
+        contactUserProfile: {
+          id: usersSchema.id,
+          fullname: usersSchema.fullname,
+          bio: usersSchema.bio,
+          phone: usersSchema.phone,
+          profilePicture: usersSchema.profilePicture,
+          accountId: usersSchema.accountId,
+        },
+      })
       .from(userContactsSchema)
+      .leftJoin(
+        usersSchema,
+        eq(usersSchema.id, userContactsSchema.contactUserId)
+      )
       .where(sql`${sql.raw(query)}`);
   }
   /**
