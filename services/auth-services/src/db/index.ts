@@ -20,7 +20,7 @@ export function init_db() {
     throw new Error('Database URL is not defined in .env');
   }
   const neonClient = neon(process.env.DRIZZLE_DATABASE_URL!); // Initialize the Neon database client
-  return drizzle(process.env.DRIZZLE_DATABASE_URL!); // Return the Drizzle ORM instance
+  return drizzle(neonClient); // Return the Drizzle ORM instance
 }
 
 export const db = init_db();
