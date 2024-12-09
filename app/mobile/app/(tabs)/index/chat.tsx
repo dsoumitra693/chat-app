@@ -7,15 +7,15 @@ import { SENDER, WALLPAPER_URI } from '@/constants/data';
 const chat = () => {
   return (
     <View style={styles.container}>
-      <Header user={SENDER} />
-      <MsgFeed />
-      <MessageArea />
       <Image
         style={styles.wallpaper}
         source={{
           uri: WALLPAPER_URI,
         }}
       />
+      <Header user={SENDER} />
+      <MsgFeed />
+      <MessageArea />
     </View>
   );
 };
@@ -30,7 +30,6 @@ const styles = StyleSheet.create({
   wallpaper: {
     width: '100%',
     height: '100%',
-    zIndex: -100,
     position: 'absolute',
   },
 });

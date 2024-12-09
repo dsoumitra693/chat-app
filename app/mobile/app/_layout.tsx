@@ -5,6 +5,7 @@ import { useEffect } from 'react';
 import { Colors } from '@/constants/Colors';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { RootProvider } from '@/provides';
+import { StatusBar } from 'expo-status-bar';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -25,10 +26,10 @@ export default function RootLayout() {
 
   return (
     <RootProvider>
-      <GestureHandlerRootView style={{ flex: 1 }}>
+      <GestureHandlerRootView style={{ flex: 1,backgroundColor:Colors.dark.background }}>
+        <StatusBar hidden animated backgroundColor="transparent"/>
         <Stack
           screenOptions={{
-            statusBarTranslucent: true,
             navigationBarColor: Colors['dark'].secondary,
             headerShown: false,
           }}

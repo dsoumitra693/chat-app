@@ -1,56 +1,69 @@
 import { Colors } from '@/constants/Colors';
 import { Ionicons } from '@expo/vector-icons';
-import { Video, ResizeMode, VideoFullscreenUpdateEvent } from 'expo-av';
-import { useRef, useState } from 'react';
-import { StyleSheet, TouchableOpacity } from 'react-native';
-
-const FULLSCREEN_ENTER = 1;
-const FULLSCREEN_EXIT = 3;
+import { useEffect, useRef, useState } from 'react';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { useVideoPlayer, VideoView, VideoPlayer as VP } from 'expo-video';
 
 export const VideoPlayer = ({ url }: { url: string }) => {
   const [isPlaying, setisPlaying] = useState(false);
-  const [isFullScreen, setIsFullScreen] = useState(false);
-  const videoRef = useRef<Video>(null);
-  const handleFullScreen = () => {
-    videoRef.current?.presentFullscreenPlayer();
-    setIsFullScreen(true);
+  const [player, setPlayer] = useState<VP>();
+  const [showNativeControl, setShowNativeControl] = useState(false);
+  const videoRef = useRef<VideoView>(null);
+  const toogleFullScreen = () => {
+    console.log(videoRef.current);
+    videoRef.current?.enterFullscreen();
+    player?.play();
+    console.log(videoRef.current);
   };
 
-  const handleFullscreenUpdate = (event: any) => {
-    setisPlaying(false)
-    if (event.fullscreenUpdate === FULLSCREEN_ENTER) {
-      setIsFullScreen(true);
+  const currentPlayer = useVideoPlayer(url, (player) => {
+    player.loop = true;
+    setPlayer(player);
+  });
+
+  const tooglePlayPause = () => {
+    if (isPlaying) {
+      player?.pause();
+    } else {
+      player?.play();
     }
-    if (event.fullscreenUpdate === FULLSCREEN_EXIT) {
-      setIsFullScreen(false);
-    }
-    setisPlaying(true)
+    setisPlaying((prev) => !prev);
+  };
+
+  useEffect(() => {
+    setisPlaying(!!player?.playing);
+  }, [player?.playing]);
+
+  const handleFullscreenEnter = () => {
+    console.log('hello');
+    setShowNativeControl(true);
+  };
+  const handleFullscreenExit = () => {
+    setShowNativeControl(false);
   };
   return (
-    <TouchableOpacity style={styles.videoWrapper} onPress={handleFullScreen}>
-      <Video
-        source={{ uri: url }}
-        rate={1.0}
-        isLooping
-        volume={1.0}
-        isMuted={false}
-        shouldPlay={isPlaying}
-        useNativeControls={false}
+    <View style={styles.videoWrapper}>
+      <VideoView
+        player={currentPlayer}
         style={styles.video}
+        nativeControls={showNativeControl}
+        contentFit="cover"
         ref={videoRef}
-        resizeMode={isFullScreen ? ResizeMode.CONTAIN : ResizeMode.COVER}
-        onFullscreenUpdate={handleFullscreenUpdate}
+        onFullscreenEnter={handleFullscreenEnter}
+        onFullscreenExit={handleFullscreenExit}
+      />
+      <TouchableOpacity
+        style={styles.touchableArea}
+        onPress={toogleFullScreen}
       />
       <Ionicons
         name={isPlaying ? 'pause' : 'play'}
         size={40}
         color={Colors['dark'].text}
         style={styles.icon}
-        onPress={() => {
-          setisPlaying((prev) => !prev);
-        }}
+        onPress={tooglePlayPause}
       />
-    </TouchableOpacity>
+    </View>
   );
 };
 
@@ -58,6 +71,7 @@ const styles = StyleSheet.create({
   videoWrapper: {
     justifyContent: 'center',
     alignItems: 'center',
+    position: 'relative',
   },
   video: {
     width: 300,
@@ -69,5 +83,10 @@ const styles = StyleSheet.create({
     position: 'absolute',
     alignSelf: 'center',
     justifyContent: 'center',
+  },
+  touchableArea: {
+    width: '100%',
+    height: '100%',
+    position: 'absolute',
   },
 });

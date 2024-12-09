@@ -18,14 +18,14 @@ const Header = ({ user }: { user: IUser }) => {
   const router = useRouter();
   const handleBackPress = () => {
     if (router.canGoBack()) router.back();
-    router.replace('/(tabs)/');
+    router.replace('/(tabs)/index');
   };
-  const handleAudioCall = ()=>{
-    router.push('/(tabs)/call');
-  }
-  const handleVideoCall = ()=>{
-    router.push('/(tabs)/call');
-  }
+  const handleAudioCall = () => {
+    router.push('/call');
+  };
+  const handleVideoCall = () => {
+    router.push('/call');
+  };
   return (
     <BlurView intensity={90} tint="dark" style={styles.container}>
       <View
@@ -62,7 +62,11 @@ const Header = ({ user }: { user: IUser }) => {
           <Ionicons name="call-outline" size={20} color={Colors['dark'].icon} />
         </TouchableOpacity>
         <TouchableOpacity onPress={handleVideoCall}>
-          <Ionicons name="videocam-outline" size={20} color={Colors['dark'].icon} />
+          <Ionicons
+            name="videocam-outline"
+            size={20}
+            color={Colors['dark'].icon}
+          />
         </TouchableOpacity>
       </View>
     </BlurView>
@@ -74,8 +78,8 @@ export default Header;
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    height: 80,
-    paddingTop: StatusBar.currentHeight,
+    // height: 80,
+    paddingTop: Number(StatusBar.currentHeight) - 10,
     padding: 10,
     position: 'absolute',
     borderBottomWidth: 1,

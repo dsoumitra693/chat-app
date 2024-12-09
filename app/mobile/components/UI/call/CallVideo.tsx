@@ -1,6 +1,6 @@
 import { Image, StyleSheet, Text, View } from 'react-native';
 import React from 'react';
-import { ResizeMode, Video } from 'expo-av';
+import { useVideoPlayer, VideoView } from 'expo-video';
 
 const CallVideo = ({
   video,
@@ -9,6 +9,7 @@ const CallVideo = ({
   video: string;
   placeholder: string;
 }) => {
+  const player = useVideoPlayer(video);
   return (
     <View style={styles.container}>
       {!video ? (
@@ -18,11 +19,7 @@ const CallVideo = ({
           resizeMode="cover"
         />
       ) : (
-        <Video
-          source={{ uri: video }}
-          style={styles.video}
-          resizeMode={ResizeMode.CONTAIN}
-        />
+        <VideoView player={player} style={styles.video} contentFit="cover" />
       )}
     </View>
   );

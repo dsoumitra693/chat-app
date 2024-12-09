@@ -5,7 +5,7 @@ export const IMAGE_1 =
 export const IMAGE_2 =
   'https://www.pixel4k.com/wp-content/uploads/2021/08/girl-adjusting-hairs-4k_1629241627-1536x864.jpg';
 export const WALLPAPER_URI =
-  'https://e1.pxfuel.com/desktop-wallpaper/407/713/desktop-wallpaper-in-celebration-of-whatsapps-dark-mode-whatsapp-aesthetic.jpg';
+  'https://i.pinimg.com/originals/85/ec/df/85ecdf1c3611ecc9b7fa85282d9526e0.jpg';
 
 export const SENDER: IUser = {
   fullname: 'Emma',

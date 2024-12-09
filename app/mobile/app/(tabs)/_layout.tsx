@@ -8,7 +8,6 @@ import { useSession } from '@/provides';
 export default function TabLayout() {
   const colorScheme = useColorScheme();
   const { session, user } = useSession();
-  const pathname = usePathname();
 
   // if (!session) return <Redirect href="/signin" />;
   // if (!user) return <Redirect href="/createProfile" />;
@@ -40,8 +39,7 @@ export default function TabLayout() {
         name="index"
         options={{
           tabBarStyle: {
-            // display: pathname != '/' ? 'none' : 'flex',
-            display:'none'
+            display: 'flex',
           },
           title: '',
           tabBarIcon: ({ color, focused }) => (
