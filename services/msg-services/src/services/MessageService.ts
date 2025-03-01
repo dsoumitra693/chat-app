@@ -99,17 +99,67 @@ export class MessageService {
    */
   static async get(
     conversationId: string,
-    lastMsgTimestamp: string
-  ): Promise<any[]> {
-    // If lastMsgTimestamp is not provided, default to the earliest possible date.
-    const messages = await Message.find({
-      conversationId,
-      createdAt: { $lt: new Date(lastMsgTimestamp || 0) },
-    })
-      .sort({ createdAt: -1 })
-      .exec();
-
-    // Return an empty array if no messages are found.
-    return messages.length ? messages : [];
+    options: {
+      lastMsgTimestamp?: string;
+      page?: number;
+      limit?: number;
+    } = {}
+  ): Promise<{
+    messages: any[];
+    totalCount: number;
+    hasMore: boolean;
+    nextPage?: number;
+  }> {
+    try {
+      const { lastMsgTimestamp, page = 1, limit = 20 } = options;
+  
+      // Build match conditions
+      const matchStage: { conversationId: string; createdAt?: { $lt: Date } } = {
+        conversationId,
+      };
+  
+      // Add timestamp filter if provided
+      if (lastMsgTimestamp) {
+        matchStage.createdAt = { $lt: new Date(lastMsgTimestamp) };
+      }
+  
+      // Get total count using the same match conditions
+      const countResult = await Message.aggregate([
+        { $match: matchStage },
+        { $count: "total" }
+      ]);
+      
+      const totalCount = countResult.length > 0 ? countResult[0].total : 0;
+  
+      // Calculate skip value for page-based pagination
+      const skip = (page - 1) * limit;
+  
+      // Execute the aggregation pipeline
+      const messages = await Message.aggregate([
+        { $match: matchStage },
+        { $sort: { createdAt: -1 } },
+        { $skip: skip },
+        { $limit: limit }
+      ]);
+    
+      // Calculate if there are more messages
+      const hasMore = skip + messages.length < totalCount;
+  
+      // Return paginated results with metadata
+      return {
+        messages: messages || [],
+        totalCount,
+        hasMore,
+        nextPage: hasMore ? page + 1 : undefined,
+      };
+    } catch (error) {
+      console.error('Error fetching messages:', error);
+      return {
+        messages: [],
+        totalCount: 0,
+        hasMore: false,
+      };
+    }
   }
+  
 }

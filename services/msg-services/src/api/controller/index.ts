@@ -17,16 +17,17 @@ const msgService = MessageService.getInstance();
  */
 export const getMessage = asyncErrorHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { conversationId, lastMsgTimestamp } = req.query;
-    const messages = await MessageService.get(
-      conversationId as string,
-      lastMsgTimestamp as string
-    );
+    const { conversationId, lastMsgTimestamp, limit, page } = req.body;
+    const data = await MessageService.get(conversationId as string, {
+      lastMsgTimestamp: lastMsgTimestamp as string,
+      limit: limit,
+      page: page,
+    });
 
     res.status(200).json({
       success: true,
       message: 'Message retrieval successful',
-      data: { messages },
+      data,
     });
   }
 );
