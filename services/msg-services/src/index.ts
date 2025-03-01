@@ -3,6 +3,8 @@ import SocketServices from './services/SocketServices';
 import express from 'express';
 import { msgRouter } from './api/routes';
 import { connectToDB } from './db';
+import { MessageService } from './services/MessageService';
+import cors from 'cors';
 
 /**
  * Initializes the HTTP server and socket services, and starts listening on the specified port.
@@ -16,10 +18,16 @@ import { connectToDB } from './db';
  */
 const init = async (): Promise<void> => {
   const app = express();
+  // Middleware to parse incoming JSON requests with a body size limit of 50mb
+  app.use(express.json({ limit: '50mb' }));
+
+  // Middleware to parse URL-encoded payloads (like form submissions)
+  app.use(express.urlencoded({ extended: true }));
+
+  // Middleware to enable Cross-Origin Resource Sharing (CORS) for all routes
+  app.use(cors());
   // Create an HTTP server instance
   let httpServer = http.createServer(app);
-
-  app.use('/', msgRouter);
 
   // Define the port to listen on, defaulting to 4000 if not specified
   const PORT = process.env.PORT || 4000;
@@ -32,6 +40,8 @@ const init = async (): Promise<void> => {
 
   // Set up the necessary event listeners for socket communication
   socketServices.initListeners();
+  MessageService.getInstance(socketServices.io);
+  app.use('/', msgRouter);
 
   connectToDB();
 

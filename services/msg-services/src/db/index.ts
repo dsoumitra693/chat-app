@@ -7,7 +7,9 @@ config();
 const { MONGO_DB_URL } = process.env;
 
 export const connectToDB = async () => {
-  mongoose.connect(MONGO_DB_URL!)
+  console.log(MONGO_DB_URL!);
+  mongoose
+    .connect(MONGO_DB_URL!)
     .then(() => console.log('Connected to MongoDB'))
-    .catch(err => console.error('Connection error:', err));
+    .catch((err) => console.error('Connection error:', err));
 };

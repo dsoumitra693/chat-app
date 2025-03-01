@@ -6,7 +6,6 @@ const messageSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-      default: () => new mongoose.Types.ObjectId().toString(),
     },
     conversationId: {
       type: String,

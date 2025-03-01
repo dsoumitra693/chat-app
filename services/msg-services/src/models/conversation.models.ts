@@ -6,7 +6,6 @@ const conversationSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-      default: () => new mongoose.Types.ObjectId().toString(),
     },
     participants: {
       type: [
