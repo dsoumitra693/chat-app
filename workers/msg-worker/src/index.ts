@@ -1,3 +1,9 @@
-import { initConsumers } from "./kafka/worker";
+import { connectToDB } from './db';
+import { initConsumers } from './kafka/worker';
 
-initConsumers()
+function main() {
+  connectToDB();
+  initConsumers();
+}
+
+main();

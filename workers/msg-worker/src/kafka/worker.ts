@@ -7,7 +7,7 @@ export class KafkaConsumer {
   private consumer;
   private dbService = new DBService();
   private batchSize = 10; // Define batch size
-  private batchInterval = 1000 * 15; // Interval in milliseconds
+  private batchInterval = 100; // Interval in milliseconds
   private batchMap: Record<string, string[]> = {};
 
   constructor() {
@@ -40,6 +40,7 @@ export class KafkaConsumer {
     await this.consumer.run({
       eachMessage: async ({ topic, message }: EachMessagePayload) => {
         const messageValue = message.value?.toString();
+        console.log(messageValue, topic)
         if (messageValue) {
           // Push message to appropriate batch
           if (!this.batchMap[topic]) this.batchMap[topic] = [];
@@ -126,6 +127,6 @@ export class KafkaConsumer {
 export async function initConsumers() {
   const kafkaConsumer = new KafkaConsumer();
   await kafkaConsumer.connect(); // Ensure connection before subscribing
-  await kafkaConsumer.subscribe(['conversation.create', 'conversation.update']);
+  await kafkaConsumer.subscribe(['conversation.create', 'conversation.update','message.create']);
   await kafkaConsumer.consume();
 }
